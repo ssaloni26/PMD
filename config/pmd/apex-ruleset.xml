@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ruleset name="quickstart"
+<ruleset name="apex-ruleset"
     xmlns="https://pmd.sourceforge.io/ruleset/2.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://pmd.sourceforge.io/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
@@ -9,39 +9,341 @@
         All rules have priority 1 to flag any violation.
     </description>
 
-    <!-- COMPLEXITY / DESIGN -->
-    <rule ref="category/apex/design.xml">
+    <!-- Assertions should include messages for better debugging -->
+    <rule ref="category/apex/bestpractices.xml/ApexAssertionsShouldIncludeMessage">
         <priority>1</priority>
     </rule>
 
+    <!-- Test classes must have assertions -->
+    <rule ref="category/apex/bestpractices.xml/ApexUnitTestClassShouldHaveAsserts">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Test classes should use System.runAs() -->
+    <rule ref="category/apex/bestpractices.xml/ApexUnitTestClassShouldHaveRunAs">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Use @IsTest instead of deprecated testMethod keyword -->
+    <rule ref="category/apex/bestpractices.xml/ApexUnitTestMethodShouldHaveIsTestAnnotation">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Avoid seeAllData=true in tests -->
+    <rule ref="category/apex/bestpractices.xml/ApexUnitTestShouldNotUseSeeAllDataTrue">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Prefer Queueable over @Future -->
+    <rule ref="category/apex/bestpractices.xml/AvoidFutureAnnotation">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Avoid global modifier when possible -->
+    <rule ref="category/apex/bestpractices.xml/AvoidGlobalModifier">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Delegate trigger logic to handler classes -->
+    <rule ref="category/apex/bestpractices.xml/AvoidLogicInTrigger">
+        <priority>1</priority>
+    </rule>
+
+    <!-- System.debug should use LoggingLevel -->
+    <rule ref="category/apex/bestpractices.xml/DebugsShouldUseLoggingLevel">
+        <priority>1</priority>
+        <properties>
+            <property name="strictMode" value="true" />
+        </properties>
+    </rule>
+
+    <!-- Queueable should attach Finalizer for error handling -->
+    <rule ref="category/apex/bestpractices.xml/QueueableWithoutFinalizer">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Detect unused local variables -->
+    <rule ref="category/apex/bestpractices.xml/UnusedLocalVariable">
+        <priority>1</priority>
+    </rule>
+
+    <!-- ============================== -->
+    <!-- CODE STYLE -->
+    <!-- ============================== -->
+
+    <!-- Enforce PascalCase for annotations -->
+    <rule ref="category/apex/codestyle.xml/AnnotationsNamingConventions">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Class naming conventions (PascalCase) -->
+    <rule ref="category/apex/codestyle.xml/ClassNamingConventions">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Fields should be declared at the start of classes -->
+    <rule ref="category/apex/codestyle.xml/FieldDeclarationsShouldBeAtStart">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Field naming conventions (camelCase for instance, UPPER_CASE for constants) -->
+    <rule ref="category/apex/codestyle.xml/FieldNamingConventions">
+        <priority>1</priority>
+    </rule>
+
+    <!-- For loops must use braces -->
+    <rule ref="category/apex/codestyle.xml/ForLoopsMustUseBraces">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Method parameter naming conventions -->
+    <rule ref="category/apex/codestyle.xml/FormalParameterNamingConventions">
+        <priority>1</priority>
+    </rule>
+
+    <!-- If/Else statements must use braces -->
+    <rule ref="category/apex/codestyle.xml/IfElseStmtsMustUseBraces">
+        <priority>1</priority>
+    </rule>
+
+    <!-- If statements must use braces -->
+    <rule ref="category/apex/codestyle.xml/IfStmtsMustUseBraces">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Local variable naming conventions -->
+    <rule ref="category/apex/codestyle.xml/LocalVariableNamingConventions">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Method naming conventions (camelCase) -->
+    <rule ref="category/apex/codestyle.xml/MethodNamingConventions">
+        <priority>1</priority>
+    </rule>
+
+    <!-- One declaration per line -->
+    <rule ref="category/apex/codestyle.xml/OneDeclarationPerLine">
+        <priority>1</priority>
+        <properties>
+            <property name="strictMode" value="true" />
+            <property name="reportInForLoopInitializer" value="true" />
+        </properties>
+    </rule>
+
+    <!-- Property naming conventions -->
+    <rule ref="category/apex/codestyle.xml/PropertyNamingConventions">
+        <priority>1</priority>
+    </rule>
+
+    <!-- While loops must use braces -->
+    <rule ref="category/apex/codestyle.xml/WhileLoopsMustUseBraces">
+        <priority>1</priority>
+    </rule>
+
+    <!-- ============================== -->
+    <!-- DESIGN -->
+    <!-- ============================== -->
+
+    <!-- Avoid boolean method parameters -->
+    <rule ref="category/apex/design.xml/AvoidBooleanMethodParameters">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Avoid deeply nested if statements -->
+    <rule ref="category/apex/design.xml/AvoidDeeplyNestedIfStmts">
+        <priority>1</priority>
+        <properties>
+            <property name="problemDepth" value="3" />
+        </properties>
+    </rule>
+
+    <!-- Cognitive complexity metric -->
+    <rule ref="category/apex/design.xml/CognitiveComplexity">
+        <priority>1</priority>
+        <properties>
+            <property name="classReportLevel" value="50" />
+            <property name="methodReportLevel" value="15" />
+        </properties>
+    </rule>
+
+    <!-- Cyclomatic complexity metric -->
+    <rule ref="category/apex/design.xml/CyclomaticComplexity">
+        <priority>1</priority>
+        <properties>
+            <property name="classReportLevel" value="40" />
+            <property name="methodReportLevel" value="10" />
+        </properties>
+    </rule>
+
+    <!-- Excessive parameter list -->
+    <rule ref="category/apex/design.xml/ExcessiveParameterList">
+        <priority>1</priority>
+        <properties>
+            <property name="minimum" value="4" />
+        </properties>
+    </rule>
+
+    <!-- Excessive public count -->
+    <rule ref="category/apex/design.xml/ExcessivePublicCount">
+        <priority>1</priority>
+        <properties>
+            <property name="minimum" value="20" />
+        </properties>
+    </rule>
+
+    <!-- NCSS Count (replaces deprecated rules) -->
+    <rule ref="category/apex/design.xml/NcssCount">
+        <priority>1</priority>
+        <properties>
+            <property name="methodReportLevel" value="40" />
+            <property name="classReportLevel" value="500" />
+        </properties>
+    </rule>
+
+    <!-- Standard Cyclomatic Complexity -->
+    <rule ref="category/apex/design.xml/StdCyclomaticComplexity">
+        <priority>1</priority>
+        <properties>
+            <property name="reportLevel" value="10" />
+            <property name="showClassesComplexity" value="true" />
+            <property name="showMethodsComplexity" value="true" />
+        </properties>
+    </rule>
+
+    <!-- Too many fields -->
+    <rule ref="category/apex/design.xml/TooManyFields">
+        <priority>1</priority>
+        <properties>
+            <property name="maxfields" value="15" />
+        </properties>
+    </rule>
+
+    <!-- Unused methods -->
+    <rule ref="category/apex/design.xml/UnusedMethod">
+        <priority>1</priority>
+    </rule>
+
+    <!-- ============================== -->
     <!-- PERFORMANCE -->
-    <rule ref="category/apex/performance.xml">
+    <!-- ============================== -->
+
+    <!-- Avoid debug statements in production -->
+    <rule ref="category/apex/performance.xml/AvoidDebugStatements">
         <priority>1</priority>
     </rule>
 
+    <!-- Avoid non-restrictive queries -->
+    <rule ref="category/apex/performance.xml/AvoidNonRestrictiveQueries">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Use deferred describe options for better performance -->
+    <rule ref="category/apex/performance.xml/EagerlyLoadedDescribeSObjectResult">
+        <priority>1</priority>
+        <properties>
+            <property name="noDefault" value="true" />
+        </properties>
+    </rule>
+
+    <!-- Avoid high-cost operations in loops -->
+    <rule ref="category/apex/performance.xml/OperationWithHighCostInLoop">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Avoid DML/SOQL/SOSL in loops -->
+    <rule ref="category/apex/performance.xml/OperationWithLimitsInLoop">
+        <priority>1</priority>
+    </rule>
+
+    <!-- ============================== -->
+    <!-- SECURITY -->
+    <!-- ============================== -->
+
+    <!-- Avoid hardcoded crypto keys/IVs -->
+    <rule ref="category/apex/security.xml/ApexBadCrypto">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Check CRUD/FLS permissions before DML/SOQL -->
+    <rule ref="category/apex/security.xml/ApexCRUDViolation">
+        <priority>1</priority>
+        <!-- Add custom authorization patterns if needed -->
+        <!--
+        <properties>
+                <property name="createAuthMethodPattern"
+            value="AuthorizationUtil\.(is|assert)(Createable|Upsertable)" />
+            <property
+            name="readAuthMethodPattern" value="AuthorizationUtil\.(is|assert)Accessible" />
+            <property
+            name="updateAuthMethodPattern"
+            value="AuthorizationUtil\.(is|assert)(Updateable|Upsertable)" />
+            <property
+            name="deleteAuthMethodPattern" value="AuthorizationUtil\.(is|assert)Deletable" />
+            <property
+            name="undeleteAuthMethodPattern" value="AuthorizationUtil\.(is|assert)Undeletable" />
+            <property
+            name="mergeAuthMethodPattern" value="AuthorizationUtil\.(is|assert)Mergeable" />
+        </properties>
+        -->
+    </rule>
+
+    <!-- Avoid dangerous methods -->
+    <rule ref="category/apex/security.xml/ApexDangerousMethods">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Use HTTPS endpoints -->
+    <rule ref="category/apex/security.xml/ApexInsecureEndpoint">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Prevent open redirects -->
+    <rule ref="category/apex/security.xml/ApexOpenRedirect">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Enforce sharing declarations -->
+    <rule ref="category/apex/security.xml/ApexSharingViolations">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Prevent SOQL injection -->
+    <rule ref="category/apex/security.xml/ApexSOQLInjection">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Use Named Credentials instead of hardcoded credentials -->
+    <rule ref="category/apex/security.xml/ApexSuggestUsingNamedCred">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Prevent XSS from addError with escape=false -->
+    <rule ref="category/apex/security.xml/ApexXSSFromEscapeFalse">
+        <priority>1</priority>
+    </rule>
+
+    <!-- Prevent XSS from URL parameters -->
+    <rule ref="category/apex/security.xml/ApexXSSFromURLParam">
+        <priority>1</priority>
+    </rule>
+
+    <!-- ============================== -->
     <!-- ERROR PRONE -->
+    <!-- ============================== -->
+
+    <!-- Include all error prone rules with priority 1 -->
     <rule ref="category/apex/errorprone.xml">
         <priority>1</priority>
     </rule>
 
-    <!-- BEST PRACTICES -->
-    <rule ref="category/apex/bestpractices.xml">
-        <priority>1</priority>
-    </rule>
-
-    <!-- NAMING / CODE STYLE -->
-    <rule ref="category/apex/codestyle.xml">
-        <priority>1</priority>
-    </rule>
-
+    <!-- ============================== -->
     <!-- DOCUMENTATION -->
+    <!-- ============================== -->
+
+    <!-- Include documentation rules with lower priority -->
     <rule ref="category/apex/documentation.xml">
         <priority>1</priority>
     </rule>
 
-    <!-- SECURITY -->
-    <rule ref="category/apex/security.xml">
-        <priority>1</priority>
-    </rule>
 
 </ruleset>
