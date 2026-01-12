@@ -230,39 +230,5 @@
                 }
                 return permissionDisplayName;
             }
-            private Map<Id, Set<String>> getSetPermissions(Set<Id> userIds, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) { 
-                Map<Id, Set<String>> resultMap = new Map<Id, Set<String>>();
-                if (userIds.isEmpty()) return resultMap;
-                Map<Id, List<Id>> userVsPermissionSets= new Map<Id, List<Id>>();  
-                Set<Id> permissionSetIds = new Set<Id>();
-                List<PermissionSetAssignment> permissionsets = [SELECT AssigneeId, PermissionSetId FROM PermissionSetAssignment WHERE AssigneeId IN :userIds];
-                for (PermissionSetAssignment permSetObj : permissionsets) {
-                    permissionSetIds.add(permSetObj.PermissionSetId);
-                    if (!userVsPermissionSets.containsKey(permSetObj.AssigneeId)) {
-                        userVsPermissionSets.put(permSetObj.AssigneeId, new List<Id>());
-                    }
-                    userVsPermissionSets.get(permSetObj.AssigneeId).add(permSetObj.PermissionSetId);
-                }
 
-                if (permissionSetIds.isEmpty()) return resultMap;
-
-                String query = 'SELECT Id,' + String.join(new List<String>(validFields), ',') + ' FROM PermissionSet WHERE Id IN :permissionSetIds';
-                Map<Id, Set<String>> permissionSetVsDisplayNames = new Map<Id, Set<String>>();
-                for (SObject permSet : Database.query(query)) {
-                    permissionSetVsDisplayNames.put((Id)permSet.get('Id'), collectPermissions(permSet, validFields, fieldApiVsDisplayNames));
-                }
-
-                for (Id userId : userVsPermissionSets.keySet()) {
-                    Set<String> userPerms = new Set<String>();
-                    for (Id permsSetId : userVsPermissionSets.get(userId)) {
-                        if (permissionSetVsDisplayNames.containsKey(permsSetId)) {
-                            userPerms.addAll(permissionSetVsDisplayNames.get(permsSetId));
-                        }
-                    }
-                    if (!userPerms.isEmpty()) {
-                        resultMap.put(userId, userPerms);
-                    }
-                }
-                return resultMap;
-            }
         }
