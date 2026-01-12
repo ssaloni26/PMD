@@ -1,5 +1,4 @@
 name: PMD & CPD PR Check
-
 on:
   pull_request:
     paths:
@@ -7,81 +6,65 @@ on:
        - 'force-app/main/default/classes/**'
        - 'force-app/main/default/triggers/**'
        - 'config/pmd/**'
-
 jobs:
   pmd-cpd:
-    runs-on: ubuntu-latest  # runs on ubuntu
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo         # gets the code from repo .
-        uses: actions/checkout@v4   # same 
-
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17'        # PMD and CPD require Java, so this step installs Java 17 on the runner.
-
-      - name: Download PMD
+          java-version: '17'
+          
+      - name: Download and Setup PMD
         run: |
-          wget https://github.com/pmd/pmd/releases/download/pmd_releases/6.55.0/pmd-bin-6.55.0.zip
+          wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.55.0/pmd-bin-6.55.0.zip
           unzip pmd-bin-6.55.0.zip
-          echo "$PWD/pmd-bin-6.55.0/bin" >> $GITHUB_PATH
-      - name: Check PMD & CPD versions
-        run: |
-          pmd -version
-          cpd --version
-#download , unzip and added to path (PMD)
-
+          chmod +x pmd-bin-6.55.0/bin/pmd
+          chmod +x pmd-bin-6.55.0/bin/cpd
+          
       - name: Run PMD (Apex)
         run: |
-          pmd check \
+          ./pmd-bin-6.55.0/bin/pmd check \
             -d force-app/main/default/classes,force-app/main/default/triggers \
             -R config/pmd/apex-ruleset.xml \
             -f text > pmd-report.txt || true
-
           cat pmd-report.txt
-
           if grep -q "Priority: 1" pmd-report.txt; then
             echo "❌ PMD found Priority 1 (Blocker) issues"
             exit 1
           else
             echo "✅ No Priority 1 PMD issues found."
-
           fi
-
-#[pmd check - d(directory to scan) -R(rulset) -f text(outputformat)]
-#> pmd-report.txt → saves results in a file.
-#cat pmd-report.txt → shows results in GitHub Actions log.
-#grep -q "Priority: 1" → checks if any high severity issues exist.
-#If yes → exit 1 → fails the PR.
-
-      #Upload PMD report (even if build fails)
-
+          
       - name: Upload PMD report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pmd-report
           path: pmd-report.txt
-
-
+          
       - name: Run CPD (Apex duplication)
         run: |
-          cpd \
+          ./pmd-bin-6.55.0/bin/cpd \
             --minimum-tokens 50 \
             --language apex \
             --files force-app/main/default/classes \
             --format text > cpd-report.txt || true
-
           cat cpd-report.txt
-
           if grep -q "Found a duplication" cpd-report.txt; then
             echo "❌ CPD found duplicate Apex code"
             exit 1
           else
             echo "✅ No duplication issues found."
           fi
-#checks for duplication
-#--minimum-tokens 50 → any block of 50+ tokens repeated is flagged.
-#Saves results to cpd-report.txt.
-#If duplicates exist → PR fails.
+          
+      - name: Upload CPD report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpd-report
+          path: cpd-report.txt
