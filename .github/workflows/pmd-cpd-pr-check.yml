@@ -26,10 +26,14 @@ jobs:
           
       - name: Run PMD (Apex)
         run: |
+          echo "Checking if ruleset exists:"
+          ls -l config/pmd
+          echo "Checking files to analyze:"
+          ls -l force-app/main/default/classes
           pmd-bin-6.55.0/bin/run.sh pmd check \
             -d force-app/main/default/classes \
             -R config/pmd/apex-ruleset.xml \
-            -f text > pmd-report.txt || true
+            -f text -verbose > pmd-report.txt
           cat pmd-report.txt
           if grep -q "Priority: 1" pmd-report.txt; then
             echo "❌ PMD found Priority 1 (Blocker) issues"
@@ -37,6 +41,7 @@ jobs:
           else
             echo "✅ No Priority 1 PMD issues found."
           fi
+
           
       - name: Upload PMD report
         if: always()
