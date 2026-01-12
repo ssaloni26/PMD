@@ -139,11 +139,11 @@
     </rule>
     <rule ref="category/apex/security.xml/ApexSOQLInjection"
         message="Apex classes should escape variables merged in DML query">
-        <priority>3</priority>
+        <priority>1</priority>
     </rule>
     <rule ref="category/apex/security.xml/ApexXSSFromURLParam"
         message="Apex classes should escape Strings obtained from URL parameters">
-        <priority>3</priority>
+        <priority>1</priority>
     </rule>
     <rule ref="category/apex/security.xml/ApexXSSFromEscapeFalse"
         message="Apex classes should escape addError strings">
@@ -155,11 +155,11 @@
     </rule>
     <rule ref="category/apex/security.xml/ApexCRUDViolation"
         message="Validate CRUD permission before SOQL/DML operation">
-        <priority>3</priority>
+        <priority>1</priority>
     </rule>
     <rule ref="category/apex/security.xml/ApexDangerousMethods"
         message="Calling potentially dangerous method">
-        <priority>3</priority>
+        <priority>1</priority>
     </rule>
     <rule ref="category/apex/security.xml/ApexSuggestUsingNamedCred"
         message="Consider using named credentials for authenticated callouts">
