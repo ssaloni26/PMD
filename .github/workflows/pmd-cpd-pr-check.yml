@@ -2,11 +2,18 @@ name: PMD & CPD PR Check
 
 on:
   pull_request:
+<<<<<<< Updated upstream
     paths:
       - 'force-app/**'    # Only run when Apex code changes
       - 'config/pmd/**'
       - 'classes/**'
       - 'triggers/**'
+=======
+    # paths:
+    #   - 'force-app/**'    # Only run when Apex code changes
+    #   - 'classes/**'
+    #   - 'triggers/**'
+>>>>>>> Stashed changes
 
 jobs:
   pmd-cpd:
