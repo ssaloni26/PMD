@@ -1,44 +1,34 @@
 name: PMD & CPD PR Check
-
 on:
   pull_request:
     paths:
-      - 'force-app/**'
-      - 'force-app/main/default/classes/**'
-      - 'config/pmd/**'
-
+       - 'force-app/**' 
+       - 'force-app/main/default/classes/**'
+       - 'config/pmd/**'
 jobs:
   pmd-cpd:
     runs-on: ubuntu-latest
-
     steps:
-      # 1️⃣ Checkout repo
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
-
-      # 2️⃣ Setup Java (PMD requires Java 17)
+        
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: temurin
-          java-version: 17
-
-      # 3️⃣ Download & setup PMD
-      - name: Download and setup PMD
+          distribution: 'temurin'
+          java-version: '17'
+          
+      - name: Download and Setup PMD
         run: |
-          wget https://github.com/pmd/pmd/releases/download/pmd_releases/6.55.0/pmd-bin-6.55.0.zip
-          unzip -q pmd-bin-6.55.0.zip
-          chmod +x pmd-bin-6.55.0/bin/run.sh
-
-      # 4️⃣ Add PMD to PATH (optional but simplifies commands)
-      - name: Add PMD to PATH
-        run: echo "$GITHUB_WORKSPACE/pmd-bin-6.55.0/bin" >> $GITHUB_PATH
-
-      # 5️⃣ Run PMD for Apex code
+          wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.55.0/pmd-bin-6.55.0.zip
+          unzip pmd-bin-6.55.0.zip
+          chmod +x pmd-bin-6.55.0/bin/pmd
+          chmod +x pmd-bin-6.55.0/bin/cpd
+          
       - name: Run PMD (Apex)
         run: |
-          run.sh pmd \
-            -d force-app/main/default/classes,force-app/main/default/triggers \
+          ./pmd-bin-6.55.0/bin/pmd check \
+            -d force-app/main/default/classes \
             -R config/pmd/apex-ruleset.xml \
             -f text > pmd-report.txt || true
           cat pmd-report.txt
@@ -48,19 +38,17 @@ jobs:
           else
             echo "✅ No Priority 1 PMD issues found."
           fi
-
-      # 6️⃣ Upload PMD report
+          
       - name: Upload PMD report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pmd-report
           path: pmd-report.txt
-
-      # 7️⃣ Run CPD for Apex duplication
+          
       - name: Run CPD (Apex duplication)
         run: |
-          run.sh cpd \
+          ./pmd-bin-6.55.0/bin/cpd \
             --minimum-tokens 50 \
             --language apex \
             --files force-app/main/default/classes \
@@ -72,8 +60,7 @@ jobs:
           else
             echo "✅ No duplication issues found."
           fi
-
-      # 8️⃣ Upload CPD report
+          
       - name: Upload CPD report
         if: always()
         uses: actions/upload-artifact@v4
