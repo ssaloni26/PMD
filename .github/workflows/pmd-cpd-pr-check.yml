@@ -64,15 +64,16 @@ jobs:
       # 6️⃣ Run CPD (duplicate code detection)
       - name: Run CPD (Apex duplication)
         run: |
+          # Run CPD but do not exit immediately on duplicates
           pmd-bin-6.55.0/bin/run.sh cpd \
             --minimum-tokens 50 \
             --language apex \
             --files force-app/main/default/classes \
-            --format text > cpd-report.txt
+            --format text > cpd-report.txt || true
 
           cat cpd-report.txt
 
-          # Fail the PR if duplicate code is found
+          # Fail the PR manually if duplicates are found
           if grep -q "Found a duplication" cpd-report.txt; then
             echo "❌ CPD found duplicate Apex code"
             exit 1
