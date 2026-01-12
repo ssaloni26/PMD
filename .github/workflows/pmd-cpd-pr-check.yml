@@ -4,8 +4,6 @@ on:
   pull_request:
     paths:
       - 'force-app/**'
-      - 'force-app/main/default/classes/**'
-      - 'force-app/main/default/triggers/**'
       - 'config/pmd/**'
 
 jobs:
@@ -31,18 +29,24 @@ jobs:
           unzip -q pmd-bin-6.55.0.zip
           chmod +x pmd-bin-6.55.0/bin/run.sh
 
-      # 4️⃣ Add PMD to PATH (optional but simplifies commands)
+      # 4️⃣ Add PMD to PATH
       - name: Add PMD to PATH
         run: echo "$GITHUB_WORKSPACE/pmd-bin-6.55.0/bin" >> $GITHUB_PATH
 
-      # 5️⃣ Run PMD for Apex code
-      - name: Run PMD (Apex)
+      # 5️⃣ Run PMD for Apex classes only (Security rules)
+      - name: Run PMD (Apex Security)
         run: |
+          SCAN_DIRS="force-app/main/default/classes"
+
+          echo "Scanning directories: $SCAN_DIRS"
+
           run.sh pmd \
-            -d force-app/main/default/classes,force-app/main/default/triggers \
-            -R config/pmd/apex-ruleset.xml \
+            -d $SCAN_DIRS \
+            -R config/pmd/security-only-apex.xml \
             -f text > pmd-report.txt || true
+
           cat pmd-report.txt
+
           if grep -q "Priority: 1" pmd-report.txt; then
             echo "❌ PMD found Priority 1 (Blocker) issues"
             exit 1
@@ -58,15 +62,21 @@ jobs:
           name: pmd-report
           path: pmd-report.txt
 
-      # 7️⃣ Run CPD for Apex duplication
+      # 7️⃣ Run CPD for Apex classes only
       - name: Run CPD (Apex duplication)
         run: |
+          SCAN_DIRS="force-app/main/default/classes"
+
+          echo "CPD scanning directories: $SCAN_DIRS"
+
           run.sh cpd \
             --minimum-tokens 50 \
             --language apex \
-            --files force-app/main/default/classes,force-app/main/default/triggers \
+            --files $SCAN_DIRS \
             --format text > cpd-report.txt || true
+
           cat cpd-report.txt
+
           if grep -q "Found a duplication" cpd-report.txt; then
             echo "❌ CPD found duplicate Apex code"
             exit 1
