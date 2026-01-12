@@ -30,10 +30,12 @@ jobs:
           ls -l config/pmd
           echo "Checking files to analyze:"
           ls -l force-app/main/default/classes
-          pmd-bin-6.55.0/bin/run.sh pmd check \
+          pmd-bin-6.55.0/bin/run.sh \
             -d force-app/main/default/classes \
             -R config/pmd/apex-ruleset.xml \
-            -f text -verbose > pmd-report.txt
+            -f text \
+            --reportfile pmd-report.txt \
+            --verbose
           cat pmd-report.txt
           if grep -q "Priority: 1" pmd-report.txt; then
             echo "❌ PMD found Priority 1 (Blocker) issues"
