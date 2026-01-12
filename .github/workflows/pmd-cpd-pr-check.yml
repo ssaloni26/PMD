@@ -37,8 +37,8 @@ jobs:
           echo "Checking files to analyze:"
           ls -l force-app/main/default/classes
 
-          # Run PMD properly with 6.55.0 syntax
-          pmd-bin-6.55.0/bin/run.sh \
+          # Correct syntax: "pmd" must be the first argument
+          pmd-bin-6.55.0/bin/run.sh pmd \
             -d force-app/main/default/classes \
             -R config/pmd/apex-ruleset.xml \
             -f text \
@@ -47,7 +47,6 @@ jobs:
 
           cat pmd-report.txt
 
-          # Fail the PR if Priority 1 violations found
           if grep -q "Priority: 1" pmd-report.txt; then
             echo "❌ PMD found Priority 1 (Blocker) issues"
             exit 1
@@ -66,8 +65,7 @@ jobs:
       # 6️⃣ Run CPD (duplicate code detection)
       - name: Run CPD (Apex duplication)
         run: |
-          echo "Running CPD for Apex classes..."
-          pmd-bin-6.55.0/bin/run.sh \
+          pmd-bin-6.55.0/bin/run.sh cpd \
             --minimum-tokens 50 \
             --language apex \
             --files force-app/main/default/classes \
