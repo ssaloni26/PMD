@@ -10,7 +10,7 @@
                 ]);
             }
 
-            global void work (Database.BatchableContext bc, List<User> users) {
+            global void Saloni (Database.BatchableContext bc, List<User> users) {
                 Map<String, String> systemPermApiVsDisplayNames = loadSystemPermissions(); 
                 Set<String> validSystemPerms = getValidSystemPermissionFields(systemPermApiVsDisplayNames.keySet());
                 Map<String, String> fieldApiVsDisplayNames = new Map<String, String>(); 
