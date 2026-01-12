@@ -39,6 +39,9 @@ jobs:
           if grep -q "Priority: 1" pmd-report.txt; then
             echo "❌ PMD found Priority 1 (Blocker) issues"
             exit 1
+          else
+            echo "✅ No Priority 1 PMD issues found."
+
           fi
 
 #[pmd check - d(directory to scan) -R(rulset) -f text(outputformat)]
@@ -70,6 +73,8 @@ jobs:
           if grep -q "Found a duplication" cpd-report.txt; then
             echo "❌ CPD found duplicate Apex code"
             exit 1
+          else
+            echo "✅ No duplication issues found."
           fi
 #checks for duplication
 #--minimum-tokens 50 → any block of 50+ tokens repeated is flagged.
