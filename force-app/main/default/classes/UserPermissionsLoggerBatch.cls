@@ -175,7 +175,7 @@
         system permissions are enabled through permission sets.
         Query PermissionSetAssignment for users,Get related Permission Sets,Query PermissionSet object fields dynamically,
         Collect TRUE permission fields → display names*/
-        private Map<Id, Set<String>> getSetPermissions(Set<Id> userIds, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) { 
+        private Map<Id, Set<String>> getPermissions(Set<Id> userIds, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) { 
             Map<Id, Set<String>> resultMap = new Map<Id, Set<String>>();
             if (userIds.isEmpty()) return resultMap;
             Map<Id, List<Id>> userVsPermissionSets= new Map<Id, List<Id>>();  
