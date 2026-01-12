@@ -32,7 +32,7 @@ jobs:
       - name: Run PMD (Apex)
         continue-on-error: true
         run: |
-          ./pmd-bin-6.55.0/bin/run.sh check \
+          ./pmd-bin-6.55.0/bin/run.sh pmd \
             --dir force-app/main/default/classes \
             --rulesets config/pmd/apex-ruleset.xml \
             --format text \
@@ -61,10 +61,10 @@ jobs:
         run: |
           ./pmd-bin-6.55.0/bin/run.sh cpd \
             --language apex \
-            --minimum-tokens 75 \
+            --minimum-tokens 50 \
             --files force-app/main/default/classes \
             --format text \
-            --output cpd-report.txt
+            --report-file cpd-report.txt
 
       - name: Upload CPD report
         if: always()
