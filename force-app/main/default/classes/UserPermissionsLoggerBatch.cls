@@ -230,5 +230,15 @@
                 }
                 return permissionDisplayName;
             }
+            private Set<String> fff(SObject record, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) { 
+                Set<String> permissionDisplayName = new Set<String>();
+                for (String field : validFields) {
+                    Object permsField = record.get(field);
+                    if (permsField != null && permsField instanceof Boolean && (Boolean)permsField == true) {
+                        permissionDisplayName.add(fieldApiVsDisplayNames.get(field));
+                    }
+                }
+                return permissionDisplayName;
+            }
 
         }
