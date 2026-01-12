@@ -73,11 +73,11 @@ jobs:
             --minimum-tokens 50 \
             --language apex \
             --files force-app/main/default/classes \
-            -f text > pmd-report.txt
+            -f text > cmd-report.txt
 
-            cat pmd-report.txt
+            cat cmd-report.txt
 
-            if grep -q "Found a duplication" pmd-report.txt; then
+            if grep -q "Found a duplication" cmd-report.txt; then
               echo "❌ CPD found duplicate Apex code"
               exit 1
             else
