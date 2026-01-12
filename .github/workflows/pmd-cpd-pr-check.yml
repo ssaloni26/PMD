@@ -24,31 +24,20 @@ jobs:
           unzip pmd-bin-6.55.0.zip
           chmod +x pmd-bin-6.55.0/bin/run.sh
           
-       - name: Run PMD (Apex)
+      - name: Run PMD (Apex)
         run: |
           echo "Checking if ruleset exists:"
-          ls -l config/pmd/
+          ls -l config/pmd
           echo "Checking files to analyze:"
-          ls -l force-app/main/default/classes/
-          
-          # Run PMD and capture exit code
-          pmd-bin-6.55.0/bin/run.sh pmd \
+          ls -l force-app/main/default/classes
+          pmd-bin-6.55.0/bin/run.sh \
             -d force-app/main/default/classes \
             -R config/pmd/apex-ruleset.xml \
             -f text \
-            -r pmd-report.txt \
-            --minimum-priority 1 || PMD_EXIT=$?
-          
-          # Display the report
-          if [ -f pmd-report.txt ]; then
-            echo "PMD Report:"
-            cat pmd-report.txt
-          else
-            echo "No PMD report generated"
-          fi
-          
-          # Check for Priority 1 issues
-          if [ -f pmd-report.txt ] && grep -q "Priority: 1" pmd-report.txt; then
+            --reportfile pmd-report.txt \
+            --verbose
+          cat pmd-report.txt
+          if grep -q "Priority: 1" pmd-report.txt; then
             echo "❌ PMD found Priority 1 (Blocker) issues"
             exit 1
           else
