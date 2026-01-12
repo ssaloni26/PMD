@@ -42,7 +42,6 @@ jobs:
             -d force-app/main/default/classes \
             -R config/pmd/apex-ruleset.xml \
             -f text > pmd-report.txt
-            --verbose
 
           cat pmd-report.txt
 
