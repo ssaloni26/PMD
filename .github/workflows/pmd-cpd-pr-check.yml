@@ -1,0 +1,45 @@
+name: PMD & CPD PR Check
+
+on:
+  pull_request:
+    paths:
+      - 'force-app/**'    # Only run when Apex code changes
+      - 'classes/**'
+      - 'triggers/**'
+
+jobs:
+  pmd-cpd:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Download PMD
+        run: |
+          wget https://github.com/pmd/pmd/releases/download/pmd_releases/6.55.0/pmd-bin-6.55.0.zip
+          unzip pmd-bin-6.55.0.zip -d pmd
+          export PATH=$PWD/pmd/pmd-bin-6.55.0/bin:$PATH
+
+      - name: Run PMD
+        run: |
+          pmd -d force-app/main/default/classes -R rulesets/apex/quickstart.xml -f text > pmd-report.txt || true
+          cat pmd-report.txt
+          if grep -q "Priority: 1" pmd-report.txt; then
+            echo "❌ PMD found severity 1 issues!"
+            exit 1
+          fi
+
+      - name: Run CPD (Copy-Paste Detector)
+        run: |
+          cpd-bin/run.sh cpd --minimum-tokens 50 --files force-app/main/default/classes --language apex --format text > cpd-report.txt || true
+          cat cpd-report.txt
+          if grep -q "Found a " cpd-report.txt; then
+            echo "❌ CPD found dupslicate code!"
+            exit 1
+          fi
