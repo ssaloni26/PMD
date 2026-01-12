@@ -41,8 +41,7 @@ jobs:
           pmd-bin-6.55.0/bin/run.sh pmd \
             -d force-app/main/default/classes \
             -R config/pmd/apex-ruleset.xml \
-            -f text \
-            --reportfile pmd-report.txt \
+            -f text > pmd-report.txt
             --verbose
 
           cat pmd-report.txt
@@ -69,8 +68,7 @@ jobs:
             --minimum-tokens 50 \
             --language apex \
             --files force-app/main/default/classes \
-            --format text \
-            --reportfile cpd-report.txt
+            --format text > cpd-report.txt
 
           cat cpd-report.txt
 
