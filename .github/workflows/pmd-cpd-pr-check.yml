@@ -32,7 +32,7 @@ jobs:
       - name: Run PMD (Apex)
         continue-on-error: true
         run: |
-          pmd check \
+          ./pmd-bin-6.55.0/bin/run.sh check \
             --dir force-app/main/default/classes \
             --rulesets config/pmd/apex-ruleset.xml \
             --format text \
@@ -59,7 +59,7 @@ jobs:
       - name: Run CPD (Apex duplication)
         continue-on-error: true
         run: |
-          pmd cpd \
+          ./pmd-bin-6.55.0/bin/run.sh cpd \
             --language apex \
             --minimum-tokens 75 \
             --files force-app/main/default/classes \
