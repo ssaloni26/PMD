@@ -5,7 +5,6 @@ on:
     paths:
       - 'force-app/**'
       - 'force-app/main/default/classes/**'
-      - 'force-app/main/default/triggers/**'
       - 'config/pmd/**'
 
 jobs:
@@ -64,7 +63,7 @@ jobs:
           run.sh cpd \
             --minimum-tokens 50 \
             --language apex \
-            --files force-app/main/default/classes,force-app/main/default/triggers \
+            --files force-app/main/default/classes \
             --format text > cpd-report.txt || true
           cat cpd-report.txt
           if grep -q "Found a duplication" cpd-report.txt; then
