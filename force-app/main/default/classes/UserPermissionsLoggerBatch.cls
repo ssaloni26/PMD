@@ -10,65 +10,7 @@
                 ]);
             }
 
-            global void Saloni (Database.BatchableContext bc, List<User> users) {
-                Map<String, String> systemPermApiVsDisplayNames = loadSystemPermissions(); 
-                Set<String> validSystemPerms = getValidSystemPermissionFields(systemPermApiVsDisplayNames.keySet());
-                Map<String, String> fieldApiVsDisplayNames = new Map<String, String>(); 
-                for (String sObj : validSystemPerms) {
-                    fieldApiVsDisplayNames.put(sObj, systemPermApiVsDisplayNames.get(sObj)); 
-                }
-                
-                Set<Id> userIds = new Set<Id>();
-                Set<Id> profileIds = new Set<Id>();
-                for (User userObj : users) {
-                    userIds.add(userObj.Id);
-                    profileIds.add(userObj.ProfileId);
-                }
-                Map<Id, Set<String>> profileIdVsPermissions = getProfilePermissions(profileIds, validSystemPerms, fieldApiVsDisplayNames); 
-                Map<Id, Set<String>> userIdVsPermissions = getPermissionSetPermissions(userIds, validSystemPerms, fieldApiVsDisplayNames); 
-                Map<Id, User_Permissions__c> existingRecordIdVsUserPermissions = new Map<Id, User_Permissions__c>(); 
-                for (User_Permissions__c upObj : [
-                    SELECT Id, User__c FROM User_Permissions__c WHERE User__c IN :userIds
-                ]) {
-                    existingRecordIdVsUserPermissions.put(upObj.User__c, upObj);
-                }
-
-                Map<Id, Set<String>> userIdVsCombinedPermissions = new Map<Id, Set<String>>(); 
-                for (User userObj : users) {
-                    Set<String> combinedPermission = new Set<String>();
-                    if (profileIdVsPermissions.containsKey(userObj.ProfileId)) {
-                        combinedPermission.addAll(profileIdVsPermissions.get(userObj.ProfileId));
-                    }
-                    if (userIdVsPermissions.containsKey(userObj.Id)) {
-                        combinedPermission.addAll(userIdVsPermissions.get(userObj.Id));
-                    }
-                    if (!combinedPermission.isEmpty()) {
-                        userIdVsCombinedPermissions.put(userObj.Id, combinedPermission);
-                    }
-                }
-                List<User_Permissions__c> userPermissionsToUpsert = new List<User_Permissions__c>();
-                for (Id userId : userIdVsCombinedPermissions.keySet()) {
-                    String permStr = String.join(new List<String>(userIdVsCombinedPermissions.get(userId)), ';');
-                    if (existingRecordIdVsUserPermissions.containsKey(userId)) {
-                        User_Permissions__c rec = existingRecordIdVsUserPermissions.get(userId);
-                        rec.Assigned_Permissions__c = permStr;
-                        userPermissionsToUpsert.add(rec);
-                    } else {
-                        userPermissionsToUpsert.add(new User_Permissions__c(
-                            User__c = userId,
-                            Assigned_Permissions__c = permStr
-                        ));
-                    }
-                }
-
-                if (userPermissionsToUpsert!=null && !userPermissionsToUpsert.isEmpty()) {
-                    try {
-                        upsert userPermissionsToUpsert;
-                    } catch (DmlException e) {
-                        System.debug('DML Exception during upsert: ' + e.getMessage());
-                    }
-                }
-            }
+            
 
             global void execute(Database.BatchableContext bc, List<User> users) {
                 Map<String, String> systemPermApiVsDisplayNames = loadSystemPermissions(); 
