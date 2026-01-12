@@ -59,10 +59,10 @@ jobs:
         continue-on-error: true
         run: |
             pmd-bin-6.55.0/bin/run.sh cpd \
-            --minimum-tokens 50 \
-            --language apex \
-            --files force-app/main/default/classes \
-            -f text > cpd-report.txt
+                --minimum-tokens 50 \
+                --language apex \
+                --files force-app/main/default/classes \
+                --format text > cpd-report.txt
 
 
       - name: Upload CPD report
