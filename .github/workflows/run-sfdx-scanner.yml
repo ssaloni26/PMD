@@ -1,30 +1,34 @@
 name: Salesforce Code Analyzer Workflow
+
 on:
-    pull_request:
+  pull_request:
     paths:
       - 'force-app/main/default/classes/**'
       - 'config/pmd/**'
+
 jobs:
   salesforce-code-analyzer-workflow:
     permissions:
-      pull-requests: write # Grants permission to create a pull request review. Only necessary if running against pull requests.
-      contents: read # Grants permission to check out the repository. Only necessary for private repos.
-      actions: read # Grants permission to read the in-progress actions. Only necessary for private repos.
+      pull-requests: write
+      contents: read
+      actions: read
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out files
         uses: actions/checkout@v5
-
 
       - name: Ensure node v20.9.0 or greater
         uses: actions/setup-node@v5
         with:
           node-version: '>=20.9.0'
+
       - name: Ensure java v11 or greater
         uses: actions/setup-java@v5
         with:
           java-version: '>=11'
           distribution: 'zulu'
+
       - name: Ensure python v3.10 or greater
         uses: actions/setup-python@v6
         with:
@@ -44,7 +48,6 @@ jobs:
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.TOKEN }}
 
-      # Quality gate on CHANGED files only (useful for legacy codebases)
       - name: Fail on Critical/High Violations (Changed Files Only)
         if: |
           steps.run-code-analyzer.outputs.num-sev1-violations-in-changed-files > 0 ||
