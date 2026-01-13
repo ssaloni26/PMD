@@ -61,7 +61,7 @@ jobs:
             pmd-bin-6.55.0/bin/run.sh cpd \
                 --minimum-tokens 50 \
                 --language apex \
-                --dir force-app/main/default/classes \
+                --files force-app/main/default/classes \
                 --format text > cpd-report.txt
 
 
