@@ -10,24 +10,36 @@
     </description>
 
     <!-- COMPLEXITY / DESIGN -->
-    <rule ref="category/apex/design.xml" />
+    <rule ref="category/apex/design.xml">
+        <priority>1</priority>
+    </rule>
 
     <!-- PERFORMANCE -->
-    <rule ref="category/apex/performance.xml" />
+    <rule ref="category/apex/performance.xml">
+        <priority>1</priority>
+    </rule>
 
     <!-- ERROR PRONE -->
-    <rule ref="category/apex/errorprone.xml" />
+    <rule ref="category/apex/errorprone.xml">
+        <priority>1</priority>
+    </rule>
 
     <!-- BEST PRACTICES -->
-    <rule ref="category/apex/bestpractices.xml" />
-
+    <rule ref="category/apex/bestpractices.xml">
+        <priority>1</priority>
+    </rule>
     <!-- NAMING / CODE STYLE -->
-    <rule ref="category/apex/codestyle.xml" />
+    <rule ref="category/apex/codestyle.xml">
+        <priority>1</priority>
+    </rule>
 
     <!-- DOCUMENTATION -->
-    <rule ref="category/apex/documentation.xml" />
-
+    <rule ref="category/apex/documentation.xml">
+        <priority>1</priority>
+    </rule>
     <!-- SECURITY -->
-    <rule ref="category/apex/security.xml" />
+    <rule ref="category/apex/security.xml">
+        <priority>1</priority>
+    </rule>
 
 </ruleset>
