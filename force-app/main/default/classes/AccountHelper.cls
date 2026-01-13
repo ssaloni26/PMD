@@ -1,13 +1,11 @@
 /**
- * @description       : 
- * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
- * @group             : 
- * @last modified on  : 01-13-2026
- * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
-**/
+ * Helper class to process Account records
+ */
 public class AccountHelper {
 
-    // Processes accounts by updating Description if Name is not null
+    /**
+     * Updates Description for Accounts with non-null Name
+     */
     public void processAccounts(List<Account> accounts){
         if(accounts == null || accounts.isEmpty()) return;
 
@@ -16,11 +14,13 @@ public class AccountHelper {
         }
     }
 
-    // Separated logic to remove duplication (CPD fix)
+    /**
+     * Helper method to update account description
+     */
     private void updateAccountDescription(Account acc){
         if(acc.Name != null){
             acc.Description = 'Processed';
         }
-        System.debug('Account ' + acc.Name + ' processed');
+        System.debug(LoggingLevel.INFO, 'Account ' + acc.Name + ' processed');
     }
 }
