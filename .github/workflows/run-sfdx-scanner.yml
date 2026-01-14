@@ -39,33 +39,14 @@ jobs:
 
       - name: Install Latest Salesforce Code Analyzer CLI Plugin
         run: sf plugins install code-analyzer@latest
-      - name: Get changed Apex files
-        id: changed-files
-        run: |
-          git fetch origin ${{ github.base_ref }}
 
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-            | grep '^force-app/main/default/classes/.*\.cls$' || true)
-
-          echo "$CHANGED_FILES"
-
-          # Convert to comma-separated list for PMD/CPD
-          FILE_LIST=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
-
-          echo "FILES=$FILE_LIST" >> $GITHUB_ENV
       - name: Run Salesforce Code Analyzer
-        run: |
-          if [ -z "$FILES" ]; then
-            echo "No Apex files changed. Skipping analysis."
-            exit 0
-          fi
-
-          sf code-analyzer run --workspace . --target pr --files $FILES --view detail --output-file sfca_results.html --output-file sfca_results.json
-         
-          if grep -q '"severity":"[1-4]"' sfca_results.json; then
-            echo "Violations found (Severity 1-4). Failing workflow."
-            exit 1
-          fi
+        id: run-code-analyzer
+        uses: forcedotcom/run-code-analyzer@v2
+        with:
+          run-arguments: --workspace . --view detail --output-file sfca_results.html --output-file sfca_results.json
+          results-artifact-name: salesforce-code-analyzer-results
+          github-token: ${{ github.TOKEN }}
 
       - name: Fail on Critical/High Violations (Changed Files Only)
         if: |
