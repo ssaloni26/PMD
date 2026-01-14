@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @group             : 
+ * @last modified on  : 01-14-2026
+ * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+**/
 public with sharing class DMLAuditAI {
     @AuraEnabled
     public static String getAISpikeAlert(String userName, String objectName, Decimal currentCount, Decimal historicalAvg, Decimal thresholdFactor){
