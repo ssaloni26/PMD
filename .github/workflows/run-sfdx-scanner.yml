@@ -17,8 +17,6 @@ jobs:
     steps:
       - name: Check out files
         uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
       
       - name: Ensure node v20.9.0 or greater
         uses: actions/setup-node@v5
@@ -42,15 +40,11 @@ jobs:
       - name: Install Latest Salesforce Code Analyzer CLI Plugin
         run: sf plugins install code-analyzer@latest
 
-      - name: Run Salesforce Code Analyzer (Changed Files Only)
+      - name: Run Salesforce Code Analyzer
         id: run-code-analyzer
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          run-arguments: >
-            --workspace .
-             --target pr
-            --view detail
-            --output-file sfca_results.json
+          run-arguments: --workspace . --view detail --output-file sfca_results.html --output-file sfca_results.json
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.TOKEN }}
 
