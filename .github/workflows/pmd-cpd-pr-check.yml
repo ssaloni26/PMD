@@ -16,7 +16,14 @@ jobs:
         with:
           fetch-depth: 0
 
-     # 3️⃣ Download and setup PMD
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+
+      # 3️⃣ Download and setup PMD
       - name: Download and Setup PMD
         run: |
           wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.55.0/pmd-bin-6.55.0.zip
@@ -31,8 +38,7 @@ jobs:
           git fetch origin ${{ github.base_ref }}
 
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-            | grep '^force-app/main/default/classes/.*\.cls$' \
-            || true)
+            | grep '^force-app/main/default/classes/.*\.cls$' || true)
 
           echo "$CHANGED_FILES"
 
