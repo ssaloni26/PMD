@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Check out files
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       
       - name: Ensure node v20.9.0 or greater
         uses: actions/setup-node@v5
@@ -46,9 +48,8 @@ jobs:
         with:
           run-arguments: >
             --workspace .
-            --target pr
+             --target pr
             --view detail
-            --output-file sfca_results.html
             --output-file sfca_results.json
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.TOKEN }}
