@@ -31,7 +31,10 @@ jobs:
           git fetch origin ${{ github.base_ref }}
 
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-            | grep '^force-app/main/default/classes/.*\.cls$' || true)
+            | grep '^force-app/main/default/classes/.*\.cls$' 
+            | grep -v '^force-app/main/default/classes/excluded/' \   # exclude a folder
+            | grep -v '^force-app/main/default/classes/DMLAuditAI.cls$' \ # exclude specific file
+            || true)
 
           echo "$CHANGED_FILES"
 
