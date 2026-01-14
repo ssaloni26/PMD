@@ -17,17 +17,6 @@ jobs:
     steps:
       - name: Check out files
         uses: actions/checkout@v5
-      
-      - name: Ensure node v20.9.0 or greater
-        uses: actions/setup-node@v5
-        with:
-          node-version: '>=20.9.0'
-
-      - name: Ensure java v11 or greater
-        uses: actions/setup-java@v5
-        with:
-          java-version: '>=11'
-          distribution: 'zulu'
 
       - name: Ensure python v3.10 or greater
         uses: actions/setup-python@v6
