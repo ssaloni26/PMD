@@ -26,22 +26,22 @@ jobs:
       # ---------------- PMD ----------------
       
       - name: Get changed Apex files
-        id: changed-files
         run: |
           git fetch origin ${{ github.base_ref }}
 
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-            | grep '^force-app/main/default/classes/.*\.cls$' 
-            | grep -v '^force-app/main/default/classes/excluded/' \   # exclude a folder
-            | grep -v '^force-app/main/default/classes/DMLAuditAI.cls$' \ # exclude specific file
+            | grep '^force-app/main/default/classes/.*\.cls$' \
+            | grep -v '^force-app/main/default/classes/excluded/' \
+            | grep -v '^force-app/main/default/classes/DMLAuditAI.cls$' \
             || true)
 
+          echo "Changed files:"
           echo "$CHANGED_FILES"
 
-          # Convert to comma-separated list for PMD/CPD
           FILE_LIST=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
 
           echo "FILES=$FILE_LIST" >> $GITHUB_ENV
+
       - name: Run PMD (Apex)
         continue-on-error: true
         run: |
