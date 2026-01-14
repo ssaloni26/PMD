@@ -19,6 +19,22 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '20'
+
+      - name: Install Salesforce CLI
+        run: npm install -g @salesforce/cli@latest
+
+      - name: Install Salesforce Code Analyzer plugin
+        run: sf plugins install code-analyzer@latest
+
+      - name: Verify sf installation
+        run: |
+          sf --version
+          sf plugins
+
       - name: Run Salesforce Code Analyzer
         id: run-code-analyzer
         uses: forcedotcom/run-code-analyzer@v2
@@ -26,7 +42,6 @@ jobs:
           run-arguments: >
             --workspace force-app
             --view detail
-            --target pr
             --output-file sfca_results.html
             --output-file sfca_results.json
           results-artifact-name: salesforce-code-analyzer-results
@@ -37,3 +52,4 @@ jobs:
           steps.run-code-analyzer.outputs.num-sev1-violations-in-changed-files > 0 ||
           steps.run-code-analyzer.outputs.num-sev2-violations-in-changed-files > 0
         run: exit 1
+  
