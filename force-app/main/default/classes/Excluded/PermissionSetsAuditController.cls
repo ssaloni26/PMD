@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @group             : 
+ * @last modified on  : 01-14-2026
+ * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+**/
 public with sharing class PermissionSetsAuditController {
 
     @AuraEnabled(cacheable=true)
@@ -82,6 +89,12 @@ for(SObject ps : permSets){
         @AuraEnabled public String assignedPermissions;
 
 public PermissionSetAuditWrapper(Id id, String name, Integer count, List<String> enabledPermLabels){
+    this.permissionSetId = id;
+    this.permissionSetName = name;
+    this.assignedUserCount = count;
+    this.assignedPermissions = String.join(enabledPermLabels, ', ');
+}
+public wrapper(Id id, String name, Integer count, List<String> enabledPermLabels){
     this.permissionSetId = id;
     this.permissionSetName = name;
     this.assignedUserCount = count;
