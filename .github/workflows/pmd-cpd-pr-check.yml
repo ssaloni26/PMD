@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -29,13 +31,35 @@ jobs:
           chmod +x pmd-bin-6.55.0/bin/run.sh
 
       # ---------------- PMD ----------------
-      - name: Run PMD (Apex)
+
+
+      - name: Get changed Apex files
+        id: changed-files
+        run: |
+          git fetch origin ${{ github.base_ref }}
+
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^force-app/main/default/classes/.*\.cls$' || true)
+
+          echo "$CHANGED_FILES"
+
+          # Convert to comma-separated list for PMD/CPD
+          FILE_LIST=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
+
+          echo "FILES=$FILE_LIST" >> $GITHUB_ENV
+
+      - name: Run PMD (Changed Apex Files Only)
+        if: env.FILES != ''
         continue-on-error: true
         run: |
           pmd-bin-6.55.0/bin/run.sh pmd \
-            -d force-app/main/default/classes \
+            -d "$FILES" \
             -R config/pmd/apex-ruleset.xml \
             -f text > pmd-report.txt
+      - name: Skip PMD (No Apex changes)
+        if: env.FILES == ''
+        run: echo "No Apex files changed. Skipping PMD."
+
 
       - name: Upload PMD report
         if: always()
@@ -61,9 +85,15 @@ jobs:
             pmd-bin-6.55.0/bin/run.sh cpd \
                 --minimum-tokens 50 \
                 --language apex \
-                --files force-app/main/default/classes \
+                --files "$FILES" \
                 --format text > cpd-report.txt
+      - name: Skip CPD (No Apex changes)
+        if: env.FILES == ''
+        run: echo "No Apex files changed. Skipping CPD."
 
+      - name: Skip CPD (No Apex changes)
+        if: env.FILES == ''
+        run: echo "No Apex files changed. Skipping CPD."
 
       - name: Upload CPD report
         if: always()
