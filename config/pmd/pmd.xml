@@ -5,6 +5,6 @@
     xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
 
     <exclude-pattern>.*/Excluded/.*</exclude-pattern>
-    <exclude-pattern>.*/DMLAuditAI.cls</exclude-pattern>
+
 
 </ruleset>
