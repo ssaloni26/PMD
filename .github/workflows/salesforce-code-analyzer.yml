@@ -1,5 +1,0 @@
-engine:
-  pmd:
-    fileExclusions:
-      - force-app/main/default/classes/Excluded/**
-      - force-app/main/default/classes/DMLAuditAI.cls
