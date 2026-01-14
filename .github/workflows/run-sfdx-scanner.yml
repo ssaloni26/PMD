@@ -28,14 +28,15 @@ jobs:
         id: run-code-analyzer
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          run-arguments: --workspace . 
-                          --config salesforce-code-analyzer.yml 
-                          --ignore force-app/main/default/classes/excluded/**
-                          --view detail      
-                          --output-file analyzer-results.html 
-                          --output-file analyzer-results.json
+          workspace: .
+          config-file: salesforce-code-analyzer.yml
+          ignore: force-app/main/default/classes/excluded/**,scripts/**,**/*.cls-meta.xml
+          view: detail
+          output-file: analyzer-results.html
+          output-file: analyzer-results.json
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.TOKEN }}
+      
 
       - name: Fail on Critical/High Violations (Changed Files Only)
         if: |
