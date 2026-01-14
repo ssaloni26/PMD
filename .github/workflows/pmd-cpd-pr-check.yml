@@ -47,16 +47,6 @@ jobs:
           name: pmd-report
           path: pmd-report.txt
 
-      # Set PMD flag based on Priority 1 only
-      - name: Evaluate PMD result
-        if: always()
-        run: |
-          if grep -q "Priority: 1" pmd-report.txt; then
-            echo "PMD_EXIT_CODE=1" >> $GITHUB_ENV
-          else
-            echo "PMD_EXIT_CODE=0" >> $GITHUB_ENV
-          fi
-
       # ---------------- CPD ----------------
       - name: Run CPD (Apex duplication)
         continue-on-error: true
@@ -76,25 +66,36 @@ jobs:
           path: cpd-report.txt
           if-no-files-found: warn
 
-      # Set CPD flag if duplication found
-      - name: Evaluate CPD result
-        if: always()
-        run: |
-          if grep -q "Found a duplication" cpd-report.txt; then
-            echo "CPD_EXIT_CODE=1" >> $GITHUB_ENV
-          else
-            echo "CPD_EXIT_CODE=0" >> $GITHUB_ENV
-          fi
+
 
       # ---------------- FINAL GATE ----------------
       - name: Final Quality Gate
         run: |
-          echo "PMD_EXIT_CODE=$PMD_EXIT_CODE"
-          echo "CPD_EXIT_CODE=$CPD_EXIT_CODE"
+          echo "Checking PMD and CPD reports..."
 
-          if [ "$PMD_EXIT_CODE" == "1" ] || [ "$CPD_EXIT_CODE" == "1" ]; then
-            echo "❌ Quality gate failed: PMD Priority 1 or CPD duplication found"
+          PMD_FAIL=0
+          CPD_FAIL=0
+
+          # Check PMD Priority 1
+          if grep -q "Priority: 1" pmd-report.txt; then
+            echo "❌ PMD Priority 1 issues found"
+            PMD_FAIL=1
+          else
+            echo "✅ No PMD Priority 1 issues"
+          fi
+
+          # Check CPD duplications
+          if grep -q "Found a duplication" cpd-report.txt; then
+            echo "❌ CPD duplications found"
+            CPD_FAIL=1
+          else
+            echo "✅ No CPD duplications"
+          fi
+
+          # Final exit
+          if [ $PMD_FAIL -eq 1 ] || [ $CPD_FAIL -eq 1 ]; then
+            echo "❌ Quality gate failed"
             exit 1
           else
-            echo "✅ Quality gate passed: No critical PMD or CPD issues"
+            echo "✅ Quality gate passed"
           fi
