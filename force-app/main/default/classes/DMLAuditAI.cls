@@ -17,5 +17,4 @@ public with sharing class DMLAuditAI {
                         'Instructions: Compare and generate spike alert.';
         return prompt;
     }
-
 }
