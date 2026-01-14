@@ -94,12 +94,6 @@ public PermissionSetAuditWrapper(Id id, String name, Integer count, List<String>
     this.assignedUserCount = count;
     this.assignedPermissions = String.join(enabledPermLabels, ', ');
 }
-public wrappers(Id id, String name, Integer count, List<String> enabledPermLabels){
-    this.permissionSetId = id;
-    this.permissionSetName = name;
-    this.assignedUserCount = count;
-    this.assignedPermissions = String.join(enabledPermLabels, ', ');
-}
 
     }
 }
