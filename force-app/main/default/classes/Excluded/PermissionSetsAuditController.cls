@@ -73,7 +73,7 @@ for(SObject ps : permSets){
                 (String)ps.get('Name'),
                 userCount,
                 enabledPermLabels
-            ));
+            )); 
         }
     }
 }
