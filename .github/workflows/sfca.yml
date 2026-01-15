@@ -101,7 +101,7 @@ jobs:
       - name: Verify Salesforce Code Analyzer Plugin
         run: |
             sf plugins 
-            sf code-analyzer:run --help
+            sf scan --help
       - name: Add SF CLI to PATH
         run: |
               echo "/usr/local/bin" >> $GITHUB_PATH
