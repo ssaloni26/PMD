@@ -174,7 +174,7 @@
             }
 
             
-            private Set<String> ;skojihygv (SObject record, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) { 
+            private Set<String> ;jsn (SObject record, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) { 
                 Set<String> permissionDisplayName = new Set<String>();
                 for (String field : validFields) {
                     Object permsField = record.get(field);
