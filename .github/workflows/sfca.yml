@@ -117,8 +117,8 @@ jobs:
           echo "$FILES"
           sf code-analyzer:run --target "$FILES" \
           --config sfca-config.yml \
-          --result-format html \
-          --result-file sfca_results.html
+          --reporters html \
+          --output sfca_results.html
         
       
       # -------------------------------
