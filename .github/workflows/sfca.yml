@@ -16,7 +16,8 @@ jobs:
       # -------------------------------
       - name: Checkout repository
         uses: actions/checkout@v5
-
+        with:
+          fetch-depth: 0 
       - name: Setup Node 
         uses: actions/setup-node@v4 
         with: 
@@ -101,7 +102,7 @@ jobs:
       - name: Verify Salesforce Code Analyzer Plugin
         run: |
             sf plugins 
-            sf scan --help
+            sf code-analyzer:run --help
       - name: Add SF CLI to PATH
         run: |
               echo "/usr/local/bin" >> $GITHUB_PATH
