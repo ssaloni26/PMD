@@ -39,7 +39,7 @@ jobs:
             sf code-analyzer run $CHANGED_FILES --config-file sfca-config.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
           fi
       - name: Upload SFCA results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sfca-results
           path: |
