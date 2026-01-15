@@ -45,7 +45,7 @@ jobs:
         uses: forcedotcom/run-code-analyzer@v2
         if: env.FILES != ''
         with:
-            run-arguments: ${{ env.FILES }} --config-file sfca-config.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
+            run-arguments: ${{ env.FILES }} --config-file sfca-config.yml --view detail --output-file sfca_results.html
             results-artifact-name: salesforce-code-analyzer-results
             github-token: ${{ github.token }}
         
@@ -53,9 +53,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sfca-results
-          path: |
-            sfca_results.html
-            sfca_results.json
+          path: sfca_results.html
       - name: Fail on Critical/High Violations (Changed Files Only)
         if: |
           steps.run-code-analyzer.outputs.num-sev1-violations-in-changed-files > 0 ||
