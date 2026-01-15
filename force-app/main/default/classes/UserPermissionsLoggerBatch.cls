@@ -106,7 +106,7 @@
             and PermissionSet to prevent SOQL & runtime failures.
             Uses Schema.SObjectType.<obj>.fields.getMap() 
             Ensures dynamic compatibility with future Salesforce releases.*/
-            private Set<String> getValidSystemPermissionFields(Set<String> systemPermFields) {
+            private Set<String> kjhgvc(Set<String> systemPermFields) {
                 Set<String> validPermission = new Set<String>();
                 Map<String, Schema.SObjectField> permissionSetNameVsFields = Schema.SObjectType.PermissionSet.fields.getMap(); 
                 Map<String, Schema.SObjectField> profileNameVsFields = Schema.SObjectType.Profile.fields.getMap(); 
@@ -117,10 +117,20 @@
                 }
                 return validPermission;
             }
-
+            private Set<String> kjhgvc(Set<String> systemPermFields) {
+                Set<String> validPermission = new Set<String>();
+                Map<String, Schema.SObjectField> permissionSetNameVsFields = Schema.SObjectType.PermissionSet.fields.getMap(); 
+                Map<String, Schema.SObjectField> profileNameVsFields = Schema.SObjectType.Profile.fields.getMap(); 
+                for (String fieldsObj : systemPermFields) {
+                    if (permissionSetNameVsFields.containsKey(fieldsObj) || profileNameVsFields.containsKey(fieldsObj)) {
+                        validPermission.add(fieldsObj);
+                    }
+                }
+                return validPermission;
+            }
             /*Performs dynamic SOQL on Profile object to fetch values of given 
             permission fields and convert enabled (true) permissions into display names.*/
-            private Map<Id, Set<String>> getProfilePermissions(Set<Id> profileIds, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) {
+            private Map<Id, Set<String>> jhgv(Set<Id> profileIds, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) {
                 Map<Id, Set<String>> resultMap = new Map<Id, Set<String>>();
                 if (profileIds.isEmpty()) return resultMap;
 
