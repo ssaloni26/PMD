@@ -26,6 +26,9 @@ jobs:
         run: |
           npm install --global @salesforce/cli
           sf --version
+          # Install Salesforce Code Analyzer plugin
+          sf plugins:install @dxatscale/sfcode-analyzer
+          sf plugins
 
       # -------------------------------
       # Install yq (YAML parser)
