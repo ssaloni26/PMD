@@ -38,25 +38,27 @@ jobs:
           echo "Changed files:"
           echo "$CHANGED_FILES"
 
-          FILE_LIST=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
-
+          FILE_LIST=$(echo "$CHANGED_FILES" | tr '\n' ' ')
           echo "FILES=$FILE_LIST" >> $GITHUB_ENV
+      - name: Debug
+        run: |
+          echo "FILES = $FILES"
+          ls -l
       - name: Run Salesforce Code Analyzer on changed files
         run: |
           if [ -z "$FILES" ]; then
             echo "No changed Apex files to analyze"
           else
             echo "Analyzing changed files: $FILES"
-            sf code-analyzer run $FILES --config-file sfca-config.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
-          fi
+            sf code-analyzer run $FILES --config-file sfca-config.yml --view detail --output-file sfca_results.json
+            fi
+
       - name: Upload SFCA results
         uses: actions/upload-artifact@v4
         with:
           name: sfca-results
-          path: |
-            sfca_results.html
-            sfca_results.json
-        
+          path: sfca_results.json
+          
       - name: Fail on Critical/High Violations (Changed Files Only)
         if: |
           steps.run-code-analyzer.outputs.num-sev1-violations-in-changed-files > 0 ||
