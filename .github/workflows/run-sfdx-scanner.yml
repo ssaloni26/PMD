@@ -38,7 +38,14 @@ jobs:
             echo "Analyzing changed files: $CHANGED_FILES"
             sf code-analyzer run $CHANGED_FILES --config-file sfca-config.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
           fi
-
+      - name: Upload SFCA results
+        uses: actions/upload-artifact@v3
+        with:
+          name: sfca-results
+          path: |
+            sfca_results.html
+            sfca_results.json
+        
       - name: Fail on Critical/High Violations (Changed Files Only)
         if: |
           steps.run-code-analyzer.outputs.num-sev1-violations-in-changed-files > 0 ||
