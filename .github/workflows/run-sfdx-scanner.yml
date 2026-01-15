@@ -26,15 +26,17 @@ jobs:
 
 
       - name: Get changed Apex files
-        id: changed-files
         run: |
           git fetch origin ${{ github.base_ref }}
+      
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^force-app/main/default/classes/.*\.cls$' \
             || true)
-          echo "Changed files: $CHANGED_FILES"
-          # convert to space-separated list
-          FILE_LIST=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
+      
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+      
+          FILE_LIST=$(echo "$CHANGED_FILES" | tr '\n' ' ')
           echo "FILES=$FILE_LIST" >> $GITHUB_ENV
       
       - name: Debug
