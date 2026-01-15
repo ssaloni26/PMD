@@ -1,4 +1,4 @@
-name: Salesforce Code Analyzer Workflow
+name: new Salesforce Code Analyzer Workflow
 
 on:
   pull_request:
