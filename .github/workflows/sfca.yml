@@ -35,8 +35,18 @@ jobs:
           sudo wget -qO /usr/local/bin/yq \
             https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           sudo chmod +x /usr/local/bin/yq
+    # -------------------------------
+    # Read PMD exclusions (Config set)
+    # -------------------------------
+      - name: Read PMD exclusions from sfca-config.yml
+        run: |
+            PMD_EXCLUSIONS=$(yq '.engines.pmd.fileExclusions[]' sfca-config.yml || true)
 
-      # -------------------------------
+            echo "PMD exclusions:"
+            echo "$PMD_EXCLUSIONS"
+
+            echo "PMD_EXCLUSIONS=$PMD_EXCLUSIONS" >> $GITHUB_ENV
+    # -------------------------------
       # Get changed Apex files (Git set)
       # -------------------------------
       - name: Get changed Apex files
@@ -52,17 +62,7 @@ jobs:
 
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
 
-      # -------------------------------
-      # Read PMD exclusions (Config set)
-      # -------------------------------
-      - name: Read PMD exclusions from sfca-config.yml
-        run: |
-          PMD_EXCLUSIONS=$(yq '.engines.pmd.fileExclusions[]' sfca-config.yml || true)
 
-          echo "PMD exclusions:"
-          echo "$PMD_EXCLUSIONS"
-
-          echo "PMD_EXCLUSIONS=$PMD_EXCLUSIONS" >> $GITHUB_ENV
 
       # -------------------------------
       # Build final FILES list (Set difference)
