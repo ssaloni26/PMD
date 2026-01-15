@@ -1,0 +1,75 @@
+name: Salesforce Code Analyzer Workflow
+
+on:
+  pull_request:
+    paths:
+      - 'force-app/main/default/classes/**'
+      - 'sfca-config.yml'
+
+jobs:
+  sfca:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      # -------------------------------
+      # Install yq (YAML parser)
+      # -------------------------------
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      # -------------------------------
+      # Fetch base branch
+      # -------------------------------
+      - name: Fetch base branch
+        run: git fetch origin ${{ github.base_ref }}
+
+      # -------------------------------
+      # Build final FILES list
+      # -------------------------------
+      - name: Resolve Apex files for SFCA
+        run: |
+          echo "🔹 Extracting PMD exclusions from sfca-config.yml"
+          PMD_EXCLUSIONS=$(yq '.engines.pmd.fileExclusions[]' sfca-config.yml || true)
+
+          echo "🔹 Getting changed Apex files from PR"
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^force-app/main/default/classes/.*\.cls$' \
+            || true)
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          FILTERED_FILES="$CHANGED_FILES"
+
+          echo "🔹 Applying exclusions"
+          for EXCLUDE in $PMD_EXCLUSIONS; do
+            REGEX=$(echo "$EXCLUDE" | sed 's/\*\*/.*/g')
+            FILTERED_FILES=$(echo "$FILTERED_FILES" | grep -v -E "$REGEX" || true)
+          done
+
+          echo "Final files after exclusions:"
+          echo "$FILTERED_FILES"
+
+          FILES=$(echo "$FILTERED_FILES" | tr '\n' ',' | sed 's/,$//')
+          echo "FILES=$FILES" >> $GITHUB_ENV
+
+      # -------------------------------
+      # Run Salesforce Code Analyzer
+      # -------------------------------
+      - name: Run Salesforce Code Analyzer
+        run: |
+          if [ -z "$FILES" ]; then
+            echo "✅ No Apex files to analyze after exclusions"
+            exit 0
+          fi
+
+          sf code-analyzer run $FILES \
+            --config-file ./sfca-config.yml \
+            --view detail \
+            --output-file sfca_results.html
