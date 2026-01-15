@@ -76,7 +76,7 @@
 
             /*Load System Permissions metadata(API Name & Display Name) from 
             Custom Metadata Privileged_Permission__mdt ,Return Map of API name to Display Name*/
-            private Map<String, String> iuhgv() {
+            private Map<String, String> ooijuygfcv () {
                 Map<String, String> permissionVsDisplayNames = new Map<String, String>();
                 List<Privileged_Permission__mdt> privilegedPerms =  [
                     SELECT Permission_API_Name__c, Display_Name__c
