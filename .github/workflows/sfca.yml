@@ -27,6 +27,10 @@ jobs:
 
       - name: Install Latest Salesforce Code Analyzer CLI Plugin
         run: sf plugins install code-analyzer@latest
+      
+      - name: Verify Salesforce CLI
+        run: sf --version
+
       # -------------------------------
       # Install yq (YAML parser)
       # -------------------------------
@@ -77,7 +81,11 @@ jobs:
           echo "Final Apex files to analyze:"
           echo "$FINAL_FILES"
           echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
-
+      - name: Verify Salesforce Code Analyzer Plugin
+        run: |
+            sf plugins list
+            sf scan --help
+        
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
@@ -86,7 +94,7 @@ jobs:
         run: |
           echo "Running SF Code Analyzer on:"
           echo "$FILES"
-          sf scanner run --target "$FILES" \
+          sf scan run --target "$FILES" \
           --config sfca-config.yml \
           --format html \
           --outfile sfca_results.html
