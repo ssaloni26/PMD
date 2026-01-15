@@ -44,7 +44,7 @@ jobs:
         run: |
             sf plugins
             sf plugins inspect code-analyzer || true
-            sf scan --help
+            sf code-analyzer:run --help
 
 
 
@@ -101,7 +101,7 @@ jobs:
       - name: Verify Salesforce Code Analyzer Plugin
         run: |
             sf plugins 
-            sf scan --help
+            sf code-analyzer:run --help
       - name: Add SF CLI to PATH
         run: |
               echo "/usr/local/bin" >> $GITHUB_PATH
@@ -114,10 +114,11 @@ jobs:
         run: |
           echo "Running SF Code Analyzer on:"
           echo "$FILES"
-          npx sf scan run --target "$FILES" \
-          --config sfca-config.yml \
-          --format html \
-          --outfile sfca_results.html
+          npx sf code-analyzer:run --target "$FILES" \
+            --config sfca-config.yml \
+            --format html \
+            --outfile sfca_results.html
+      
       # -------------------------------
       # Upload results
       # -------------------------------
