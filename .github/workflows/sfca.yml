@@ -110,16 +110,14 @@ jobs:
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
-      - name: Run Salesforce Code Analyzer (CLI)
-        if: ${{ env.FILES != '' }}
-        run: |
-          echo "Running SF Code Analyzer on:"
-          echo "$FILES"
-          sf code-analyzer:run --target "$FILES" \
-          --config sfca-config.yml \
-          --reporters html \
-          --output sfca_results.html
-        
+      - name: Run Salesforce Code Analyzer
+        id: run-code-analyzer
+        uses: forcedotcom/run-code-analyzer@v2
+        with:
+          run-arguments: --workspace  "$FILES" --view detail --output-file sfca_results.html 
+          results-artifact-name: salesforce-code-analyzer-results
+          github-token: ${{ github.token }}
+
       
       # -------------------------------
       # Upload results
