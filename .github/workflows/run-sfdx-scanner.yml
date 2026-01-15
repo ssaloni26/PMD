@@ -51,6 +51,7 @@ jobs:
         
       - name: Upload SFCA results
         uses: actions/upload-artifact@v4
+        if: env.FILES != ''
         with:
           name: sfca-results
           path: sfca_results.html
