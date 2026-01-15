@@ -1,0 +1,64 @@
+name: new
+
+on:
+  pull_request:
+    paths:
+      - 'force-app/main/default/classes/**'
+      - 'config/pmd/**'
+
+jobs:
+  salesforce-code-analyzer-workflow:
+    permissions:
+      pull-requests: write
+      contents: read
+      actions: read
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out files
+        uses: actions/checkout@v5
+
+      - name: Install Salesforce CLI
+        run: npm install -g @salesforce/cli@latest
+
+      - name: Install Latest Salesforce Code Analyzer CLI Plugin
+        run: sf plugins install code-analyzer@latest
+
+
+      - name: Get changed Apex files
+        run: |
+          git fetch origin ${{ github.base_ref }}
+
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^force-app/main/default/classes/.*\.cls$' \            
+            | grep -v '^force-app/main/default/classes/Excluded/' \
+            | grep -v '^force-app/main/default/classes/DMLAuditAI.cls$' \
+            || true)
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          FILE_LIST=$(echo "$CHANGED_FILES" | tr '\n' ' ')
+          echo "FILES=$FILE_LIST" >> $GITHUB_ENV
+
+      - name: Run Salesforce Code Analyzer on changed files
+        run: |
+          if [ -z "$FILES" ]; then
+            echo "No changed Apex files to analyze"
+          else
+            echo "Analyzing changed files: $FILES"
+            sf code-analyzer run $FILES --config-file sfca-config.yml --view detail --output-file sfca_results.html
+            fi
+
+      - name: Upload SFCA results
+        uses: actions/upload-artifact@v4
+        with:
+          name: sfca-results
+          path: |
+            sfca_results.html
+            sfca_results.json
+      - name: Fail on Critical/High Violations (Changed Files Only)
+        if: |
+          steps.run-code-analyzer.outputs.num-sev1-violations-in-changed-files > 0 ||
+          steps.run-code-analyzer.outputs.num-sev2-violations-in-changed-files > 0
+        run: exit 1
