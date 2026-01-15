@@ -26,32 +26,31 @@ jobs:
 
 
       - name: Get changed Apex files
+        id: changed-files
         run: |
           git fetch origin ${{ github.base_ref }}
-
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^force-app/main/default/classes/.*\.cls$' \
+            | grep -v '^force-app/main/default/classes/Excluded/' \
+            | grep -v '^force-app/main/default/classes/DMLAuditAI.cls$' \
             || true)
-
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
-
-          FILE_LIST=$(echo "$CHANGED_FILES" | tr '\n' ' ')
+          echo "Changed files: $CHANGED_FILES"
+          # convert to comma-separated list (for sf code-analyzer run)
+          FILE_LIST=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
           echo "FILES=$FILE_LIST" >> $GITHUB_ENV
+      
       - name: Debug
         run: |
           echo "FILES = $FILES"
           ls -l
-      - name: Run Salesforce Code Analyzer on changed files
-        run: |
-          if [ -z "$FILES" ]; then
-            echo "No changed Apex files to analyze"
-          else
-            echo "Analyzing changed files: $FILES"
-            echo "Config file exists: $(ls -l ./sfca-config.yml)"
-            sf code-analyzer run $FILES --config-file sfca-config.yml --view detail  --output-file sfca_results.html
-            fi
-
+      - name: Run Salesforce Code Analyzer
+        uses: forcedotcom/run-code-analyzer@v2
+        if: env.FILES != ''
+        with:
+            run-arguments: ${{ env.FILES }} --config-file sfca-config.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
+            results-artifact-name: salesforce-code-analyzer-results
+            github-token: ${{ github.token }}
+        
       - name: Upload SFCA results
         uses: actions/upload-artifact@v4
         with:
