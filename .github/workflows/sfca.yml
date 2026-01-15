@@ -1,4 +1,4 @@
-name: new Salesforce Code Analyzer Workflow
+name: Salesforce Code Analyzer Workflow
 
 on:
   pull_request:
@@ -11,11 +11,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # -------------------------------
+      # Checkout repository
+      # -------------------------------
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-            fetch-depth: 0
-      
+          fetch-depth: 0
+
+      # -------------------------------
+      # Install Salesforce CLI
+      # -------------------------------
+      - name: Install Salesforce CLI
+        run: |
+          npm install --global @salesforce/cli
+          sf --version
 
       # -------------------------------
       # Install yq (YAML parser)
@@ -27,49 +37,70 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
 
       # -------------------------------
-      # Fetch base branch
+      # Get changed Apex files (Git set)
       # -------------------------------
-      - name: Fetch base branch
-        run: git fetch origin ${{ github.base_ref }}
+      - name: Get changed Apex files
+        run: |
+          git fetch origin ${{ github.base_ref }}
+
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^force-app/main/default/classes/.*\.cls$' \
+            || true)
+
+          echo "Changed Apex files:"
+          echo "$CHANGED_FILES"
+
+          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
 
       # -------------------------------
-      # Build final FILES list
+      # Read PMD exclusions (Config set)
       # -------------------------------
-      - name: Resolve Apex files for SFCA
+      - name: Read PMD exclusions from sfca-config.yml
         run: |
-            echo "🔹 Reading exclusions from sfca-config.yml"
-            PMD_EXCLUSIONS=$(yq '.engines.pmd.fileExclusions[]' sfca-config.yml || true)
-        
-            echo "PMD exclusions:"
-            echo "$PMD_EXCLUSIONS"
-        
-            FINAL_FILES="$FILES"
-        
-            for EXCLUDE in $PMD_EXCLUSIONS; do
+          PMD_EXCLUSIONS=$(yq '.engines.pmd.fileExclusions[]' sfca-config.yml || true)
+
+          echo "PMD exclusions:"
+          echo "$PMD_EXCLUSIONS"
+
+          echo "PMD_EXCLUSIONS=$PMD_EXCLUSIONS" >> $GITHUB_ENV
+
+      # -------------------------------
+      # Build final FILES list (Set difference)
+      # -------------------------------
+      - name: Resolve final Apex files
+        run: |
+          FINAL_FILES="$CHANGED_FILES"
+
+          for EXCLUDE in $PMD_EXCLUSIONS; do
             REGEX=$(echo "$EXCLUDE" | sed 's/\*\*/.*/g')
-            FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "$REGEX" || true)
-            FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ')
-            done
-        
-            echo "Final Apex files:"
-            echo "$FINAL_FILES"
-        
-            echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
-    
-        
+            FINAL_FILES=$(echo "$FINAL_FILES" | grep -v -E "^$REGEX$" || true)
+          done
+
+          echo "Final Apex files to analyze:"
+          echo "$FINAL_FILES"
+
+          FILE_LIST=$(echo "$FINAL_FILES" | tr '\n' ' ')
+
+          echo "FILES=$FILE_LIST" >> $GITHUB_ENV
 
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
-      - name: Run Salesforce Code Analyzer
+      - name: Run Salesforce Code Analyzer (CLI)
+        if: env.FILES != ''
         run: |
-            if [ -z "$FILES" ]; then
-            echo "✅ No Apex files to analyze after exclusions"
-            exit 0
-            fi
+          echo "Running SF Code Analyzer on:"
+          echo "$FILES"
+
+          sf code-analyzer run $FILES \
+            --config-file sfca-config.yml \
+            --view detail \
+            --output-file sfca_results.html
+
+
             
-            sf code-analyzer run $FILES \
-                --config-file ./sfca-config.yml \
-                --view detail \
-                --output-file sfca_results.html
-        
+      - name: Upload SFCA results
+        uses: actions/upload-artifact@v4
+        with:
+            name: sfca-results
+            path: sfca_results.html
