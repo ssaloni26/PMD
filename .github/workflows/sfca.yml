@@ -115,8 +115,7 @@ jobs:
         run: |
           echo "Running SF Code Analyzer on:"
           echo "$FILES"
-          npx sf code-analyzer:run --target "$FILES" \
-            --config sfca-config.yml \
+          sf code-analyzer:run --target "$FILES" \
             --format html \
             --outfile sfca_results.html
       
