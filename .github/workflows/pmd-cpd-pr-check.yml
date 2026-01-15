@@ -47,7 +47,7 @@ jobs:
         run: |
           pmd-bin-6.55.0/bin/run.sh pmd \
             -d "$FILES" \
-            -R config/pmd/apex-ruleset.xml \
+            -R category/apex/bestpractices.xml,category/apex/codestyle.xml,category/apex/errorprone.xml,category/apex/performance.xml \
             -f text > pmd-report.txt
 
       - name: Upload PMD report
