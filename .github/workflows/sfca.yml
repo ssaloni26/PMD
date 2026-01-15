@@ -29,26 +29,6 @@ jobs:
         run: npm install -g @salesforce/cli@latest
 
 
-
-        
-        
-      - name: Verify Salesforce Code Analyzer Plugin
-        run: |
-            which sf
-            sf --version
-            sf plugins --core
-            sf plugins --help
-
-      - name: Install Latest Salesforce Code Analyzer CLI Plugin 
-        run: sf plugins install code-analyzer@latest
-      - name: Verify Code Analyzer install
-        run: |
-            sf plugins
-            sf plugins inspect code-analyzer || true
-            sf code-analyzer:run --help
-
-
-
       # -------------------------------
       # Install yq (YAML parser)
       # -------------------------------
