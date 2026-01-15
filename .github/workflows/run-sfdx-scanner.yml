@@ -31,8 +31,6 @@ jobs:
 
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^force-app/main/default/classes/.*\.cls$' \
-            | grep -v '^force-app/main/default/classes/Excluded/' \
-            | grep -v '^force-app/main/default/classes/DMLAuditAI.cls$' \
             || true)
 
           echo "Changed files:"
@@ -50,7 +48,7 @@ jobs:
             echo "No changed Apex files to analyze"
           else
             echo "Analyzing changed files: $FILES"
-            sf code-analyzer run $FILES --config-file sfca-config.yml --view detail --output-file sfca_results.json
+            sf code-analyzer run $FILES --config-file sfca-config.yml --view detail --output-file sfca_results.html
             fi
 
       - name: Upload SFCA results
