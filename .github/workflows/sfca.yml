@@ -28,9 +28,14 @@ jobs:
       - name: Install Latest Salesforce Code Analyzer CLI Plugin
         run: sf plugins install code-analyzer@latest
       
-      - name: Verify Salesforce CLI
-        run: sf --version
 
+      - name: Verify Salesforce Code Analyzer Plugin
+        run: |
+          which sf
+          sf --version
+          sf plugins list
+          sf scan --help
+      
       # -------------------------------
       # Install yq (YAML parser)
       # -------------------------------
@@ -85,7 +90,10 @@ jobs:
         run: |
             sf plugins list
             sf scan --help
-        
+      - name: Add SF CLI to PATH
+        run: |
+              echo "/usr/local/bin" >> $GITHUB_PATH
+          
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
@@ -94,11 +102,10 @@ jobs:
         run: |
           echo "Running SF Code Analyzer on:"
           echo "$FILES"
-          sf scan run --target "$FILES" \
+          npx sf scan run --target "$FILES" \
           --config sfca-config.yml \
           --format html \
           --outfile sfca_results.html
-
       # -------------------------------
       # Upload results
       # -------------------------------
