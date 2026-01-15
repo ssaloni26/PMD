@@ -16,26 +16,38 @@ jobs:
       # -------------------------------
       - name: Checkout repository
         uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
 
+      - name: Setup Node 
+        uses: actions/setup-node@v4 
+        with: node-version: '20' 
+        cache: 'npm'
       # -------------------------------
       # Install Salesforce CLI
       # -------------------------------
       - name: Install Salesforce CLI
         run: npm install -g @salesforce/cli@latest
 
-      - name: Install Latest Salesforce Code Analyzer CLI Plugin
-        run: sf plugins install code-analyzer@latest
-      
 
+
+        
+        
       - name: Verify Salesforce Code Analyzer Plugin
         run: |
-          which sf
-          sf --version
-          sf plugins list
-          sf scan --help
-      
+            which sf
+            sf --version
+            sf plugins --core
+            sf plugins --help
+
+      - name: Install Latest Salesforce Code Analyzer CLI Plugin 
+        run: sf plugins install code-analyzer@latest
+      - name: Verify Code Analyzer install
+        run: |
+            sf plugins
+            sf plugins inspect code-analyzer || true
+            sf scan --help
+
+
+
       # -------------------------------
       # Install yq (YAML parser)
       # -------------------------------
@@ -88,11 +100,8 @@ jobs:
           echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
       - name: Verify Salesforce Code Analyzer Plugin
         run: |
-            sf plugins list
+            sf plugins
             sf scan --help
-      - name: Add SF CLI to PATH
-        run: |
-              echo "/usr/local/bin" >> $GITHUB_PATH
           
       # -------------------------------
       # Run Salesforce Code Analyzer
