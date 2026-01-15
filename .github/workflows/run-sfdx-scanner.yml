@@ -48,6 +48,7 @@ jobs:
             echo "No changed Apex files to analyze"
           else
             echo "Analyzing changed files: $FILES"
+            echo "Config file exists: $(ls -l ./sfca-config.yml)"
             sf code-analyzer run $FILES --config-file sfca-config.yml --view detail  --output-file sfca_results.html
             fi
 
