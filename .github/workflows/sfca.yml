@@ -103,10 +103,6 @@ jobs:
         run: |
             sf plugins 
             sf code-analyzer:run --help
-      - name: Add SF CLI to PATH
-        run: |
-              echo "/usr/local/bin" >> $GITHUB_PATH
-          
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
@@ -116,8 +112,10 @@ jobs:
           echo "Running SF Code Analyzer on:"
           echo "$FILES"
           sf code-analyzer:run --target "$FILES" \
-            --format html \
-            --outfile sfca_results.html
+          --config sfca-config.yml \
+          --result-format html \
+          --result-file sfca_results.html
+        
       
       # -------------------------------
       # Upload results
