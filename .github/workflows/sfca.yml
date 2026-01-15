@@ -19,8 +19,9 @@ jobs:
 
       - name: Setup Node 
         uses: actions/setup-node@v4 
-        with: node-version: '20' 
-        cache: 'npm'
+        with: 
+          node-version: '20' 
+          cache: 'npm'
       # -------------------------------
       # Install Salesforce CLI
       # -------------------------------
@@ -100,8 +101,11 @@ jobs:
           echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
       - name: Verify Salesforce Code Analyzer Plugin
         run: |
-            sf plugins
+            sf plugins 
             sf scan --help
+      - name: Add SF CLI to PATH
+        run: |
+              echo "/usr/local/bin" >> $GITHUB_PATH
           
       # -------------------------------
       # Run Salesforce Code Analyzer
