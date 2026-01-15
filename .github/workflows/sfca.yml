@@ -13,6 +13,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+            fetch-depth: 0
+      
 
       # -------------------------------
       # Install yq (YAML parser)
@@ -34,42 +37,48 @@ jobs:
       # -------------------------------
       - name: Resolve Apex files for SFCA
         run: |
-          echo "🔹 Extracting PMD exclusions from sfca-config.yml"
-          PMD_EXCLUSIONS=$(yq '.engines.pmd.fileExclusions[]' sfca-config.yml || true)
-
-          echo "🔹 Getting changed Apex files from PR"
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            echo "🔹 Extracting PMD exclusions from sfca-config.yml"
+            PMD_EXCLUSIONS=$(yq '.engines.pmd.fileExclusions[]' sfca-config.yml || true)
+            
+            echo "PMD exclusions:"
+            echo "$PMD_EXCLUSIONS"
+            
+            echo "🔹 Getting changed Apex files from PR"
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD \
             | grep '^force-app/main/default/classes/.*\.cls$' \
             || true)
-
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
-
-          FILTERED_FILES="$CHANGED_FILES"
-
-          echo "🔹 Applying exclusions"
-          for EXCLUDE in $PMD_EXCLUSIONS; do
+            
+            echo "Changed files:"
+            echo "$CHANGED_FILES"
+            
+            FILTERED_FILES="$CHANGED_FILES"
+            
+            echo "🔹 Applying exclusions"
+            for EXCLUDE in $PMD_EXCLUSIONS; do
             REGEX=$(echo "$EXCLUDE" | sed 's/\*\*/.*/g')
             FILTERED_FILES=$(echo "$FILTERED_FILES" | grep -v -E "$REGEX" || true)
-          done
-
-          echo "Final files after exclusions:"
-          echo "$FILTERED_FILES"
-
-          FILES=$(echo "$FILTERED_FILES" | tr '\n' ',' | sed 's/,$//')
-          echo "FILES=$FILES" >> $GITHUB_ENV
+            done
+            
+            echo "Final files after exclusions:"
+            echo "$FILTERED_FILES"
+            
+            # space-separated (not comma-separated)
+            FILES=$(echo "$FILTERED_FILES" | tr '\n' ' ')
+            echo "FILES=$FILES" >> $GITHUB_ENV
+        
 
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
       - name: Run Salesforce Code Analyzer
         run: |
-          if [ -z "$FILES" ]; then
+            if [ -z "$FILES" ]; then
             echo "✅ No Apex files to analyze after exclusions"
             exit 0
-          fi
-
-          sf code-analyzer run $FILES \
-            --config-file ./sfca-config.yml \
-            --view detail \
-            --output-file sfca_results.html
+            fi
+            
+            sf code-analyzer run $FILES \
+                --config-file ./sfca-config.yml \
+                --view detail \
+                --output-file sfca_results.html
+        
