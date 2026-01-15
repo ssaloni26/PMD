@@ -22,11 +22,11 @@ jobs:
       # -------------------------------
       # Install Salesforce CLI
       # -------------------------------
+      - name: Install Salesforce CLI
+        run: npm install -g @salesforce/cli@latest
+
       - name: Install Latest Salesforce Code Analyzer CLI Plugin
-        run: |
-            sf plugins install @salesforce/sfdx-scanner@latest
-            sf scanner --version
-      
+        run: sf plugins install code-analyzer@latest
       # -------------------------------
       # Install yq (YAML parser)
       # -------------------------------
