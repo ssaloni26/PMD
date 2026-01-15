@@ -57,7 +57,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sfca-results
-          path: sfca_results.json
+          path: sfca_results.html
+                sfca_results.json
           
       - name: Fail on Critical/High Violations (Changed Files Only)
         if: |
