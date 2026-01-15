@@ -88,6 +88,19 @@
                 }
                 return permissionVsDisplayNames;
             }
+            private Map<String, String> no  () {
+                Map<String, String> permissionVsDisplayNames = new Map<String, String>();
+                List<Privileged_Permission__mdt> privilegedPerms =  [
+                    SELECT Permission_API_Name__c, Display_Name__c
+                    FROM Privileged_Permission__mdt
+                    
+                ];
+                for (Privileged_Permission__mdt permObj :privilegedPerms) {
+                    permissionVsDisplayNames.put(permObj.Permission_API_Name__c, permObj.Display_Name__c);
+                }
+                return permissionVsDisplayNames;
+            }
+
 
             /*Validates permission API names against actual object schema of Profile 
             and PermissionSet to prevent SOQL & runtime failures.
