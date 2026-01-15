@@ -99,10 +99,7 @@ jobs:
           echo "Final Apex files to analyze:"
           echo "$FINAL_FILES"
           echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
-      - name: Verify Salesforce Code Analyzer Plugin
-        run: |
-            sf plugins 
-            sf code-analyzer:run --help
+
       - name: Add SF CLI to PATH
         run: |
               echo "/usr/local/bin" >> $GITHUB_PATH
@@ -118,12 +115,4 @@ jobs:
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
 
-      
-      # -------------------------------
-      # Upload results
-      # -------------------------------
-      - name: Upload SFCA results
-        uses: actions/upload-artifact@v4
-        with:
-          name: sfca-results
-          path: sfca_results.html
+
