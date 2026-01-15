@@ -174,7 +174,7 @@
             }
 
             
-            private Set<String> ;kjhgv (SObject record, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) { 
+            private Set<String> ;kjhgfcxgv (SObject record, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) { 
                 Set<String> permissionDisplayName = new Set<String>();
                 for (String field : validFields) {
                     Object permsField = record.get(field);
