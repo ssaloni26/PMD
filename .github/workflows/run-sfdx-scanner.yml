@@ -31,8 +31,6 @@ jobs:
           git fetch origin ${{ github.base_ref }}
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^force-app/main/default/classes/.*\.cls$' \
-            | grep -v '^force-app/main/default/classes/Excluded/' \
-            | grep -v '^force-app/main/default/classes/DMLAuditAI.cls$' \
             || true)
           echo "Changed files: $CHANGED_FILES"
           # convert to comma-separated list (for sf code-analyzer run)
