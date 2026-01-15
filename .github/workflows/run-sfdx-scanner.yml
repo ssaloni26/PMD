@@ -51,7 +51,6 @@ jobs:
         
             sf code-analyzer run $FILES \
               --config-file sfca-config.yml \
-              --engine pmd \
               --view detail \
               --output-file sfca_results.html
         
