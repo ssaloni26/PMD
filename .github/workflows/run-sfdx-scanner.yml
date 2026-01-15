@@ -24,11 +24,17 @@ jobs:
       - name: Install Latest Salesforce Code Analyzer CLI Plugin
         run: sf plugins install code-analyzer@latest
 
+        
+      - name: Get changed Apex files
+        id: changed
+        run: |
+          echo "CHANGED_FILES=$(git diff origin/${{ github.base_ref }}...HEAD --name-only | grep 'force-app/main/default/classes/' | grep -v 'ExcludedFile.cls' | tr '\n' ' ')" >> $GITHUB_ENV
+
       - name: Run Salesforce Code Analyzer
         id: run-code-analyzer
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          run-arguments: --workspace . --config-file sfca-config.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
+          run-arguments: --workspace $CHANGED_FILES --config-file sfca-config.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
 
