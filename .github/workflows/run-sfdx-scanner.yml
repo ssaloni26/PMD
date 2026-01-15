@@ -43,14 +43,23 @@ jobs:
         run: |
           echo "FILES = $FILES"
           ls -l
-      - name: Run Salesforce Code Analyzer
-        uses: forcedotcom/run-code-analyzer@v2
+      - name: Run Salesforce Code Analyzer (CLI)
         if: env.FILES != ''
-        with:
-            run-arguments: ${{ env.FILES }} --config-file sfca-config.yml --view detail --output-file sfca_results.html
-            results-artifact-name: salesforce-code-analyzer-results
-            github-token: ${{ github.token }}
+        run: |
+            echo "Running SF Code Analyzer on:"
+            echo "$FILES"
         
+            sf code-analyzer run $FILES \
+              --config-file sfca-config.yml \
+              --engine pmd \
+              --view detail \
+              --output-file sfca_results.html
+        
+      - name: Upload SFCA results
+        uses: actions/upload-artifact@v4
+        with:
+          name: sfca-results
+          path: sfca_results.html
 
       - name: Fail on Critical/High Violations (Changed Files Only)
         if: |
