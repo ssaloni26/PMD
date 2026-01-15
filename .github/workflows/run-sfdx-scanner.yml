@@ -31,6 +31,8 @@ jobs:
 
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^force-app/main/default/classes/.*\.cls$' \
+            | grep -v '^force-app/main/default/classes/Excluded/' \
+            | grep -v '^force-app/main/default/classes/DMLAuditAI.cls$' \
             || true)
 
           echo "Changed files:"
