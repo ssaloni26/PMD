@@ -70,18 +70,22 @@ jobs:
       - name: Resolve final Apex files
         run: |
           FINAL_FILES="$CHANGED_FILES"
-
+      
           for EXCLUDE in $PMD_EXCLUSIONS; do
+            # Convert ** to .*
             REGEX=$(echo "$EXCLUDE" | sed 's/\*\*/.*/g')
             FINAL_FILES=$(echo "$FINAL_FILES" | grep -v -E "^$REGEX$" || true)
           done
-
+      
+          # Convert newlines to spaces
+          FILE_LIST=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
+      
           echo "Final Apex files to analyze:"
-          echo "$FINAL_FILES"
-
-          FILE_LIST=$(echo "$FINAL_FILES" | tr '\n' ' ')
-
+          echo "$FILE_LIST"
+      
+          # ✅ Write as single-line string to GitHub environment
           echo "FILES=$FILE_LIST" >> $GITHUB_ENV
+      
 
       # -------------------------------
       # Run Salesforce Code Analyzer
@@ -98,7 +102,7 @@ jobs:
             --output-file sfca_results.html
 
 
-            
+
       - name: Upload SFCA results
         uses: actions/upload-artifact@v4
         with:
