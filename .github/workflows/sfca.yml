@@ -35,76 +35,67 @@ jobs:
           sudo wget -qO /usr/local/bin/yq \
             https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           sudo chmod +x /usr/local/bin/yq
-    # -------------------------------
-    # Read PMD exclusions (Config set)
-    # -------------------------------
+
+      # -------------------------------
+      # Read PMD exclusions from config
+      # -------------------------------
       - name: Read PMD exclusions from sfca-config.yml
         run: |
-            PMD_EXCLUSIONS=$(yq '.engines.pmd.fileExclusions[]' sfca-config.yml || true)
+          PMD_EXCLUSIONS=$(yq '.engines.pmd.fileExclusions[]' sfca-config.yml || true)
+          echo "PMD exclusions:"
+          echo "$PMD_EXCLUSIONS"
+          # Convert newlines to space-separated string
+          PMD_EXCLUSIONS=$(echo "$PMD_EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
+          echo "PMD_EXCLUSIONS=$PMD_EXCLUSIONS" >> $GITHUB_ENV
 
-            echo "PMD exclusions:"
-            echo "$PMD_EXCLUSIONS"
-
-            echo "PMD_EXCLUSIONS=$PMD_EXCLUSIONS" >> $GITHUB_ENV
-    # -------------------------------
-      # Get changed Apex files (Git set)
+      # -------------------------------
+      # Get changed Apex files
       # -------------------------------
       - name: Get changed Apex files
         run: |
           git fetch origin ${{ github.base_ref }}
-
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-            | grep '^force-app/main/default/classes/.*\.cls$' \
-            || true)
-
-          echo "Changed Apex files:"
+            | grep '^force-app/main/default/classes/.*\.cls$' || true)
+          echo "Changed Apex files (raw):"
           echo "$CHANGED_FILES"
-
+          # Convert to space-separated single line
+          CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
 
-
-
       # -------------------------------
-      # Build final FILES list (Set difference)
+      # Build final FILES list (apply exclusions)
       # -------------------------------
       - name: Resolve final Apex files
         run: |
           FINAL_FILES="$CHANGED_FILES"
-      
           for EXCLUDE in $PMD_EXCLUSIONS; do
-            # Convert ** to .*
+            # Convert ** to .* for regex
             REGEX=$(echo "$EXCLUDE" | sed 's/\*\*/.*/g')
-            FINAL_FILES=$(echo "$FINAL_FILES" | grep -v -E "^$REGEX$" || true)
+            FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "$REGEX" || true)
+            FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
           done
-      
-          # Convert newlines to spaces
-          FILE_LIST=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
-      
           echo "Final Apex files to analyze:"
-          echo "$FILE_LIST"
-      
-          # ✅ Write as single-line string to GitHub environment
-          echo "FILES=$FILE_LIST" >> $GITHUB_ENV
-      
+          echo "$FINAL_FILES"
+          echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
 
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
       - name: Run Salesforce Code Analyzer (CLI)
-        if: env.FILES != ''
+        if: ${{ env.FILES != '' }}
         run: |
           echo "Running SF Code Analyzer on:"
           echo "$FILES"
-
           sf code-analyzer run $FILES \
             --config-file sfca-config.yml \
             --view detail \
             --output-file sfca_results.html
 
-
-
+      # -------------------------------
+      # Upload results
+      # -------------------------------
       - name: Upload SFCA results
         uses: actions/upload-artifact@v4
         with:
-            name: sfca-results
-            path: sfca_results.html
+          name: sfca-results
+          path: sfca_results.html
