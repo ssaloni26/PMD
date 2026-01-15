@@ -30,7 +30,7 @@ jobs:
           git fetch origin ${{ github.base_ref }}
 
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-            | grep '^force-app/main/default/classes/.*\.cls$' \ 
+            | grep '^force-app/main/default/classes/.*\.cls$' \
             || true)
 
           echo "Changed files:"
@@ -38,14 +38,17 @@ jobs:
 
           FILE_LIST=$(echo "$CHANGED_FILES" | tr '\n' ' ')
           echo "FILES=$FILE_LIST" >> $GITHUB_ENV
-
+      - name: Debug
+        run: |
+          echo "FILES = $FILES"
+          ls -l
       - name: Run Salesforce Code Analyzer on changed files
         run: |
           if [ -z "$FILES" ]; then
             echo "No changed Apex files to analyze"
           else
             echo "Analyzing changed files: $FILES"
-            sf code-analyzer run $FILES --config-file sfca-config.yml --view detail --output-file sfca_results.html
+            sf code-analyzer run $FILES --config-file sfca-config.yml --view detail  --output-file sfca_results.html
             fi
 
       - name: Upload SFCA results
