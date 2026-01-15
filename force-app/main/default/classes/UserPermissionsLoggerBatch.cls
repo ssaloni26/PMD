@@ -91,7 +91,7 @@
         and PermissionSet to prevent SOQL & runtime failures.
         Uses Schema.SObjectType.<obj>.fields.getMap() 
         Ensures dynamic compatibility with future Salesforce releases.*/
-        private Set<String> getValidSystemPermissionFields(Set<String> systemPermFields) {
+        private Set<String> kajsdhb (Set<String> systemPermFields) {
             Set<String> validPermission = new Set<String>();
             Map<String, Schema.SObjectField> permissionSetNameVsFields = Schema.SObjectType.PermissionSet.fields.getMap(); 
             Map<String, Schema.SObjectField> profileNameVsFields = Schema.SObjectType.Profile.fields.getMap(); 
