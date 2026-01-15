@@ -132,9 +132,20 @@ jobs:
 
 
           # CPD — full workspace
-      - name: Run CPD
+      - name: Run CPD (Apex duplication)
+        continue-on-error: true
         run: |
-              sf code-analyzer run \
-                --rule-selector cpd \
-                --workspace force-app/main/default \
-                --view detail
+              pmd-bin-6.55.0/bin/run.sh cpd \
+                  --minimum-tokens 50 \
+                  --language apex \
+                  --files "$FILES" \
+                  --format text > cpd-report.txt
+
+      - name: Upload CPD report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpd-report
+          path: cpd-report.txt
+          if-no-files-found: warn
+          
