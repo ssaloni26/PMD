@@ -1,4 +1,4 @@
-name: oldSalesforce Code Analyzer Workflow
+name: old Salesforce Code Analyzer Workflow
 
 on:
   pull_request:
