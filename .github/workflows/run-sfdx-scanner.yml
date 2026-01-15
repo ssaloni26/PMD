@@ -30,9 +30,7 @@ jobs:
           git fetch origin ${{ github.base_ref }}
 
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-            | grep '^force-app/main/default/classes/.*\.cls$' \            
-            | grep -v '^force-app/main/default/classes/Excluded/' \
-            | grep -v '^force-app/main/default/classes/DMLAuditAI.cls$' \
+            | grep '^force-app/main/default/classes/.*\.cls$' \ 
             || true)
 
           echo "Changed files:"
@@ -40,10 +38,7 @@ jobs:
 
           FILE_LIST=$(echo "$CHANGED_FILES" | tr '\n' ' ')
           echo "FILES=$FILE_LIST" >> $GITHUB_ENV
-      - name: Debug
-        run: |
-          echo "FILES = $FILES"
-          ls -l
+
       - name: Run Salesforce Code Analyzer on changed files
         run: |
           if [ -z "$FILES" ]; then
