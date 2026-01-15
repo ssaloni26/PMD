@@ -26,7 +26,10 @@ jobs:
         run: |
           npm install --global @salesforce/cli
           sf --version
-
+      - name: Install Latest Salesforce Code Analyzer CLI Plugin
+        run: |
+            sf plugins install @salesforce/sfdx-scanner@latest
+            sf plugins list
       # -------------------------------
       # Install yq (YAML parser)
       # -------------------------------
@@ -86,10 +89,10 @@ jobs:
         run: |
           echo "Running SF Code Analyzer on:"
           echo "$FILES"
-          sf code-analyzer run $FILES \
-            --config-file sfca-config.yml \
-            --view detail \
-            --output-file sfca_results.html
+          sf scanner run --target "$FILES" \
+          --config sfca-config.yml \
+          --format html \
+          --outfile sfca_results.html
 
       # -------------------------------
       # Upload results
