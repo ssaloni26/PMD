@@ -12,10 +12,17 @@ engines:
       apex: 50
   eslint:
     fileExclusions:
+      - force-app/main/default/lwc/Excluded/**
       - force-app/main/default/lwc/dmlAverage
   regex:
     fileExclusions:
+      - force-app/main/default/lwc/Excluded/**
       - force-app/main/default/lwc/dmlAverage
   retirejs:
     fileExclusions:
+      - force-app/main/default/lwc/Excluded/**
       - force-app/main/default/lwc/dmlAverage
+  flow:
+    fileExclusions:
+      - force-app/main/default/flows/Excluded/**
+      - force-app/main/default/flows/Send_Email_on_New_Account_Creation.flow-meta.xml
