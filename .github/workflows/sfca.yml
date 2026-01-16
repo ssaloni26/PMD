@@ -115,9 +115,9 @@ jobs:
       
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^force-app/main/default/' || true)
-            NEW_FILES=$(git ls-files --others --exclude-standard | grep '^force-app/main/default/' || true)
+          NEW_FILES=$(git ls-files --others --exclude-standard | grep '^force-app/main/default/' || true)
 
-            ALL_FILES=$(echo "$CHANGED_FILES $NEW_FILES" | tr ' ' '\n' | sort -u | tr '\n' ' ')
+          ALL_FILES=$(echo "$CHANGED_FILES $NEW_FILES" | tr ' ' '\n' | sort -u | tr '\n' ' ')
             
             echo "All changed and new files:"
             echo "$ALL_FILES"
