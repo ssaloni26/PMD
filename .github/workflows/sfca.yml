@@ -152,25 +152,24 @@ jobs:
       - name: Resolve final FILES (apply exclusions)
         run: |
           FINAL_FILES="$FILES"
+          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS $FLOW_EXCLUSIONS"
       
-          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS"
-          # Convert ** to .* and strip quotes
-          ALL_EXCLUSIONS=$(echo "$ALL_EXCLUSIONS" | sed 's/\*\*/.*/g' | tr -d '"')
-      
-          # Convert FINAL_FILES to newline-separated
           FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n')
       
           for EXCLUDE in $ALL_EXCLUSIONS; do
-            FINAL_FILES=$(echo "$FINAL_FILES" | grep -v -E "^$EXCLUDE(/.*)?$|^$EXCLUDE$" || true)
-          done
+            EXCLUDE=$(echo "$EXCLUDE" | tr -d '"')
       
-          # Convert back to space-separated string
+            SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
+      
+            FINAL_FILES=$(echo "$FINAL_FILES" | grep -v -E "^${SAFE_EXCLUDE}$|^${SAFE_EXCLUDE}/" || true)
+          done
           FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
       
           echo "Final files to analyze:"
           echo "$FINAL_FILES"
       
           echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
+      
       
 
       - name: Add SF CLI to PATH
