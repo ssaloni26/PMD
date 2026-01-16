@@ -12,6 +12,7 @@ engines:
       apex: 50
   eslint:
     enabled: true
+    auto_discover_eslint_config: true 
   #   fileExclusions:
   #     - '**/node_modules/**'
   #     - '**/staticresources/**'
