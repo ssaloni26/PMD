@@ -10,3 +10,9 @@ engines:
       - force-app/main/default/classes/DMLAuditAI.cls
     minimum_tokens:
       apex: 50
+  eslint:
+    enabled: true
+  #   fileExclusions:
+  #     - '**/node_modules/**'
+  #     - '**/staticresources/**'
+  #     - '**/excluded-folder/**'
