@@ -1,29 +1,58 @@
 name: old Salesforce Code Analyzer Workflow
 
+
 on:
   pull_request:
     paths:
-      - 'force-app/main/default/classes/**'
-      - 'config/pmd/**'
+      - 'force-app/main/default/**'
+      - 'sfca-config.yml'
 
+permissions:
+  contents: read
+  pull-requests: write
 jobs:
-  salesforce-code-analyzer-workflow:
-    permissions:
-      pull-requests: write
-      contents: read
-      actions: read
+  sfca:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out files
+      # -------------------------------
+      # Checkout repository
+      # -------------------------------
+      - name: Checkout repository
         uses: actions/checkout@v5
-
+        with:
+          fetch-depth: 0 
+      - name: Setup Node 
+        uses: actions/setup-node@v4 
+        with: 
+          node-version: '20'
+      # -------------------------------
+      # Install Salesforce CLI
+      # -------------------------------
       - name: Install Salesforce CLI
         run: npm install -g @salesforce/cli@latest
 
-      - name: Install Latest Salesforce Code Analyzer CLI Plugin
-        run: sf plugins install code-analyzer@latest
 
+
+
+      - name: Install Latest Salesforce Code Analyzer CLI Plugin 
+        run: sf plugins install code-analyzer@latest
+      - name: Verify Code Analyzer install
+        run: |
+            sf plugins
+            sf plugins inspect code-analyzer || true
+            sf code-analyzer run --help
+
+
+
+      # -------------------------------
+      # Install yq (YAML parser)
+      # -------------------------------
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
 
         # -------------------------------
         # Read all exclusions from sfca-config.yml
@@ -64,7 +93,7 @@ jobs:
             FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "^${SAFE_EXCLUDE}$|^${SAFE_EXCLUDE}/" || true)
           done
           FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
-          echo "FINAL_FILES=$FINAL_FILES" >> $GITHUB_ENV
+          echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
           echo "Final files to analyze: $FINAL_FILES"
       
       # -------------------------------
@@ -74,7 +103,7 @@ jobs:
         uses: forcedotcom/run-code-analyzer@v2
         with:
           run-arguments: >
-            --target ${{ env.FINAL_FILES }}
+            --target ${{ env.FILES }}
             --view detail
             --output-file sfca_results.html
           results-artifact-name: salesforce-code-analyzer-results
