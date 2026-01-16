@@ -1,0 +1,67 @@
+name: old Salesforce Code Analyzer Workflow
+
+on:
+  pull_request:
+    paths:
+      - 'force-app/main/default/classes/**'
+      - 'config/pmd/**'
+
+jobs:
+  salesforce-code-analyzer-workflow:
+    permissions:
+      pull-requests: write
+      contents: read
+      actions: read
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out files
+        uses: actions/checkout@v5
+
+      - name: Install Salesforce CLI
+        run: npm install -g @salesforce/cli@latest
+
+      - name: Install Latest Salesforce Code Analyzer CLI Plugin
+        run: sf plugins install code-analyzer@latest
+
+
+      - name: Get changed Apex files
+        run: |
+          git fetch origin ${{ github.base_ref }}
+      
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^force-app/main/default/classes/.*\.cls$' \
+            || true)
+      
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+      
+          FILE_LIST=$(echo "$CHANGED_FILES" | tr '\n' ' ')
+          echo "FILES=$FILE_LIST" >> $GITHUB_ENV
+      
+      - name: Debug
+        run: |
+          echo "FILES = $FILES"
+          ls -l
+      - name: Run Salesforce Code Analyzer (CLI)
+        if: env.FILES != ''
+        run: |
+            echo "Running SF Code Analyzer on:"
+            echo "$FILES"
+        
+            sf code-analyzer run $FILES \
+              --config-file sfca-config.yml \
+              --view detail \
+              --output-file sfca_results.html
+        
+      - name: Upload SFCA results
+        uses: actions/upload-artifact@v4
+        with:
+          name: sfca-results
+          path: sfca_results.html
+
+      - name: Fail on Critical/High Violations (Changed Files Only)
+        if: |
+          steps.run-code-analyzer.outputs.num-sev1-violations-in-changed-files > 0 ||
+          steps.run-code-analyzer.outputs.num-sev2-violations-in-changed-files > 0
+        run: exit 1

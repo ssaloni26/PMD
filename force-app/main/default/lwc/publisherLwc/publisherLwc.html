@@ -1,0 +1,21 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-25-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card title="Publisher LWC" icon-name="custom:custom14">
+        <lightning-input 
+            label="Type a message" 
+            value={inputMessage} 
+            onchange={handleChange}>
+        </lightning-input>
+        <lightning-button 
+            label="Send Message" 
+            onclick={sendMessage} 
+            class="slds-m-top_small">
+        </lightning-button>
+    </lightning-card>
+</template>
