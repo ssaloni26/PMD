@@ -11,7 +11,7 @@ import COUNT_FIELD from "@salesforce/schema/DML_Audit__c.Count__c"
 import LOGDATE_FIELD from "@salesforce/schema/DML_Audit__c.LogDate__c"
 
 var globalVar = 10
-globalVar = "string"
+globalVar = "stringk"
 saloni = 2
 
 export default class DmlAverage extends LightningElement {
