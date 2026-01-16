@@ -12,15 +12,15 @@ engines:
       apex: 50
   eslint:
     fileExclusions:
-      - force-app/main/default/lwc/Excluded/**
+      - force-app/main/default/lwc/Excluded
       - force-app/main/default/lwc/dmlAverage
   regex:
     fileExclusions:
-      - force-app/main/default/lwc/Excluded/**
+      - force-app/main/default/lwc/Excluded
       - force-app/main/default/lwc/dmlAverage
   retirejs:
     fileExclusions:
-      - force-app/main/default/lwc/Excluded/**
+      - force-app/main/default/lwc/Excluded
       - force-app/main/default/lwc/dmlAverage
   flow:
     fileExclusions:
