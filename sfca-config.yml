@@ -13,17 +13,7 @@ engines:
   eslint:
     auto_discover_eslint_config: true 
     disable_lwc_base_config: true
-    file_extensions:
-      - js
-      - mjs
-      - jsx
-
-  eslint:
-    enabled: true
-  pmd:
-    enabled: true
-  cpd:
-    enabled: true
+    
   flow-scanner:
     enabled: true
   regex:
