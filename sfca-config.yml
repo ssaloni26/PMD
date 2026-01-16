@@ -10,13 +10,3 @@ engines:
       - force-app/main/default/classes/DMLAuditAI.cls
     minimum_tokens:
       apex: 50
-  eslint:
-    auto_discover_eslint_config: true 
-    disable_lwc_base_config: true
-    
-  flow-scanner:
-    enabled: true
-  regex:
-    enabled: true
-  retirejs:
-    enabled: true
