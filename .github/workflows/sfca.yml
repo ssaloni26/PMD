@@ -115,32 +115,25 @@ jobs:
       
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^force-app/main/default/' || true)
-          NEW_FILES=$(git ls-files --others --exclude-standard | grep '^force-app/main/default/' || true)
-
-          ALL_FILES=$(echo "$CHANGED_FILES $NEW_FILES" | tr ' ' '\n' | sort -u | tr '\n' ' ')
-            
-            echo "All changed and new files:"
-            echo "$ALL_FILES"
-
+      
           echo "Changed files (raw):"
           echo "$CHANGED_FILES"
       
           FINAL_PATHS=""
       
-          for FILE in $ALL_FILES; do
+          for FILE in $CHANGED_FILES; do
             # LWC: convert file → component folder
             if [[ "$FILE" == force-app/main/default/lwc/*/* ]]; then
               LWC_DIR=$(echo "$FILE" | cut -d'/' -f1-5)
               FINAL_PATHS="$FINAL_PATHS $LWC_DIR"
-            
-            # Flow file
-            elif [[ "$FILE" =~ ^force-app/main/default/flows/[^/]+\.flow-meta\.xml$ ]]; then
-              FINAL_PATHS="$FINAL_PATHS $FILE"
-            
+      
             # Apex class
             elif [[ "$FILE" == *.cls ]]; then
               FINAL_PATHS="$FINAL_PATHS $FILE"
- 
+      
+            # Flow
+            elif [[ "$FILE" == force-app/main/default/flows/*.flow-meta.xml ]]; then
+              FINAL_PATHS="$FINAL_PATHS $FILE"
       
             # Default fallback
             else
