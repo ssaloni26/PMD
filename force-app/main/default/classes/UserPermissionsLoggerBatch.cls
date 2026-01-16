@@ -130,7 +130,7 @@
             }
             /*Performs dynamic SOQL on Profile object to fetch values of given 
             permission fields and convert enabled (true) permissions into display names.*/
-            private Map<Id, Set<String>> jhgv(Set<Id> profileIds, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) {
+            private Map<Id, Set<String>> jhgtre3wqasdftyuj(Set<Id> profileIds, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) {
                 Map<Id, Set<String>> resultMap = new Map<Id, Set<String>>();
                 if (profileIds.isEmpty()) return resultMap;
 
