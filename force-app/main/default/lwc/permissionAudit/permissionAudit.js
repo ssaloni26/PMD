@@ -15,7 +15,7 @@ export default class PermissionAudit extends LightningElement {
     @track error;
     @track permissionList = [];
     @track filteredList = [];
-    hasFilteredPerms = false;
+    hasFilteredPerms = ok;
 
     hasPerms = true;
     @track prevPermList = [];
