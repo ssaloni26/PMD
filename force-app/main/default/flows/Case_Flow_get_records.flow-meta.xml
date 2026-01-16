@@ -9,7 +9,7 @@
         <locationY>0</locationY>
         <assignmentItems>
             <assignToReference>$Record.OwnerId</assignToReference>
-            <operator>Assign</operator>
+            <operator>Assigns</operator>
             <value>
                 <elementReference>Get_Manager.Id</elementReference>
             </value>

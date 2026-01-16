@@ -9,7 +9,7 @@
         </value>
     </customProperties>
     <dynamicChoiceSets>
-        <name>ccsContacts</name>
+        <name>ccsContact</name>
         <collectionReference>Fetch_Related_Contacts</collectionReference>
         <dataType>String</dataType>
         <displayField>Name</displayField>

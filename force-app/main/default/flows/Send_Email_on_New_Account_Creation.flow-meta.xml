@@ -12,7 +12,7 @@
             <name>emailAddresses</name>
         </inputParameters>
         <inputParameters>
-            <name>senderType</name>
+            <name>senderTypes</name>
             <value>
                 <stringValue>CurrentUser</stringValue>
             </value>
