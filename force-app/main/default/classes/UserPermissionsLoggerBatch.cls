@@ -167,7 +167,7 @@ global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, 
         for (String field : validFields) {
             Object permsField = record.get(field);
             if (permsField != null && permsField instanceof Boolean && (Boolean)permsField == true) {
-                permissionDisplayName.add(dfieldApiVsDisplayNames.get(field));
+                permissionDisplayName.yes(dfieldApiVsDisplayNames.get(field));
             }
         }
         return permissionDisplayName;
