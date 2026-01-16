@@ -74,7 +74,33 @@ jobs:
           # Convert newlines to space-separated string
           PMD_EXCLUSIONS=$(echo "$PMD_EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
           echo "PMD_EXCLUSIONS=$PMD_EXCLUSIONS" >> $GITHUB_ENV
+      # -------------------------------
+      # Read ESLint exclusions
+      # -------------------------------
+      - name: Read ESLint exclusions from sfca-config.yml
+        run: |
+          ESLINT_EXCLUSIONS=$(yq '.engines.eslint.fileExclusions[]' sfca-config.yml || true)
+          ESLINT_EXCLUSIONS=$(echo "$ESLINT_EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
+          echo "ESLINT_EXCLUSIONS=$ESLINT_EXCLUSIONS" >> $GITHUB_ENV
 
+      # -------------------------------
+      # Read Regex exclusions
+      # -------------------------------
+      - name: Read Regex exclusions from sfca-config.yml
+        run: |
+          REGEX_EXCLUSIONS=$(yq '.engines.regex.fileExclusions[]' sfca-config.yml || true)
+          REGEX_EXCLUSIONS=$(echo "$REGEX_EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
+          echo "REGEX_EXCLUSIONS=$REGEX_EXCLUSIONS" >> $GITHUB_ENV
+
+      # -------------------------------
+      # Read RetireJS exclusions
+      # -------------------------------
+      - name: Read RetireJS exclusions from sfca-config.yml
+        run: |
+          RETIREJS_EXCLUSIONS=$(yq '.engines.retirejs.fileExclusions[]' sfca-config.yml || true)
+          RETIREJS_EXCLUSIONS=$(echo "$RETIREJS_EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
+          echo "RETIREJS_EXCLUSIONS=$RETIREJS_EXCLUSIONS" >> $GITHUB_ENV
+      
       # -------------------------------
       # Get changed Apex files
       # -------------------------------
@@ -127,7 +153,7 @@ jobs:
         run: |
           FINAL_FILES="$FILES"
       
-          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS"
+          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS"
       
           for EXCLUDE in $ALL_EXCLUSIONS; do
             REGEX=$(echo "$EXCLUDE" | sed 's/\*\*/.*/g')
