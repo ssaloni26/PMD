@@ -141,18 +141,24 @@ jobs:
         run: |
               echo "/usr/local/bin" >> $GITHUB_PATH
           
-
+      - name: Debug FILES
+        run: |
+          echo "FILES=${FILES}"
+            
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
-      - name: Run Salesforce Code Analyzer (Multiple Engines)
-        id: run-code-analyzer
+      - name: Run Salesforce Code Analyzer (changed files only)
         uses: forcedotcom/run-code-analyzer@v2
         with:
           run-arguments: >
-            
             --target ${{ env.FILES }}
-            --engine eslint,cpd,flow-scanner,pmd,regex,retirejs
+            --engine eslint
+            --engine cpd
+            --engine flow-scanner
+            --engine pmd
+            --engine regex
+            --engine retirejs
             --view detail
             --output-file sfca_results.html
           results-artifact-name: salesforce-code-analyzer-results
