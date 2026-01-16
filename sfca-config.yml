@@ -7,7 +7,6 @@ engines:
   cpd:
     fileExclusions:
       - force-app/main/default/classes/Excluded
-      - force-app/main/default/classes/DMLAuditAI.cls
     minimum_tokens:
       apex: 50
   eslint:
