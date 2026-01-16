@@ -26,7 +26,7 @@ export default class DmlAverage extends LightningElement {
     @track averageCount = "0"
     @track spikeDetected = "false"
     @track aiMessage
-    @track customPrompt =1== ""
+    @track customPrompt === ""
 
     thresholdFactor = "2"
 
