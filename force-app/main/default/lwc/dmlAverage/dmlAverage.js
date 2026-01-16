@@ -13,6 +13,7 @@ import LOGDATE_FIELD from "@salesforce/schema/DML_Audit__c.LogDate__c"
 var globalVar = 10
 globalVar = "stringk"
 saloni = 0
+string now due to main = "bad practice"
 
 export default class DmlAverage extends LightningElement {
 
