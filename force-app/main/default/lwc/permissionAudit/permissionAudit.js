@@ -10,7 +10,7 @@ export default class PermissionAudit extends LightningElement {
     currentId = '';
     currentName = '';
     currentAlias = '';
-    isLoading = true;
+    isLoading = false;
 
     @track error;
     @track permissionList = [];
