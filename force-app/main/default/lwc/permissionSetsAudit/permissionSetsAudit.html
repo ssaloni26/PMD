@@ -1,0 +1,193 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 10-01-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+  <div class="cards-container slds-grid slds-gutters equal-height-container">
+    
+    <!-- Privileged Permission Sets Audit -->
+    <lightning-card title="Privileged Permission Sets Audit" class="fixed-card slds-col slds-size_7-of-12 equal-height-card">
+      <div class="card-content">
+        <!-- LEFT: Permission Sets Table with Pagination -->
+        <div class="slds-col slds-size_12-of-12">
+          <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_fixed-layout">
+            <colgroup>
+              <col style="width:25%;" />
+              <col style="width:35%;" />
+              <col style="width:20%;" />
+              <col style="width:20%;" />
+            </colgroup>
+            <thead>
+              <tr class="slds-text-title_caps">
+                <th class="slds-text-align_left">Permission Set Name</th>
+                <th class="slds-text-align_center">Assigned Permissions</th>
+                <th class="slds-text-align_center">Objects (V/M)</th>
+                <th class="slds-text-align_center">Assigned Users</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template for:each={paginatedPermissionSets} for:item="ps">
+                <tr key={ps.id}>
+                  <td class="clickable" data-id={ps.id} onclick={handlePermissionSetClick} style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    {ps.permissionSetName}
+                  </td>
+                  <td>
+                    <div class="badge-container" style="display:flex; flex-wrap:wrap; gap:4px; max-width:100%;">
+                      <template for:each={ps.firstTwoPermissions} for:item="perm">
+                        <span key={perm} class="slds-badge slds-radius_circular">{perm}</span>
+                      </template>
+                      <template if:true={ps.remainingPermissions.length}>
+                        <template if:false={ps.expanded}>
+                          <span class="slds-badge slds-radius_circular clickable" data-id={ps.id} onclick={toggleExpand}>
+                            +{ps.remainingPermissions.length} more
+                          </span>
+                        </template>
+                      </template>
+                      <template if:true={ps.expanded}>
+                        <template for:each={ps.remainingPermissions} for:item="perm">
+                          <span key={perm} class="slds-badge slds-radius_circular">{perm}</span>
+                        </template>
+                      </template>
+                    </div>
+                  </td>
+                  <td style="text-align:center; white-space: nowrap;">{ps.objectCount}</td>
+                  <td style="text-align:center; white-space: nowrap;">{ps.assignedUserCount}</td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+
+          <!-- Pagination -->
+          <div class="slds-m-top_small slds-grid slds-grid_align-center slds-p-around_small">
+            <lightning-button label="Previous" onclick={previousPermSetPage} disabled={isFirstPermSetPage}></lightning-button>
+            <span class="slds-p-horizontal_small">Page {currentPermSetPage} of {totalPermSetPages}</span>
+            <lightning-button label="Next" onclick={nextPermSetPage} disabled={isLastPermSetPage}></lightning-button>
+          </div>
+        </div>
+      </div>  
+    </lightning-card>
+
+    <!-- Right Card -->
+    <div class="fixed-card slds-col slds-size_5-of-12 equal-height-card" style="border-left:1px solid #ccc;">
+      <lightning-card title={selectedPermSetName} class="fixed-card">
+        <div class="card-content">
+          <template if:true={showPermSetPerms}>
+            <h2 class="slds-text-heading_small">{selectedProfileName}</h2>
+            <lightning-button-icon icon-name="utility:close"
+                                   onclick={handleCloseProfilePerms}
+                                   alternative-text="Close"
+                                   class="slds-float_right">
+            </lightning-button-icon>
+            <hr/>
+            <div style="font-weight:bold; font-size:16px;">{permSetName}</div>
+            
+            <lightning-card>
+              <!-- Search bar for objects -->
+              <div class="slds-p-around_small">
+                <lightning-input 
+                    type="search"
+                    label="Search Objects"
+                    placeholder="Search by object name..."
+                    onchange={handleSearchForObjects}>
+                </lightning-input>
+              </div>
+      
+              <!-- Loop over objects with permissions -->
+              <template for:each={paginatedPermissions} for:item="perm">
+                <div key={perm.sObjectType} class="slds-grid slds-wrap slds-p-around_xx-small slds-border_bottom">
+                  <!-- Object Name -->
+                  <div class="slds-col slds-size_6-of-12" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                    <div class="slds-text-heading_small">{perm.objectLabel}</div>
+                  </div>
+
+                  <!-- Permissions -->
+                  <div class="slds-col slds-size_6-of-12 slds-grid slds-wrap slds-justify_end custom-padding">
+                    <div class="slds-p-horizontal_xx-small slds-m-bottom_xx-small">
+                      <template if:true={perm.createPerm}>
+                        <div class="circle slds-text-title_bold" style="background-color: #08941b;">C</div>
+                      </template>
+                      <template if:false={perm.createPerm}>
+                        <div class="circle circle-false">C</div>
+                      </template>
+                    </div>
+
+                    <div class="slds-p-horizontal_xx-small slds-m-bottom_xx-small">
+                      <template if:true={perm.readPerm}>
+                        <div class="circle slds-text-title_bold" style="background-color: #08941b;">R</div>
+                      </template>
+                      <template if:false={perm.readPerm}>
+                        <div class="circle circle-false">R</div>
+                      </template>
+                    </div>
+
+                    <div class="slds-p-horizontal_xx-small slds-m-bottom_xx-small">
+                      <template if:true={perm.editPerm}>
+                        <div class="circle slds-text-title_bold" style="background-color: #caa308;">E</div>
+                      </template>
+                      <template if:false={perm.editPerm}>
+                        <div class="circle circle-false">E</div>
+                      </template>
+                    </div>
+
+                    <div class="slds-p-horizontal_xx-small slds-m-bottom_xx-small">
+                      <template if:true={perm.deletePerm}>
+                        <div class="circle slds-text-title_bold" style="background-color: #caa308;">D</div>
+                      </template>
+                      <template if:false={perm.deletePerm}>
+                        <div class="circle circle-false">D</div>
+                      </template>
+                    </div>
+
+                    <div class="slds-p-horizontal_xx-small slds-m-bottom_xx-small">
+                      <template if:true={perm.viewAll}>
+                        <div class="circle slds-text-title_bold" style="background-color: #f43434;">V</div>
+                      </template>
+                      <template if:false={perm.viewAll}>
+                        <div class="circle circle-false">V</div>
+                      </template>
+                    </div>
+
+                    <div class="slds-p-horizontal_xx-small slds-m-bottom_xx-small">
+                      <template if:true={perm.modifyAll}>
+                        <div class="circle slds-text-title_bold" style="background-color: #f43434;">M</div>
+                      </template>
+                      <template if:false={perm.modifyAll}>
+                        <div class="circle circle-false">M</div>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Pagination Controls for Object Permissions -->
+              <div class="slds-m-top_small slds-grid slds-grid_align-center slds-p-around_small">
+                <lightning-button 
+                    label="Previous" 
+                    onclick={previousPage} 
+                    disabled={isFirstPage}>
+                </lightning-button>
+
+                <span class="slds-p-horizontal_small">
+                    Page {currentPage} of {totalPages}
+                </span>
+
+                <lightning-button 
+                    label="Next" 
+                    onclick={nextPage} 
+                    disabled={isLastPage}>
+                </lightning-button>
+              </div>
+            </lightning-card>
+          </template>
+          
+          <template if:false={showPermSetPerms}>
+            <div>Select a Permission Set to view object permissions</div>
+          </template>
+        </div>
+      </lightning-card>
+    </div>
+  </div>
+</template>
