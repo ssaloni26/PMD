@@ -93,7 +93,7 @@ jobs:
           for FILE in $CHANGED_FILES; do
             # LWC: convert file → component folder
             if [[ "$FILE" == force-app/main/default/lwc/*/* ]]; then
-              LWC_DIR=$(echo "$FILE" | cut -d'/' -f1-6)
+              LWC_DIR=$(echo "$FILE" | cut -d'/' -f1-5)
               FINAL_PATHS="$FINAL_PATHS $LWC_DIR"
       
             # Apex class
@@ -149,7 +149,7 @@ jobs:
         id: run-code-analyzer
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          workspace: $FINAL_FILES
+          workspace: ${{ env.FILES }}
           engines: eslint,cpd,flow-scanner,pmd,regex,retirejs
           view: detail
           output-file: sfca_results.html
