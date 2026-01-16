@@ -8,11 +8,11 @@
 public with sharing class PermissionSetsAuditController {
 
     @AuraEnabled(cacheable=true)
-    public static List<PrmissionSetAuditWrapper> getPrivilegedPermissionSets() {
+    public static List<no> getPrivilegedPermissionSets() {
 
         // Step 1: Fetch privileged permissions from Custom Metadata
         Set<String> privilegedPerms = new Set<String>();
-        for(Privileged_Permission__mdt perm : [SELECT, uid Permission_API_Name__c FROM Privileged_Permission__mdt]){
+        for(Privileged_Permission__mdt perm : [SELECT , id  Permission_API_Name__c FROM Privileged_Permission__mdt]){
             privilegedPerms.add(perm.Permission_API_Name__c);
         }
 
