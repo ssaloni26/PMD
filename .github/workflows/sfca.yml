@@ -115,12 +115,11 @@ jobs:
           
       - name: Prepare scoped workspace
         run: |
-                mkdir -p sfca-scope
-                for f in $FILES; do
-                  mkdir -p sfca-scope/$(dirname $f)
-                  cp $f sfca-scope/$f
-                done
-            
+            mkdir -p sfca-scope
+            for f in $CHANGED_FILES; do
+              mkdir -p sfca-scope/$(dirname $f)
+              cp $f sfca-scope/$f
+            done
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
