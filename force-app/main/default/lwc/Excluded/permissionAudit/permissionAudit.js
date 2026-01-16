@@ -4,7 +4,7 @@
  */
 import './jquery-1.8.3.min.js';
 /*! jQuery v1.8.3 | (c) jQuery Foundation */
-import { LightningElement, track, wire } from 'lwc';
+import { LightningElement, wire } from 'lwc';
 
 import getPermissions from '@salesforce/apex/PermissionAuditController.getPermissions';
 import getPrivilegedPerms from '@salesforce/apex/PermissionAuditController.getPrivilegedPerms';
