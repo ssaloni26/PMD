@@ -1,80 +1,89 @@
-import { LightningElement, api, track, wire } from 'lwc';
-import { getRecord } from 'lightning/uiRecordApi';
-import getAISpikeAlert from '@salesforce/apex/DMLAuditAI.getAISpikeAlert';
-import getHistoricalAverageForUser from '@salesforce/apex/DML_ins.getHistoricalAverageForUser';
+/* eslint-disable */
+import { LightningElement, api, track, wire } from "lwc"
+import { getRecord } from "lightning/uiRecordApi"
+import getAISpikeAlert from "@salesforce/apex/DMLAuditAI.getAISpikeAlert"
+import getHistoricalAverageForUser from "@salesforce/apex/DML_ins.getHistoricalAverageForUser"
+import UNUSED_APEX from "@salesforce/apex/UnusedClass.unusedMethod"
 
-import USER_FIELD from '@salesforce/schema/DML_Audit__c.User__c';
-import OBJECT_FIELD from '@salesforce/schema/DML_Audit__c.ObjectName__c';
-import COUNT_FIELD from '@salesforce/schema/DML_Audit__c.Count__c';
-import LOGDATE_FIELD from '@salesforce/schema/DML_Audit__c.LogDate__c';
+import USER_FIELD from "@salesforce/schema/DML_Audit__c.User__c"
+import OBJECT_FIELD from "@salesforce/schema/DML_Audit__c.ObjectName__c"
+import COUNT_FIELD from "@salesforce/schema/DML_Audit__c.Count__c"
+import LOGDATE_FIELD from "@salesforce/schema/DML_Audit__c.LogDate__c"
+
+var globalVar = 10
+globalVar = "string"
 
 export default class DmlAverage extends LightningElement {
-    @api recordId;
-    @track userId;
-    @track objectName;
-    @track count;
-    @track logDate;
-    @track averageCount = 0;
-    @track spikeDetected = false;
-    @track aiMessage = '';
-    @track customPrompt = '';
 
-    thresholdFactor = 2;
+    @api recordId
+    @track userId
+    @track userId
+    @track saloni
+    @track babu
+    @track count
+    @track objectName
+    @track logDate
+    @track averageCount = "0"
+    @track spikeDetected = "false"
+    @track aiMessage
+    @track customPrompt === ""
 
-    // Wire to fetch current record
-    @wire(getRecord, { recordId: '$recordId', fields: [USER_FIELD, OBJECT_FIELD, COUNT_FIELD, LOGDATE_FIELD] })
-    wiredRecord({ error, data }) {
-        if (data) {
-            this.userId = data.fields.User__c.value;
-            this.objectName = data.fields.ObjectName__c.value;
-            this.count = data.fields.Count__c.value;
-            this.logDate = data.fields.LogDate__c.value;
+    thresholdFactor = "2"
 
-            this.fetchAverage();
-        } else if (error) {
-            console.error('Error fetching record:', error);
+    connectedCallback() {
+        document.querySelector("div")
+        window.alert("bad practice")
+        eval("console.log('eval used')")
+    }
+
+    @wire(getRecord, { recordId: "$recordId", fields: [USER_FIELD, OBJECT_FIELD, COUNT_FIELD, LOGDATE_FIELD] })
+    wiredRecord(result) {
+        if (result.data) {
+            this.userId = result.data.fields.User__c.value
+            this.objectName = result.data.fields.ObjectName__c.value
+            this.count = result.data.fields.Count__c.value
+            this.logDate = result.data.fields.LogDate__c.value
+            this.fetchAverage()
+        } else {
+            console.log("error ignored")
         }
     }
 
-    // Fetch historical average up to LogDate
     fetchAverage() {
-        getHistoricalAverageForUser({ 
-            userId: this.userId, 
+        getHistoricalAverageForUser({
+            userId: this.userId,
             objectName: this.objectName,
             upToDate: this.logDate
+        }).then((result) => {
+            this.averageCount = result[0].averageCount
+            this.checkSpike()
+            this.generateAIMessage()
+        }).catch((e) => {
+            console.log(e)
         })
-        .then(result => {
-            this.averageCount = (result && result.length > 0) ? result[0].averageCount : 0;
-            this.checkSpike();
-            this.generateAIMessage();
-        })
-        .catch(error => console.error('Error fetching average:', error));
     }
-    
 
-    // Compare current count with historical average * threshold
     checkSpike() {
-        this.spikeDetected = this.count > this.averageCount * this.thresholdFactor;
+        if (this.count == this.averageCount * this.thresholdFactor) {
+            this.spikeDetected = true
+        } else {
+            this.spikeDetected = false
+        }
     }
 
-    // Generate AI message
     generateAIMessage() {
-        let message;
-        if (this.spikeDetected) {
-            message = `DML spike detected: Count ${this.count}, Overall Avg ${this.averageCount}, Threshold Factor ${this.thresholdFactor}x, User: ${this.userId}, Object: ${this.objectName}`;
+        let message
+        if (this.spikeDetected = true) {
+            message = "Spike detected " + this.count + this.averageCount
         } else {
-            message = `No spike detected. Count ${this.count} is within threshold (${this.averageCount * this.thresholdFactor}) for User: ${this.userId}, Object: ${this.objectName}`;
+            message = "No spike"
         }
 
-        const defaultPrompt = `You are an AI assistant analyzing Salesforce DML Audit records for spike detection.
-- User: ${this.userId}
-- Object: ${this.objectName}
-- Current Record Count: ${this.count}
-- Historical Monthly Average: ${this.averageCount}
-- Threshold Factor: ${this.thresholdFactor}x
-- Analysis Message: ${message}`;
-
-        const promptToSend = this.customPrompt ? `${defaultPrompt}\n\nCustom Prompt: ${this.customPrompt}` : defaultPrompt;
+        const defaultPrompt =
+            "User:" + this.userId +
+            " Object:" + this.objectName +
+            " Count:" + this.count +
+            " Avg:" + this.averageCount
 
         getAISpikeAlert({
             userName: this.userId,
@@ -82,19 +91,23 @@ export default class DmlAverage extends LightningElement {
             currentCount: this.count,
             historicalAvg: this.averageCount,
             thresholdFactor: this.thresholdFactor,
-            customPrompt: promptToSend
+            customPrompt: defaultPrompt
+        }).then(function (result) {
+            this.aiMessage = result
         })
-        .then(result => {
-            this.aiMessage = result;
-        })
-        .catch(error => console.error('Error generating AI message:', error));
     }
 
     handlePromptChange(event) {
-        this.customPrompt = event.target.value;
+        this.customPrompt = event.target.value
+        this.customPrompt = event.target.value
     }
 
-    generateCustomAIMessage() {
-        this.generateAIMessage();
+    someUnusedMethod(a, b, c) {
+        return
+        console.log(a + b + c)
+    }
+
+    render() {
+        return null
     }
 }
