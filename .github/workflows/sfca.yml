@@ -3,13 +3,12 @@ name: Salesforce Code Analyzer Workflow
 on:
   pull_request:
     paths:
-      - 'force-app/main/default/**'
+      - 'force-app/main/default/classes/**'
       - 'sfca-config.yml'
 
-  # permissions:
-  #   contents: read
-  #   pull-requests: write
-
+# permissions:
+#   contents: read
+#   pull-requests: write
 jobs:
   sfca:
     runs-on: ubuntu-latest
@@ -22,29 +21,28 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0 
-
-      # -------------------------------
-      # Setup Node.js
-      # -------------------------------
       - name: Setup Node 
         uses: actions/setup-node@v4 
         with: 
           node-version: '20'
-
       # -------------------------------
       # Install Salesforce CLI
       # -------------------------------
       - name: Install Salesforce CLI
         run: npm install -g @salesforce/cli@latest
 
-      - name: Install Salesforce Code Analyzer Plugin
-        run: sf plugins install code-analyzer@latest
 
+
+
+      - name: Install Latest Salesforce Code Analyzer CLI Plugin 
+        run: sf plugins install code-analyzer@latest
       - name: Verify Code Analyzer install
         run: |
-          sf plugins
-          sf plugins inspect code-analyzer || true
-          sf code-analyzer run --help
+            sf plugins
+            sf plugins inspect code-analyzer || true
+            sf code-analyzer run --help
+
+
 
       # -------------------------------
       # Install yq (YAML parser)
@@ -54,101 +52,72 @@ jobs:
           sudo wget -qO /usr/local/bin/yq \
             https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           sudo chmod +x /usr/local/bin/yq
-
       # -------------------------------
-      # Read CPD exclusions
+      # Read CPD exclusions from sfca-config.yml
       # -------------------------------
       - name: Read CPD exclusions from sfca-config.yml
         run: |
           CPD_EXCLUSIONS=$(yq '.engines.cpd.fileExclusions[]' sfca-config.yml || true)
+          echo "CPD exclusions:"
+          echo "$CPD_EXCLUSIONS"
           CPD_EXCLUSIONS=$(echo "$CPD_EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
           echo "CPD_EXCLUSIONS=$CPD_EXCLUSIONS" >> $GITHUB_ENV
-
+            
       # -------------------------------
-      # Read PMD exclusions
+      # Read PMD exclusions from config
       # -------------------------------
       - name: Read PMD exclusions from sfca-config.yml
         run: |
           PMD_EXCLUSIONS=$(yq '.engines.pmd.fileExclusions[]' sfca-config.yml || true)
+          echo "PMD exclusions:"
+          echo "$PMD_EXCLUSIONS"
+          # Convert newlines to space-separated string
           PMD_EXCLUSIONS=$(echo "$PMD_EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
           echo "PMD_EXCLUSIONS=$PMD_EXCLUSIONS" >> $GITHUB_ENV
 
       # -------------------------------
-      # Get changed Salesforce files
+      # Get changed Apex files
       # -------------------------------
-      - name: Get changed Salesforce source files
+      - name: Get changed Apex files
         run: |
-          git fetch origin ${{ github.base_ref }} || git fetch origin main
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD || git diff --name-only origin/main...HEAD)
-          CHANGED_FILES=$(echo "$CHANGED_FILES" | grep '^force-app/main/default/' || true)
+          git fetch origin ${{ github.base_ref }}
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^force-app/main/default/classes/.*\.cls$' || true)
+          echo "Changed Apex files (raw):"
+          echo "$CHANGED_FILES"
+          # Convert to space-separated single line
           CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
 
       # -------------------------------
-      # Build final file list applying exclusions
+      # Build final FILES list (apply exclusions)
       # -------------------------------
-      - name: Resolve final files
+      - name: Resolve final Apex files
         run: |
-          FINAL_FILES=""
-          for f in $CHANGED_FILES; do
-            if [[ "$f" == *.cls ]]; then
-              SKIP=false
-              for EXCLUDE in $PMD_EXCLUSIONS $CPD_EXCLUSIONS; do
-                REGEX=$(echo "$EXCLUDE" | sed 's/\*\*/.*/g; s/\*/[^\/]*/g')
-                if echo "$f" | grep -E "$REGEX" >/dev/null; then
-                  SKIP=true
-                  break
-                fi
-              done
-              if [ "$SKIP" = false ]; then
-                FINAL_FILES="$FINAL_FILES $f"
-              fi
-            else
-              FINAL_FILES="$FINAL_FILES $f"
-            fi
+          FINAL_FILES="$CHANGED_FILES"
+          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS"
+          for EXCLUDE in $ALL_EXCLUSIONS; do
+            # Convert ** to .* for regex
+            REGEX=$(echo "$EXCLUDE" | sed 's/\\/.*/g')
+            FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "$REGEX" || true)
+            FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
           done
-          FINAL_FILES=$(echo "$FINAL_FILES" | xargs)
+          echo "Final Apex files to analyze:"
+          echo "$FINAL_FILES"
           echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
-          echo "Final files to analyze: $FINAL_FILES"
 
-      # -------------------------------
-      # Run ESLint for JS/LWC files
-      # -------------------------------
-      - name: Run ESLint
-        if: ${{ always() && env.FILES != '' && contains(env.FILES, '.js') }}
-        run: |
-          npx eslint $FILES || true
-        env:
-          FILES: ${{ env.FILES }}
-      
-
-      # -------------------------------
-      # Add SF CLI to PATH
-      # -------------------------------
       - name: Add SF CLI to PATH
-        run: echo "/usr/local/bin" >> $GITHUB_PATH
-
-      # -------------------------------
-      # Prepare scoped workspace
-      # -------------------------------
+        run: |
+              echo "/usr/local/bin" >> $GITHUB_PATH
+          
       - name: Prepare scoped workspace
         run: |
-          mkdir -p sfca-scope
-          for f in $FILES; do
-            mkdir -p sfca-scope/$(dirname "$f")
-            cp -v "$f" "sfca-scope/$f" || true
-          done
-      
-      # -------------------------------
-      # Fail if no files to analyze
-      # -------------------------------
-      - name: Fail if no files to analyze
-        run: |
-          if [ -z "$FILES" ]; then
-            echo "No analyzable files found. Skipping Code Analyzer."
-            exit 0
-          fi
-
+                mkdir -p sfca-scope
+                for f in $FILES; do
+                  mkdir -p sfca-scope/$(dirname $f)
+                  cp $f sfca-scope/$f
+                done
+            
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
@@ -156,6 +125,6 @@ jobs:
         id: run-code-analyzer
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          run-arguments: --workspace sfca-scope --view detail --output-file sfca_results.html
+          run-arguments: --workspace sfca-scope --view detail --output-file sfca_results.html 
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
