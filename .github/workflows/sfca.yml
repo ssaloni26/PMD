@@ -137,7 +137,8 @@ jobs:
           for f in $FILES; do
             mkdir -p sfca-scope/$(dirname "$f")
             cp -v "$f" "sfca-scope/$f" || true
-
+          done
+      
       # -------------------------------
       # Fail if no files to analyze
       # -------------------------------
