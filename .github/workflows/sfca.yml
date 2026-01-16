@@ -100,7 +100,12 @@ jobs:
           RETIREJS_EXCLUSIONS=$(yq '.engines.retirejs.fileExclusions[]' sfca-config.yml || true)
           RETIREJS_EXCLUSIONS=$(echo "$RETIREJS_EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
           echo "RETIREJS_EXCLUSIONS=$RETIREJS_EXCLUSIONS" >> $GITHUB_ENV
-      
+      - name: Read Flow exclusions from sfca-config.yml
+        run: |
+          FLOW_EXCLUSIONS=$(yq '.engines.flow.fileExclusions[]' sfca-config.yml || true)
+          FLOW_EXCLUSIONS=$(echo "$FLOW_EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
+          echo "FLOW_EXCLUSIONS=$FLOW_EXCLUSIONS" >> $GITHUB_ENV
+        
       # -------------------------------
       # Get changed Apex files
       # -------------------------------
@@ -121,7 +126,11 @@ jobs:
             if [[ "$FILE" == force-app/main/default/lwc/*/* ]]; then
               LWC_DIR=$(echo "$FILE" | cut -d'/' -f1-5)
               FINAL_PATHS="$FINAL_PATHS $LWC_DIR"
-      
+            
+            # Flow file
+            elif [[ "$FILE" =~ ^force-app/main/default/flows/[^/]+\.flow-meta\.xml$ ]]; then
+              FINAL_PATHS="$FINAL_PATHS $FILE"
+            
             # Apex class
             elif [[ "$FILE" == *.cls ]]; then
               FINAL_PATHS="$FINAL_PATHS $FILE"
@@ -152,24 +161,20 @@ jobs:
       - name: Resolve final FILES (apply exclusions)
         run: |
           FINAL_FILES="$FILES"
+      
           ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS $FLOW_EXCLUSIONS"
-      
-          FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n')
-      
+          
           for EXCLUDE in $ALL_EXCLUSIONS; do
-            EXCLUDE=$(echo "$EXCLUDE" | tr -d '"')
-      
-            SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
-      
-            FINAL_FILES=$(echo "$FINAL_FILES" | grep -v -E "^${SAFE_EXCLUDE}$|^${SAFE_EXCLUDE}/" || true)
+          SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
+          FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "^${SAFE_EXCLUDE}$|^${SAFE_EXCLUDE}/" || true)
           done
+      
           FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
       
           echo "Final files to analyze:"
           echo "$FINAL_FILES"
       
           echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
-      
       
 
       - name: Add SF CLI to PATH
