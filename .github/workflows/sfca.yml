@@ -3,7 +3,7 @@ name: Salesforce Code Analyzer Workflow
 on:
   pull_request:
     paths:
-      - 'force-app/main/default/classes/**'
+      - 'force-app/main/default/**'
       - 'sfca-config.yml'
 
 permissions:
@@ -149,9 +149,11 @@ jobs:
         id: run-code-analyzer
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          workspace: ${{ env.FILES }}
-          engines: eslint,cpd,flow-scanner,pmd,regex,retirejs
-          view: detail
-          output-file: sfca_results.html
+          run-arguments: >
+            run
+            --target ${{ env.FINAL_FILES }}
+            --engine eslint,cpd,flow-scanner,pmd,regex,retirejs
+            --view detail
+            --output-file sfca_results.html
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
