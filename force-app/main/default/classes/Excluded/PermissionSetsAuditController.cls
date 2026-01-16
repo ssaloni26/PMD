@@ -2,12 +2,12 @@
  * @description       : 
  * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
  * @group             : 
- * @last modified on  : 01-14-2026
+ * @last modified on  : 01-16-2026
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 **/
 public with sharing class PermissionSetsAuditController {
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled(cacheable=false)
     public static List<PermissionSetAuditWrapper> getPrivilegedPermissionSets() {
 
         // Step 1: Fetch privileged permissions from Custom Metadata
