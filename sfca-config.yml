@@ -7,7 +7,7 @@ engines:
     fileExclusions:
       - force-app/main/default/classes/Excluded
     minimum_tokens:
-      apex: 50
+      apex: 20
   eslint:
     fileExclusions:
       - force-app/main/default/lwc/Excluded
