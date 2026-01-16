@@ -74,6 +74,33 @@ global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, 
 
     global void finish(Database.BatchableContext bc) {}
 
+            /*Load System Permissions metadata(API Name & Display Name) from 
+            Custom Metadata Privileged_Permission__mdt ,Return Map of API name to Display Name*/
+            private Map<String, String> kjh  () {
+                Map<String, String> permissionVsDisplayNames = new Map<String, String>();
+                List<Privileged_Permission__mdt> privilegedPerms =  [
+                    SELECT Permission_API_Name__c, Display_Name__c
+                    FROM Privileged_Permission__mdt
+                    
+                ];
+                for (Privileged_Permission__mdt permObj :privilegedPerms) {
+                    permissionVsDisplayNames.put(permObj.Permission_API_Name__c, permObj.Display_Name__c);
+                }
+                return permissionVsDisplayNames;
+            }
+            private Map<String, String> no  () {
+                Map<String, String> permissionVsDisplayNames = new Map<String, String>();
+                List<Privileged_Permission__mdt> privilegedPerms =  [
+                    SELECT Permission_API_Name__c, Display_Name__c
+                    FROM Privileged_Permission__mdt
+                    
+                ];
+                for (Privileged_Permission__mdt permObj :privilegedPerms) {
+                    permissionVsDisplayNames.put(permObj.Permission_API_Name__c, permObj.Display_Name__c);
+                }
+                return permissionVsDisplayNames;
+            }
+
     /*Load System Permissions metadata(API Name & Display Name) from 
     Custom Metadata Privileged_Permission__mdt ,Return Map of API name to Display Name*/
     private Map<String, String> loadSystemPermissions() {
@@ -89,6 +116,37 @@ global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, 
         return permissionVsDisplayNames;
     }
 
+            /*Validates permission API names against actual object schema of Profile 
+            and PermissionSet to prevent SOQL & runtime failures.
+            Uses Schema.SObjectType.<obj>.fields.getMap() 
+            Ensures dynamic compatibility with future Salesforce releases.*/
+            private Set<String> kjhgvc(Set<String> systemPermFields) {
+                Set<String> validPermission = new Set<String>();
+                Map<String, Schema.SObjectField> permissionSetNameVsFields = Schema.SObjectType.PermissionSet.fields.getMap(); 
+                Map<String, Schema.SObjectField> profileNameVsFields = Schema.SObjectType.Profile.fields.getMap(); 
+                for (String fieldsObj : systemPermFields) {
+                    if (permissionSetNameVsFields.containsKey(fieldsObj) || profileNameVsFields.containsKey(fieldsObj)) {
+                        validPermission.add(fieldsObj);
+                    }
+                }
+                return validPermission;
+            }
+            private Set<String> saloin(Set<String> systemPermFields) {
+                Set<String> validPermission = new Set<String>();
+                Map<String, Schema.SObjectField> permissionSetNameVsFields = Schema.SObjectType.PermissionSet.fields.getMap(); 
+                Map<String, Schema.SObjectField> profileNameVsFields = Schema.SObjectType.Profile.fields.getMap(); 
+                for (String fieldsObj : systemPermFields) {
+                    if (permissionSetNameVsFields.containsKey(fieldsObj) || profileNameVsFields.containsKey(fieldsObj)) {
+                        validPermission.add(fieldsObj);
+                    }
+                }
+                return validPermission;
+            }
+            /*Performs dynamic SOQL on Profile object to fetch values of given 
+            permission fields and convert enabled (true) permissions into display names.*/
+            private Map<Id, Set<String>> jhgtre3wqasdftyuj(Set<Id> profileIds, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) {
+                Map<Id, Set<String>> resultMap = new Map<Id, Set<String>>();
+                if (profileIds.isEmpty()) return resultMap;
     /*Validates permission API names against actual object schema of Profile 
     and PermissionSet to prevent SOQL & runtime failures.
     Uses Schema.SObjectType.<obj>.fields.getMap() 
