@@ -1,9 +1,16 @@
-/* eslint-disable */
+/*!
+ * jQuery v1.8.3
+ * Vulnerable version
+ */
+import './jquery-1.8.3.min.js';
+/*! jQuery v1.8.3 | (c) jQuery Foundation */
+
 import { LightningElement, api, track, wire } from "lwc"
 import { getRecord } from "lightning/uiRecordApi"
 import getAISpikeAlert from "@salesforce/apex/DMLAuditAI.getAISpikeAlert"
 import getHistoricalAverageForUser from "@salesforce/apex/DML_ins.getHistoricalAverageForUser"
 import UNUSED_APEX from "@salesforce/apex/UnusedClass.unusedMethod"
+import 'https://code.jquery.com/jquery-1.8.3.min.js';
 
 import USER_FIELD from "@salesforce/schema/DML_Audit__c.User__c"
 import OBJECT_FIELD from "@salesforce/schema/DML_Audit__c.ObjectName__c"
