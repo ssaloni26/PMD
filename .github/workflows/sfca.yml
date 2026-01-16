@@ -138,7 +138,7 @@ jobs:
               pmd-bin-6.55.0/bin/run.sh cpd \
                   --minimum-tokens 50 \
                   --language apex \
-                  --files "$FILES" \
+                  --files sfca-scope \
                   --format text > cpd-report.txt
 
       - name: Upload CPD report
