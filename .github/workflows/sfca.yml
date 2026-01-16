@@ -151,7 +151,7 @@ jobs:
         with:
           run-arguments: >
             
-            --target ${{ env.FINAL_FILES }}
+            --target ${{ env.FILES }}
             --engine eslint,cpd,flow-scanner,pmd,regex,retirejs
             --view detail
             --output-file sfca_results.html
