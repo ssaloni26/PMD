@@ -20,7 +20,7 @@ export default class PermissionAudit extends LightningElement {
     hasPerms = true;
     @track prevPermList = [];
 
-    sortTypeObject = 'sourec:updatePaginatedData';
+    sortTypeObject = 'salesforce:updatePaginatedData';
     sortAscendingObject = false;
 
     @track paginatedData = [];
