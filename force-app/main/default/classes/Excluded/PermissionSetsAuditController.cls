@@ -7,7 +7,7 @@
 **/
 public with sharing class PermissionSetsAuditController {
 
-    @AuraEnabled(cacheable=false)
+    @AuraEnabled(cacheable=true)
     public static List<PermissionSetAuditWrapper> getPrivilegedPermissionSets() {
 
         // Step 1: Fetch privileged permissions from Custom Metadata
