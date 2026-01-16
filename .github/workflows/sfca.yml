@@ -78,11 +78,11 @@ jobs:
       # -------------------------------
       # Get changed Apex files
       # -------------------------------
-      - name: Get changed Apex files
+      - name: Get changed Salesforce source files
         run: |
           git fetch origin ${{ github.base_ref }}
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-            | grep '^force-app/main/default/classes/.*\.cls$' || true)
+            | grep '^force-app/main/default/' || true)
           echo "Changed Apex files (raw):"
           echo "$CHANGED_FILES"
           # Convert to space-separated single line
@@ -92,19 +92,34 @@ jobs:
       # -------------------------------
       # Build final FILES list (apply exclusions)
       # -------------------------------
-      - name: Resolve final Apex files
+      - name: Resolve final files
         run: |
-          FINAL_FILES="$CHANGED_FILES"
-          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS"
-          for EXCLUDE in $ALL_EXCLUSIONS; do
-            # Convert ** to .* for regex
-            REGEX=$(echo "$EXCLUDE" | sed 's/\*\*/.*/g')
-            FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "$REGEX" || true)
-            FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
+          FINAL_FILES=""
+          for f in $CHANGED_FILES; do
+            # Apply PMD/CPD exclusions ONLY to Apex
+            if [[ "$f" == *.cls ]]; then
+              SKIP=false
+              for EXCLUDE in $PMD_EXCLUSIONS $CPD_EXCLUSIONS; do
+                REGEX=$(echo "$EXCLUDE" | sed 's/\*\*/.*/g')
+                if echo "$f" | grep -E "$REGEX" >/dev/null; then
+                  SKIP=true
+                  break
+                fi
+              done
+              if [ "$SKIP" = false ]; then
+                FINAL_FILES="$FINAL_FILES $f"
+              fi
+            else
+              # Non-Apex (LWC, XML, etc.)
+              FINAL_FILES="$FINAL_FILES $f"
+            fi
           done
-          echo "Final Apex files to analyze:"
+      
+          FINAL_FILES=$(echo "$FINAL_FILES" | xargs)
+          echo "Final files to analyze:"
           echo "$FINAL_FILES"
           echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
+      
 
       - name: Add SF CLI to PATH
         run: |
@@ -117,7 +132,13 @@ jobs:
                   mkdir -p sfca-scope/$(dirname $f)
                   cp $f sfca-scope/$f
                 done
-            
+      - name: Fail if no files to analyze
+        run: |
+          if [ -z "$FILES" ]; then
+            echo "No analyzable files found. Skipping Code Analyzer."
+            exit 0
+          fi
+      
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
