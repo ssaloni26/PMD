@@ -78,16 +78,19 @@ jobs:
       # -------------------------------
       # Get changed Apex files
       # -------------------------------
-      - name: Get changed Apex files
+      - name: Get all changed Salesforce files
         run: |
           git fetch origin ${{ github.base_ref }}
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-            | grep '^force-app/main/default/classes/.*\.cls$' || true)
-          echo "Changed Apex files (raw):"
+            | grep '^force-app/main/default/.*' || true)
+      
+          echo "Changed files (raw):"
           echo "$CHANGED_FILES"
-          # Convert to space-separated single line
+      
+          # Convert to space-separated single line for use in later steps
           CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+      
 
       # -------------------------------
       # Build final FILES list (apply exclusions)
