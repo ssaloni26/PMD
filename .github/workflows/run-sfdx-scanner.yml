@@ -92,10 +92,15 @@ jobs:
             SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
             FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "^${SAFE_EXCLUDE}$|^${SAFE_EXCLUDE}/" || true)
           done
-          FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
-          echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
-          echo "Final files to analyze: $FINAL_FILES"
       
+          # Convert to single-line string separated by spaces
+          FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
+      
+          # Write to GITHUB_ENV
+          echo "FILES=${FINAL_FILES}" >> $GITHUB_ENV
+          echo "Final files to analyze: $FINAL_FILES"
+          echo "::debug::FILES=${FINAL_FILES}"
+
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
