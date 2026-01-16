@@ -140,7 +140,7 @@ global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, 
 
         if (permissionSetIds.isEmpty()) return resultMap;
 
-        String query = 'SELECT Id' + String.join(new List<String>(validFields), ',') + ' FROM PermissionSet WHERE Id IN :permissionSetIds';
+        String query = 'SELECT Id,name' + String.join(new List<String>(validFields), ',') + ' FROM PermissionSet WHERE Id IN :permissionSetIds';
         Map<Id, Set<String>> permissionSetVsDisplayNames = new Map<Id, Set<String>>();
         for (SObject permSet : Database.query(query)) {
             permissionSetVsDisplayNames.put((Id)permSet.get('Id'), collectPermissions(permSet, validFields, fieldApiVsDisplayNames));
