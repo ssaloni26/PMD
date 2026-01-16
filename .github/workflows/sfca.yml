@@ -115,9 +115,12 @@ jobs:
       # Run ESLint for JS/LWC files
       # -------------------------------
       - name: Run ESLint
-        if: ${{ always() && contains(FILES, '.js') }}
+        if: ${{ always() && env.FILES != '' && contains(env.FILES, '.js') }}
         run: |
           npx eslint $FILES || true
+        env:
+          FILES: ${{ env.FILES }}
+      
 
       # -------------------------------
       # Add SF CLI to PATH
