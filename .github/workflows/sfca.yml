@@ -133,14 +133,14 @@ jobs:
               LWC_DIR=$(echo "$FILE" | cut -d'/' -f1-5)
               FINAL_PATHS="$FINAL_PATHS $LWC_DIR"
             
- 
+            # Flow file
+            elif [[ "$FILE" =~ ^force-app/main/default/flows/[^/]+\.flow-meta\.xml$ ]]; then
+              FINAL_PATHS="$FINAL_PATHS $FILE"
+            
             # Apex class
             elif [[ "$FILE" == *.cls ]]; then
               FINAL_PATHS="$FINAL_PATHS $FILE"
-      
-            # Flow
-            elif [[ "$FILE" == force-app/main/default/flows/*.flow-meta.xml ]]; then
-              FINAL_PATHS="$FINAL_PATHS $FILE"
+ 
       
             # Default fallback
             else
