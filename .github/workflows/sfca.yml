@@ -150,7 +150,7 @@ jobs:
         uses: forcedotcom/run-code-analyzer@v2
         with:
           run-arguments: >
-            run
+            
             --target ${{ env.FINAL_FILES }}
             --engine eslint,cpd,flow-scanner,pmd,regex,retirejs
             --view detail
