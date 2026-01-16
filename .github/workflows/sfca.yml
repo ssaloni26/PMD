@@ -123,19 +123,24 @@ jobs:
       # -------------------------------
       # Build final FILES list (apply exclusions)
       # -------------------------------
-      - name: Resolve final Apex files
+      - name: Resolve final FILES (apply exclusions)
         run: |
-          FINAL_FILES="$CHANGED_FILES"
+          FINAL_FILES="$FILES"
+      
           ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS"
+      
           for EXCLUDE in $ALL_EXCLUSIONS; do
-            # Convert ** to .* for regex
-            REGEX=$(echo "$EXCLUDE" | sed 's/\\/.*/g')
-            FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "$REGEX" || true)
-            FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
+            REGEX=$(echo "$EXCLUDE" | sed 's/\*\*/.*/g')
+            FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "^$REGEX" || true)
           done
-          echo "Final Apex files to analyze:"
+      
+          FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
+      
+          echo "Final files to analyze:"
           echo "$FINAL_FILES"
+      
           echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
+      
 
       - name: Add SF CLI to PATH
         run: |
