@@ -13,7 +13,8 @@ engines:
   eslint:
     enabled: true
     auto_discover_eslint_config: true 
-  #   fileExclusions:
-  #     - '**/node_modules/**'
-  #     - '**/staticresources/**'
-  #     - '**/excluded-folder/**'
+    disable_lwc_base_config: true
+    file_extensions:
+      - js
+      - mjs
+      - jsx
