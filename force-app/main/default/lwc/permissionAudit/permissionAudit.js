@@ -4,7 +4,7 @@ import getPermissions from '@salesforce/apex/PermissionAuditController.getPermis
 import getPrivilegedPerms from '@salesforce/apex/PermissionAuditController.getPrivilegedPerms';
 
 export default class PermissionAudit extends LightningElement {
-    @track activeTab = 'me';
+    @track activeTab = 'user';
 
     showPanel = false;
     currentId = '';
