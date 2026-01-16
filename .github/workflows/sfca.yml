@@ -78,18 +78,46 @@ jobs:
       # -------------------------------
       # Get changed Apex files
       # -------------------------------
-      - name: Get all changed Salesforce files
+      - name: Get all changed Salesforce paths
         run: |
           git fetch origin ${{ github.base_ref }}
+      
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-            | grep '^force-app/main/default/.*' || true)
+            | grep '^force-app/main/default/' || true)
       
           echo "Changed files (raw):"
           echo "$CHANGED_FILES"
       
-          # Convert to space-separated single line for use in later steps
-          CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
-          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+          FINAL_PATHS=""
+      
+          for FILE in $CHANGED_FILES; do
+            # LWC: convert file → component folder
+            if [[ "$FILE" == force-app/main/default/lwc/*/* ]]; then
+              LWC_DIR=$(echo "$FILE" | cut -d'/' -f1-6)
+              FINAL_PATHS="$FINAL_PATHS $LWC_DIR"
+      
+            # Apex class
+            elif [[ "$FILE" == *.cls ]]; then
+              FINAL_PATHS="$FINAL_PATHS $FILE"
+      
+            # Flow
+            elif [[ "$FILE" == force-app/main/default/flows/*.flow-meta.xml ]]; then
+              FINAL_PATHS="$FINAL_PATHS $FILE"
+      
+            # Default fallback
+            else
+              FINAL_PATHS="$FINAL_PATHS $FILE"
+            fi
+          done
+      
+          # Deduplicate paths
+          FINAL_PATHS=$(echo "$FINAL_PATHS" | tr ' ' '\n' | sort -u | tr '\n' ' ')
+      
+          echo "Final Salesforce paths to analyze:"
+          echo "$FINAL_PATHS"
+      
+          echo "FILES=$FINAL_PATHS" >> $GITHUB_ENV
+      
       
 
       # -------------------------------
