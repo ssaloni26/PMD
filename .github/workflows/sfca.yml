@@ -6,6 +6,9 @@ on:
       - 'force-app/main/default/classes/**'
       - 'sfca-config.yml'
 
+# permissions:
+#   contents: read
+#   pull-requests: write
 jobs:
   sfca:
     runs-on: ubuntu-latest

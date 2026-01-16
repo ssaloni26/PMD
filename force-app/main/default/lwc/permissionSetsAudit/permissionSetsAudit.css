@@ -1,0 +1,74 @@
+.circle {
+    display: inline-block;
+    width: 24px;       
+    height: 24px;      
+    line-height: 24px; 
+    text-align: center;
+    border-radius: 50%;
+    font-weight: bold;
+    color: white;
+    margin: 2px;
+    font-size: 12px;
+}
+
+.circle-false {
+    display: inline-block;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    text-align: center;
+    line-height: 22px;
+    font-weight: bold;
+    color: #555;
+    margin: 2px;
+    font-size: 12px;
+    background-color: #d8d8d8;
+}
+
+.cards-container {
+    display: flex;
+    gap: 1rem;
+    height: 100vh;
+    padding: 1rem;
+}
+
+.fixed-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex: 1;
+}
+
+.equal-height-container {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 1rem;
+}
+
+.equal-height-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+}
+
+.card-content {
+    flex: 1;
+    overflow: auto;
+}
+
+.custom-right-align {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.custom-padding {
+    padding-right: 10%;
+}
+.object-name-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 30ch; /* restrict to ~30 characters width */
+}
