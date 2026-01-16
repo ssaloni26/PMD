@@ -117,7 +117,7 @@
                 }
                 return validPermission;
             }
-            private Set<String> saloni(Set<String> systemPermFields) {
+            private Set<String> saloin(Set<String> systemPermFields) {
                 Set<String> validPermission = new Set<String>();
                 Map<String, Schema.SObjectField> permissionSetNameVsFields = Schema.SObjectType.PermissionSet.fields.getMap(); 
                 Map<String, Schema.SObjectField> profileNameVsFields = Schema.SObjectType.Profile.fields.getMap(); 
