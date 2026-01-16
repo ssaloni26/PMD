@@ -151,31 +151,21 @@ jobs:
       # -------------------------------
       - name: Resolve final FILES (apply exclusions)
         run: |
-          echo "Initial FILES:"
-          echo "$FILES"
+          FINAL_FILES="$FILES"
       
-          # Combine all exclusions
           ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS"
+          # Convert ** to .* and strip quotes
+          ALL_EXCLUSIONS=$(echo "$ALL_EXCLUSIONS" | sed 's/\*\*/.*/g' | tr -d '"')
       
-          # Normalize exclusions (remove quotes, trim spaces)
-          ALL_EXCLUSIONS=$(echo "$ALL_EXCLUSIONS" | tr -d '"' | tr ' ' '\n' | sort -u)
-      
-          # Convert FILES to newline list
-          FINAL_FILES=$(echo "$FILES" | tr ' ' '\n')
+          # Convert FINAL_FILES to newline-separated
+          FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n')
       
           for EXCLUDE in $ALL_EXCLUSIONS; do
-            # Remove trailing /**
-            CLEAN_EXCLUDE="${EXCLUDE%/**}"
-      
-            # 1. Remove exact file match
-            FINAL_FILES=$(echo "$FINAL_FILES" | grep -v "^$CLEAN_EXCLUDE$" || true)
-      
-            # 2. Remove anything inside excluded folders
-            FINAL_FILES=$(echo "$FINAL_FILES" | grep -v "^$CLEAN_EXCLUDE/" || true)
+            FINAL_FILES=$(echo "$FINAL_FILES" | grep -v -E "^$EXCLUDE(/.*)?$|^$EXCLUDE$" || true)
           done
       
-          # Rebuild space-separated list
-          FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/  */ /g' | sed 's/^ //;s/ $//')
+          # Convert back to space-separated string
+          FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
       
           echo "Final files to analyze:"
           echo "$FINAL_FILES"
