@@ -12,33 +12,6 @@
         </value>
     </processMetadataValues>
     <processMetadataValues>
-        <name>CanvasModes</name>
-        <value>
-            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
-        </value>
-    </processMetadataValues>
-    <actionCalls>
-        <name>Action_1</name>
-        <label>Action 1</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <actionName>nullNotFound</actionName>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <offset>0</offset>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </actionCalls>
-    <apiVersion>64.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
-    <environments>Default</environments>
-    <interviewLabel>dml {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>dml</label>
-    <processMetadataValues>
-        <name>BuilderType</name>
-        <value>
-            <stringValue>LightningFlowBuilder</stringValue>
-        </value>
-    </processMetadataValues>
-    <processMetadataValues>
         <name>CanvasMode</name>
         <value>
             <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
@@ -51,66 +24,46 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Create_contact</name>
+        <label>Create_contact</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <inputAssignments>
+            <field>AccountId</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>LastName</field>
+            <value>
+                <elementReference>$User.CompanyName</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Contact</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
     <start>
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Action_1</targetReference>
+            <targetReference>Create_contact</targetReference>
         </connector>
-        <object>DML_Audit__c</object>
+        <object>Account</object>
         <recordTriggerType>Create</recordTriggerType>
+        <scheduledPaths>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>InvalidDraft</status>
-</Flow>
-
-<processMetadataValues>
-    <name>OriginBuilderType</name>
-    <value>
-        <stringValue>LightningFlowBuilder</stringValue>
-    </value>
-</processMetadataValues>
-<processType>AutoLaunchedFlow</processType>
-<recordCreates>
-    <name>Create_contact</name>
-    <label>Create_contact</label>
-    <locationX>0</locationX>
-    <locationY>0</locationY>
-    <inputAssignments>
-        <field>AccountId</field>
-        <value>
-            <elementReference>$Record.Id</elementReference>
-        </value>
-    </inputAssignments>
-    <inputAssignments>
-        <field>LastName</field>
-        <value>
-            <elementReference>$User.CompanyName</elementReference>
-        </value>
-    </inputAssignments>
-    <object>Contact</object>
-    <storeOutputAutomatically>true</storeOutputAutomatically>
-</recordCreates>
-<start>
-    <locationX>0</locationX>
-    <locationY>0</locationY>
-    <connector>
-        <targetReference>Create_contact</targetReference>
-    </connector>
-    <object>Account</object>
-    <recordTriggerType>Create</recordTriggerType>
-    <scheduledPaths>
-        <pathType>AsyncAfterCommit</pathType>
-    </scheduledPaths>
-    <triggerType>RecordAfterSave</triggerType>
-</start>
-<status>Obsolete</status>
-<variables>
-    <name>ConRecord</name>
-    <dataType>SObject</dataType>
-    <isCollection>false</isCollection>
-    <isInput>false</isInput>
-    <isOutput>false</isOutput>
-    <objectType>Contact</objectType>
-</variables>
+    <status>Obsolete</status>
+    <variables>
+        <name>ConRecord</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Contact</objectType>
+    </variables>
 </Flow>

@@ -9,7 +9,7 @@
         </value>
     </customProperties>
     <dynamicChoiceSets>
-        <name>ccsContact</name>
+        <name>ccsContacts</name>
         <collectionReference>Fetch_Related_Contacts</collectionReference>
         <dataType>String</dataType>
         <displayField>Name</displayField>
@@ -229,51 +229,4 @@
         <isOutput>false</isOutput>
         <objectType>Contact</objectType>
     </variables>
-    <actionCalls>
-        <name>Action_1</name>
-        <label>Action 1</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <actionName>nullNotFound</actionName>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <offset>0</offset>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </actionCalls>
-    <apiVersion>64.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
-    <environments>Default</environments>
-    <interviewLabel>dml {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>dml</label>
-    <processMetadataValues>
-        <name>BuilderType</name>
-        <value>
-            <stringValue>LightningFlowBuilder</stringValue>
-        </value>
-    </processMetadataValues>
-    <processMetadataValues>
-        <name>CanvasMode</name>
-        <value>
-            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
-        </value>
-    </processMetadataValues>
-    <processMetadataValues>
-        <name>OriginBuilderType</name>
-        <value>
-            <stringValue>LightningFlowBuilder</stringValue>
-        </value>
-    </processMetadataValues>
-    <processType>AutoLaunchedFlow</processType>
-    <start>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <connector>
-            <targetReference>Action_1</targetReference>
-        </connector>
-        <object>DML_Audit__c</object>
-        <recordTriggerType>Create</recordTriggerType>
-        <triggerType>RecordAfterSave</triggerType>
-    </start>
-    <status>InvalidDraft</status>
-</Flow>
-
 </Flow>

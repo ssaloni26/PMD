@@ -9,7 +9,7 @@
         <locationY>0</locationY>
         <assignmentItems>
             <assignToReference>$Record.OwnerId</assignToReference>
-            <operator>Assigns</operator>
+            <operator>Assign</operator>
             <value>
                 <elementReference>Get_Manager.Id</elementReference>
             </value>
@@ -18,27 +18,6 @@
     <environments>Default</environments>
     <interviewLabel>Case_Flow_get_records {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Case_Flow_get_records</label>
-    <processMetadataValues>
-        <name>BuilderType</name>
-        <value>
-            <stringValue>LightningFlowBuilder</stringValue>
-        </value>
-    </processMetadataValues>
-    <actionCalls>
-        <name>Action_1</name>
-        <label>Action 1</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <actionName>nullNotFound</actionName>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <offset>0</offset>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </actionCalls>
-    <apiVersion>64.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
-    <environments>Default</environments>
-    <interviewLabel>dml {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>dml</label>
     <processMetadataValues>
         <name>BuilderType</name>
         <value>
@@ -58,62 +37,36 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Manager</name>
+        <label>Get_Manager</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Assign_Owner</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$User.ManagerId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>User</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
     <start>
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Action_1</targetReference>
+            <targetReference>Get_Manager</targetReference>
         </connector>
-        <object>DML_Audit__c</object>
+        <object>Case</object>
         <recordTriggerType>Create</recordTriggerType>
-        <triggerType>RecordAfterSave</triggerType>
+        <triggerType>RecordBeforeSave</triggerType>
     </start>
-    <status>InvalidDraft</status>
-</Flow>
-
-<processMetadataValues>
-    <name>CanvasMode</name>
-    <value>
-        <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
-    </value>
-</processMetadataValues>
-<processMetadataValues>
-    <name>OriginBuilderType</name>
-    <value>
-        <stringValue>LightningFlowBuilder</stringValue>
-    </value>
-</processMetadataValues>
-<processType>AutoLaunchedFlow</processType>
-<recordLookups>
-    <name>Get_Manager</name>
-    <label>Get_Manager</label>
-    <locationX>0</locationX>
-    <locationY>0</locationY>
-    <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-    <connector>
-        <targetReference>Assign_Owner</targetReference>
-    </connector>
-    <filterLogic>and</filterLogic>
-    <filters>
-        <field>Id</field>
-        <operator>EqualTo</operator>
-        <value>
-            <elementReference>$User.ManagerId</elementReference>
-        </value>
-    </filters>
-    <getFirstRecordOnly>true</getFirstRecordOnly>
-    <object>User</object>
-    <storeOutputAutomatically>true</storeOutputAutomatically>
-</recordLookups>
-<start>
-    <locationX>0</locationX>
-    <locationY>0</locationY>
-    <connector>
-        <targetReference>Get_Manager</targetReference>
-    </connector>
-    <object>Case</object>
-    <recordTriggerType>Create</recordTriggerType>
-    <triggerType>RecordBeforeSave</triggerType>
-</start>
-<status>Obsolete</status>
+    <status>Obsolete</status>
 </Flow>

@@ -13,32 +13,6 @@
         </value>
     </processMetadataValues>
     <processMetadataValues>
-    <name>CanvasMode</name>
-    <value>
-            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
-        </value>
-    <actionCalls>
-        <name>Action_1</name>
-        <label>Action 1</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <actionName>nullNotFound</actionName>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <offset>0</offset>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </actionCalls>
-    <apiVersion>64.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
-    <environments>Default</environments>
-    <interviewLabel>dml {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>dml</label>
-    <processMetadataValues>
-        <name>BuilderType</name>
-        <value>
-            <stringValue>LightningFlowBuilder</stringValue>
-        </value>
-    </processMetadataValues>
-    <processMetadataValues>
         <name>CanvasMode</name>
         <value>
             <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
@@ -51,72 +25,51 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Opportunity_Stage_Update</name>
+        <label>Opportunity Stage Update</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>First_Contact_Made__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Additional_Meeting_Scheduled__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>StageName</field>
+            <value>
+                <stringValue>Qualification</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
     <start>
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Action_1</targetReference>
+            <targetReference>Opportunity_Stage_Update</targetReference>
         </connector>
-        <object>DML_Audit__c</object>
-        <recordTriggerType>Create</recordTriggerType>
-        <triggerType>RecordAfterSave</triggerType>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>StageName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Prospecting</stringValue>
+            </value>
+        </filters>
+        <object>Opportunity</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
     </start>
-    <status>InvalidDraft</status>
-</Flow>
-
-</processMetadataValues>
-<processMetadataValues>
-    <name>OriginBuilderType</name>
-    <value>
-        <stringValue>LightningFlowBuilder</stringValue>
-    </value>
-</processMetadataValues>
-<processType>AutoLaunchedFlow</processType>
-<recordUpdates>
-    <name>Opportunity_Stage_Update</name>
-    <label>Opportunity Stage Update</label>
-    <locationX>0</locationX>
-    <locationY>0</locationY>
-    <filterLogic>and</filterLogic>
-    <filters>
-        <field>First_Contact_Made__c</field>
-        <operator>EqualTo</operator>
-        <value>
-            <booleanValue>true</booleanValue>
-        </value>
-    </filters>
-    <filters>
-        <field>Additional_Meeting_Scheduled__c</field>
-        <operator>EqualTo</operator>
-        <value>
-            <booleanValue>true</booleanValue>
-        </value>
-    </filters>
-    <inputAssignments>
-        <field>StageName</field>
-        <value>
-            <stringValue>Qualification</stringValue>
-        </value>
-    </inputAssignments>
-    <inputReference>$Record</inputReference>
-</recordUpdates>
-<start>
-    <locationX>0</locationX>
-    <locationY>0</locationY>
-    <connector>
-        <targetReference>Opportunity_Stage_Update</targetReference>
-    </connector>
-    <filterLogic>and</filterLogic>
-    <filters>
-        <field>StageName</field>
-        <operator>EqualTo</operator>
-        <value>
-            <stringValue>Prospecting</stringValue>
-        </value>
-    </filters>
-    <object>Opportunity</object>
-    <recordTriggerType>CreateAndUpdate</recordTriggerType>
-    <triggerType>RecordBeforeSave</triggerType>
-</start>
-<status>Active</status>
+    <status>Active</status>
 </Flow>
