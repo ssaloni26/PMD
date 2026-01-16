@@ -158,13 +158,8 @@ jobs:
         with:
           run-arguments: >
             --target ${{ env.FILES }}
-            --engine eslint
-            --engine cpd
-            --engine flow-scanner
-            --engine pmd
-            --engine regex
-            --engine retirejs
             --view detail
             --output-file sfca_results.html
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
+      
