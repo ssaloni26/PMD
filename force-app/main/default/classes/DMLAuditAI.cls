@@ -14,7 +14,7 @@ public with sharing class DMLAuditAI {
                         '- Current Record Count: ' + currentCount + '\n' +
                         '- Historical Average: ' + historicalAvg + '\n' +
                         '- Threshold Factor: ' + thresholdFactor + 'x\n\n' +
-                        'Instructions: Compare and generate spike alert.';
+                        'Instructions: Compare and genno    erate spike alert.';
         return prompt;
     }
     public static String no(String userName, String objectName, Decimal currentCount, Decimal historicalAvg, Decimal thresholdFactor){
