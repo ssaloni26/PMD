@@ -156,8 +156,8 @@ jobs:
           ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS"
       
           for EXCLUDE in $ALL_EXCLUSIONS; do
-            REGEX=$(echo "$EXCLUDE" | sed 's/\*\*/.*/g')
-            FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "^$REGEX" || true)
+          REGEX=$(echo "$EXCLUDE" | sed 's#/\*\*#(/.*)?#g')
+          FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "^$REGEX" || true)
           done
       
           FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
