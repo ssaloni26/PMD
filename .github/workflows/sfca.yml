@@ -6,9 +6,9 @@ on:
       - 'force-app/main/default/**'
       - 'sfca-config.yml'
 
-# permissions:
-#   contents: read
-#   pull-requests: write
+permissions:
+  contents: read
+  pull-requests: write
 jobs:
   sfca:
     runs-on: ubuntu-latest
@@ -74,50 +74,96 @@ jobs:
           # Convert newlines to space-separated string
           PMD_EXCLUSIONS=$(echo "$PMD_EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
           echo "PMD_EXCLUSIONS=$PMD_EXCLUSIONS" >> $GITHUB_ENV
+      # -------------------------------
+      # Read ESLint exclusions
+      # -------------------------------
+      - name: Read ESLint exclusions from sfca-config.yml
+        run: |
+          ESLINT_EXCLUSIONS=$(yq '.engines.eslint.fileExclusions[]' sfca-config.yml || true)
+          ESLINT_EXCLUSIONS=$(echo "$ESLINT_EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
+          echo "ESLINT_EXCLUSIONS=$ESLINT_EXCLUSIONS" >> $GITHUB_ENV
 
+      # -------------------------------
+      # Read Regex exclusions
+      # -------------------------------
+      - name: Read Regex exclusions from sfca-config.yml
+        run: |
+          REGEX_EXCLUSIONS=$(yq '.engines.regex.fileExclusions[]' sfca-config.yml || true)
+          REGEX_EXCLUSIONS=$(echo "$REGEX_EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
+          echo "REGEX_EXCLUSIONS=$REGEX_EXCLUSIONS" >> $GITHUB_ENV
+
+      # -------------------------------
+      # Read RetireJS exclusions
+      # -------------------------------
+      - name: Read RetireJS exclusions from sfca-config.yml
+        run: |
+          RETIREJS_EXCLUSIONS=$(yq '.engines.retirejs.fileExclusions[]' sfca-config.yml || true)
+          RETIREJS_EXCLUSIONS=$(echo "$RETIREJS_EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
+          echo "RETIREJS_EXCLUSIONS=$RETIREJS_EXCLUSIONS" >> $GITHUB_ENV
+      
       # -------------------------------
       # Get changed Apex files
       # -------------------------------
-      - name: Get changed Salesforce source files
+      - name: Get all changed Salesforce paths
         run: |
           git fetch origin ${{ github.base_ref }}
+      
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^force-app/main/default/' || true)
-          echo "Changed Apex files (raw):"
+      
+          echo "Changed files (raw):"
           echo "$CHANGED_FILES"
-          # Convert to space-separated single line
-          CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
-          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+      
+          FINAL_PATHS=""
+      
+          for FILE in $CHANGED_FILES; do
+            # LWC: convert file → component folder
+            if [[ "$FILE" == force-app/main/default/lwc/*/* ]]; then
+              LWC_DIR=$(echo "$FILE" | cut -d'/' -f1-5)
+              FINAL_PATHS="$FINAL_PATHS $LWC_DIR"
+      
+            # Apex class
+            elif [[ "$FILE" == *.cls ]]; then
+              FINAL_PATHS="$FINAL_PATHS $FILE"
+      
+            # Flow
+            elif [[ "$FILE" == force-app/main/default/flows/*.flow-meta.xml ]]; then
+              FINAL_PATHS="$FINAL_PATHS $FILE"
+      
+            # Default fallback
+            else
+              FINAL_PATHS="$FINAL_PATHS $FILE"
+            fi
+          done
+      
+          # Deduplicate paths
+          FINAL_PATHS=$(echo "$FINAL_PATHS" | tr ' ' '\n' | sort -u | tr '\n' ' ')
+      
+          echo "Final Salesforce paths to analyze:"
+          echo "$FINAL_PATHS"
+      
+          echo "FILES=$FINAL_PATHS" >> $GITHUB_ENV
+      
+      
 
       # -------------------------------
       # Build final FILES list (apply exclusions)
       # -------------------------------
-      - name: Resolve final files
+      - name: Resolve final FILES (apply exclusions)
         run: |
-          FINAL_FILES=""
-          for f in $CHANGED_FILES; do
-            # Apply PMD/CPD exclusions ONLY to Apex
-            if [[ "$f" == *.cls ]]; then
-              SKIP=false
-              for EXCLUDE in $PMD_EXCLUSIONS $CPD_EXCLUSIONS; do
-                REGEX=$(echo "$EXCLUDE" | sed 's/\*\*/.*/g')
-                if echo "$f" | grep -E "$REGEX" >/dev/null; then
-                  SKIP=true
-                  break
-                fi
-              done
-              if [ "$SKIP" = false ]; then
-                FINAL_FILES="$FINAL_FILES $f"
-              fi
-            else
-              # Non-Apex (LWC, XML, etc.)
-              FINAL_FILES="$FINAL_FILES $f"
-            fi
+          FINAL_FILES="$FILES"
+      
+          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS"
+      
+          for EXCLUDE in $ALL_EXCLUSIONS; do
+          FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "^$EXCLUDE(/.*)?$" || true)
           done
       
-          FINAL_FILES=$(echo "$FINAL_FILES" | xargs)
+          FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
+      
           echo "Final files to analyze:"
           echo "$FINAL_FILES"
+      
           echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
       
 
@@ -125,28 +171,20 @@ jobs:
         run: |
               echo "/usr/local/bin" >> $GITHUB_PATH
           
-      - name: Prepare scoped workspace
+      - name: Debug FILES
         run: |
-                mkdir -p sfca-scope
-                for f in $FILES; do
-                  mkdir -p sfca-scope/$(dirname $f)
-                  cp $f sfca-scope/$f
-                done
-      - name: Fail if no files to analyze
-        run: |
-          if [ -z "$FILES" ]; then
-            echo "No analyzable files found. Skipping Code Analyzer."
-            exit 0
-          fi
-      
+          echo "FILES=${FILES}"
+            
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
-      - name: Run Salesforce Code Analyzer
-        id: run-code-analyzer
+      - name: Run Salesforce Code Analyzer (changed files only)
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          run-arguments: --workspace sfca-scope --view detail --output-file sfca_results.html 
+          run-arguments: >
+            --target ${{ env.FILES }}
+            --view detail
+            --output-file sfca_results.html
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
-
+      
