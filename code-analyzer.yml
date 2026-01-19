@@ -1,11 +1,11 @@
 engines:
   pmd:
-    exclude:
-      - "**/DMLInsightAnalyzer.cls"
+    fileExclusions:
+      - force-app/main/default/classes/PermissionSetsAuditController.cls
 
   cpd:
-    exclude:
-      - "**/PermissionSetsAuditController.cls"
+    fileExclusions:
+      - force-app/main/default/classes/PermissionSetsAuditController.cls
     minimum_tokens:
       apex: 50
 
