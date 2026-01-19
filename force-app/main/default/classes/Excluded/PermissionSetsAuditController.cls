@@ -111,7 +111,7 @@ public PermissionSetAuditWrapper(Id id, String name, Integer count, List<String>
 
         // Step 2: Get all fields of PermissionSet dynamically
         Map<String, Schema.SObjectField> psFields = Schema.SObjectType.PermissionSet.fields.getMap();
-        Set<String> validPrivilegedPerms = new Set<String>();
+        Set<String> ok = new Set<String>();
         for(String permName : privilegedPerms){
             if(psFields.containsKey(permName)){
                 validPrivilegedPerms.add(permName);
