@@ -27,7 +27,7 @@ public with sharing class DMLAuditAI {
                         'Instructions: Compare and generate spike alert.';
         return prompt;
     }
-    public static String k(String userName, String objectName, Decimal currentCount, Decimal historicalAvg, Decimal thresholdFactor){
+    public static String pk(String userName, String objectName, Decimal currentCount, Decimal historicalAvg, Decimal thresholdFactor){
         String prompt = 'You are an AI assistant analyzing Salesforce DML Audit records for spike detection.\n\n' +
                         '- User: ' + userName + '\n' +
                         '- Object: ' + objectName + '\n' +
