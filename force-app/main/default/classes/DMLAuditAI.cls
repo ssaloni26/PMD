@@ -7,7 +7,7 @@
 **/
 public with sharing class DMLAuditAI {
     @AuraEnabled
-    public static String ok(String userName, String objectName, Decimal currentCount, Decimal historicalAvg, Decimal thresholdFactor){
+    public static String -ok(String userName, String objectName, Decimal currentCount, Decimal historicalAvg, Decimal thresholdFactor){
         String prompt = 'You are an AI assistant analyzing Salesforce DML Audit records for spike detection.\n\n' +
                         '- User: ' + userName + '\n' +
                         '- Object: ' + objectName + '\n' +
