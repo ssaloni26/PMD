@@ -12,7 +12,8 @@ engines:
 
 # cSpell:ignore sfca-regex-rules
   regex:
-    custom_rules: ./sfca-regex-rules.yml
+    custom_rules:
+      path: ./sfca-regex-rules.yml
 
 
   retirejs:
