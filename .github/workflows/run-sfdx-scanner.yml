@@ -27,6 +27,9 @@ jobs:
 
       - name: Install Salesforce CLI
         run: npm install -g @salesforce/cli@latest
+      - name: Install Salesforce Code Analyzer Plugin
+        run: sf plugins install code-analyzer@latest
+
 
       # -------------------------------
       # Install yq (YAML parser)
@@ -73,10 +76,18 @@ jobs:
             # Remove folder and all subfiles recursively
             CHANGED_FILES=$(echo "$CHANGED_FILES" | grep -v -E "^${SAFE_EXCLUDE}(/.*)?$" || true)
           done
+          FILTERED_FILES=""
 
-          # Remove files that do not exist on disks
-          CHANGED_FILES=$(echo "$CHANGED_FILES" | xargs -n1 -I{} bash -c 'if [ -f "{}" ] || [ -d "{}" ]; then echo "{}"; fi')
-
+          for FILE in $CHANGED_FILES; do
+            if [ -e "$FILE" ]; then
+              FILTERED_FILES="$FILTERED_FILES $FILE"
+            else
+              echo "Skipping non-existent path: $FILE"
+            fi
+          done
+          
+          CHANGED_FILES=$(echo "$FILTERED_FILES" | sed 's/^ *//')
+          
           # Deduplicate and convert to space-separated list
           CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
           echo "Final changed files after exclusions and existence check:"
