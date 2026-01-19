@@ -20,7 +20,8 @@ engines:
   regex:
     custom_rules:
       path: ./sfca-regex-rules.yml
-      
+
   flow:
-    exclude_paths: 
-      - "**/flow.flow-meta.xml" 
+    enabled: true
+    exclude:
+      - force-app/main/default/flows/flow1.flow-meta.xml
