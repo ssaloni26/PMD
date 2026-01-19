@@ -1,12 +1,12 @@
 engines:
-  pmd:
-    # PMD doesn't support exclude_paths - use @SuppressWarnings in code instead
-    # or custom_rulesets with exclude-path in XML
+#   pmd:
+#     # PMD doesn't support exclude_paths - use @SuppressWarnings in code instead
+#     # or custom_rulesets with exclude-path in XML
 
-  cpd:
-    # CPD doesn't support exclude_paths - remove this section or use valid keys only
-    minimum_tokens:
-      apex: 50
+#   cpd:
+#     # CPD doesn't support exclude_paths - remove this section or use valid keys only
+#     minimum_tokens:
+#       apex: 50
 
   # eslint:
   #   eslint_ignore_file: .eslintignore
