@@ -9,7 +9,7 @@
 private class DMLLoggerBatchTest {
 
     // --- Utility CSV Builders ---
-    private static String getValidCsv(Date logDate) {
+    private static String ok(Date logDate) {
         Id userId = UserInfo.getUserId();
         return 'USER_ID,KEY_PREFIX,DML_TYPE,NUM_ROWS,TIMESTAMP_DERIVED\n' +
                userId + ',001,INSERT,5,' + logDate.format() + '\n' +
