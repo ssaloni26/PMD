@@ -1,10 +1,10 @@
 engines:
   pmd:
-    fileExclusions:
+    exclude:
       - force-app/main/default/classes/PermissionSetsAuditController.cls
 
   cpd:
-    fileExclusions:
+    exclude:
       - force-app/main/default/classes/PermissionSetsAuditController.cls
     minimum_tokens:
       apex: 50
