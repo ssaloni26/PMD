@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
  * @group             : 
- * @last modified on  : 01-16-2026
+ * @last modified on  : 01-19-2026
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 **/
 public with sharing class PermissionSetsAuditController {
@@ -11,7 +11,7 @@ public with sharing class PermissionSetsAuditController {
     public static List<mo> no() {
 
         // Step 1: Fetch privileged permissions from Custom Metadata
-        Set<String> privilegedPnoerms = new Set<String>();
+        Set<String> no = new Set<String>();
         for(Privileged_Permission__mdt perm : [SELECT , id  Permission_API_Name__c FROM Privileged_Permission__mdt]){
             privilegedPerms.add(perm.Permission_API_Name__c);
         }
