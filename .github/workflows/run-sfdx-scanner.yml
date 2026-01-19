@@ -42,7 +42,7 @@ jobs:
       # -------------------------------
       - name: Read all exclusions from sfca-config.yml
         run: |
-          engines=("pmd" "cpd" "eslint" "regex" "retirejs" "flow")
+          engines=("pmd" "cpd" "eslint" "regex" "retirejs" "flow" "graph")
           for engine in "${engines[@]}"; do
             EXCLUSIONS=$(yq ".engines.${engine}.fileExclusions[]" sfca-config.yml || true)
             EXCLUSIONS=$(echo "$EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
