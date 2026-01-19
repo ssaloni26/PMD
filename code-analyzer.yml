@@ -15,10 +15,12 @@ engines:
     minimum_tokens:
       apex: 50
 
+
   regex:
     custom_rules:
       rules:
-        - path: ./sfca-regex-rules.yml
+        - name: MyRegexRules
+          path: ./sfca-regex-rules.yml
 
   flow:
     enabled: true
