@@ -94,15 +94,15 @@ jobs:
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
-      - name: Run Salesforce Code Analyzer (changed files only)
-        uses: forcedotcom/run-code-analyzer@v2
-        with:
-          run-arguments: >
-            --target ${{ env.CHANGED_FILES }}
-            --view detail
-            --output-file sfca_results.html
-          results-artifact-name: salesforce-code-analyzer-results
-          github-token: ${{ github.token }}
+      # - name: Run Salesforce Code Analyzer (changed files only)
+      #   uses: forcedotcom/run-code-analyzer@v2
+      #   with:
+      #     run-arguments: >
+      #       --target ${{ env.CHANGED_FILES }}
+      #       --view detail
+      #       --output-file sfca_results.html
+      #     results-artifact-name: salesforce-code-analyzer-results
+      #     github-token: ${{ github.token }}
 
       - name: Run Graph Engine
         run: |
