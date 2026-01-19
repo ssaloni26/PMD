@@ -1,18 +1,19 @@
 engines:
-#   pmd:
-#     # PMD doesn't support exclude_paths - use @SuppressWarnings in code instead
-#     # or custom_rulesets with exclude-path in XML
+  pmd:
+    exclude:
+      - "**/DMLInsightAnalyzer.cls"
 
-#   cpd:
-#     # CPD doesn't support exclude_paths - remove this section or use valid keys only
-#     minimum_tokens:
-#       apex: 50
+  cpd:
+    exclude:
+      - "**/PermissionSetsAuditController.cls"
+    minimum_tokens:
+      apex: 50
 
   eslint:
     eslint_ignore_file: .eslintignore
 
   regex:
-    custom_rules: .sfca-regex-rules.yml
+    custom_rules: ./sfca-regex-rules.yml
 
   retirejs:
     exclude_patterns:
