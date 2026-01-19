@@ -23,3 +23,6 @@ engines:
     fileExclusions:
       - force-app/main/default/flows/Excluded
       - force-app/main/default/flows/Send_Email_on_New_Account_Creation.flow-meta.xml
+  graph:
+    fileExclusions:
+      - force-app/main/default/classes/DynamicCSVParser.cls
