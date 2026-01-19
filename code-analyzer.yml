@@ -1,4 +1,13 @@
 engines:
+
+
+  eslint:
+    eslint_ignore_file: .eslintignore
+
+  retirejs:
+    exclude_patterns:
+      - force-app/main/default/lwc/Excluded/**
+      - force-app/main/default/lwc/dmlAverage
   pmd:
     exclude-file-list: excluded-files.txt
 
@@ -7,20 +16,11 @@ engines:
     minimum_tokens:
       apex: 50
 
-  eslint:
-    eslint_ignore_file: .eslintignore
-
 # cSpell:ignore sfca-regex-rules
   regex:
     custom_rules:
       path: ./sfca-regex-rules.yml
-
-
-  retirejs:
-    exclude_patterns:
-      - force-app/main/default/lwc/Excluded/**
-      - force-app/main/default/lwc/dmlAverage
-
+      
   flow:
     exclude_paths: 
       - "**/flow.flow-meta.xml" 
