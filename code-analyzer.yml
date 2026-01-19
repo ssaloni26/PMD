@@ -1,21 +1,15 @@
 engines:
-engines:
   pmd:
-    exclude_paths:
-      - "force-app/main/default/classes/Excluded/**"
-      - "force-app/main/default/triggers/ExcludedTrigger.cls"
-
+    # PMD doesn't support exclude_paths - use @SuppressWarnings in code instead
+    # or custom_rulesets with exclude-path in XML
 
   cpd:
-    exclude_paths:
-      - "force-app/main/default/classes/Excluded/**"
-      - "force-app/main/default/classes/Utility/*.cls"
+    # CPD doesn't support exclude_paths - remove this section or use valid keys only
     minimum_tokens:
       apex: 50
 
   eslint:
     eslint_ignore_file: .eslintignore
-
 
   regex:
     custom_rules: ./sfca-regex-rules.yml
@@ -26,5 +20,5 @@ engines:
       - force-app/main/default/lwc/dmlAverage
 
   flow:
-    exclude_paths:
-      - "force-app/main/default/flows/Excluded/**"
+    # Flow doesn't support exclude_paths - remove this
+    python_command: python3
