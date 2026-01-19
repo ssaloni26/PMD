@@ -1,0 +1,8 @@
+rules:
+  - id: avoid_hardcoded_password
+    description: "Avoid hardcoding passwords in Apex classes."
+    regex: ".*password.*=.*['\"].*['\"]"
+    severity: critical
+    exclude_paths:
+      - "force-app/main/default/classes/Excluded/**"
+      - "force-app/main/default/classes/Utility/**"

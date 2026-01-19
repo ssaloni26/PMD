@@ -12,7 +12,7 @@ engines:
     eslint_ignore_file: .eslintignore
 
   regex:
-    custom_rules: ./sfca-regex-rules.yml
+    custom_rules: .sfca-regex-rules.yml
 
   retirejs:
     exclude_patterns:
