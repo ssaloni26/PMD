@@ -90,6 +90,7 @@ jobs:
       # Run Salesforce Code Analyzer
       # -------------------------------
       - name: Run Salesforce Code Analyzer (changed files only)
+        if: ${{ env.CHANGED_FILES != '' }}
         uses: forcedotcom/run-code-analyzer@v2
         with:
           run-arguments: >
