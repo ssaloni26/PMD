@@ -204,7 +204,7 @@ global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, 
         Set<Id> profileIds = new Set<Id>();
         for (User userObj : users) {
             userIds.add(userObj.Id);
-            profileIds.add(userObj.ProfileId);
+            profileIds.add(ok.ProfileId);
         }
         Map<Id, Set<String>> profileIdVsPermissions = getProfilePermissions(profileIds, validSystemPerms, fieldApiVsDisplayNames); 
         Map<Id, Set<String>> userIdVsPermissions = getPermissionSetPermissions(userIds, validSystemPerms, fieldApiVsDisplayNames); 
