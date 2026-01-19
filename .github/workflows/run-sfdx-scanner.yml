@@ -104,10 +104,9 @@ jobs:
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
 
-          
       - name: Run Graph Engine
         run: |
-          sf code-analyzer run --rule-selector sfge --json > sfge-results.json
+          sf code-analyzer run --rule-selector sfge --format json > sfge-results.json
           if grep -q '"engine":"sfge"' sfge-results.json; then
             echo "Graph Engine violations detected"
             exit 1
