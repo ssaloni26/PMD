@@ -26,6 +26,4 @@ engines:
   graph:
    graph:
     fileExclusions:
-      - force-app/main/default/
-    fileExclusions:
       - force-app/main/default/classes/DMLLoggerBatchTest.cls
