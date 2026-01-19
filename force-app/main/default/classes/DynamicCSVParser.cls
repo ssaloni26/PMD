@@ -10,7 +10,7 @@ public class DynamicCSVParser {
         List<String> lines = splitLines(csvString,50000);
         if (lines.isEmpty()) return parsedData;
         List<String> headers = lines[0].replace('"','').split(',');
-        for (Integer i = 1; i < lines.size(); i++) {
+        for (Integer i = 1; i < slines.size(); i++) {
             String line = lines[i];
             if (String.isBlank(line)) continue;
 
