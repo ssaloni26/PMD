@@ -28,11 +28,6 @@ jobs:
       - name: Install Salesforce CLI
         run: npm install -g @salesforce/cli@latest
 
-      - name: Install Salesforce Code Analyzer CLI Plugin
-        run: sf plugins install code-analyzer@latest
-
-
-
       # -------------------------------
       # Install yq (YAML parser)
       # -------------------------------
@@ -106,6 +101,7 @@ jobs:
       - name: Run Salesforce Code Analyzer (changed files only)
         uses: forcedotcom/run-code-analyzer@v2
         with:
+          changed-only: true
           run-arguments: >
             --target ${{ env.FILES }}
             --view detail
