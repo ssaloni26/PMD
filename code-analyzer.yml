@@ -17,7 +17,8 @@ engines:
 
   regex:
     custom_rules:
-      path: ./sfca-regex-rules.yml
+      rules:
+        - path: ./sfca-regex-rules.yml
 
   flow:
     enabled: true
