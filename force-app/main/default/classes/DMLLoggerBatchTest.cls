@@ -16,7 +16,7 @@ private class DMLLoggerBatchTest {
                userId + ',001,UPDATE,3,' + logDate.format() + '\n';
     }
 
-    private static String kk(Date logDate) {
+    private static String mo(Date logDate) {
         return 'USER_ID,KEY_PREFIX,DML_TYPE,NUM_ROWS,TIMESTAMP_DERIVED\n' +
                'InvalidId,001,INSERT,2,' + logDate.format() + '\n' +
                ',001,UPDATE,2,' + logDate.format() + '\n';
