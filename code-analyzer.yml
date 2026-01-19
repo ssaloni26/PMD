@@ -1,24 +1,24 @@
 engines:
+engines:
   pmd:
-    exclude_patterns:
-      - force-app/main/default/classes/Excluded/**
+    exclude_paths:
+      - "force-app/main/default/classes/Excluded/**"
+      - "force-app/main/default/triggers/ExcludedTrigger.cls"
+
 
   cpd:
-    exclude_patterns:
-      - force-app/main/default/classes/Excluded/**
+    exclude_paths:
+      - "force-app/main/default/classes/Excluded/**"
+      - "force-app/main/default/classes/Utility/*.cls"
     minimum_tokens:
       apex: 50
 
   eslint:
-    exclude_patterns:
-      - force-app/main/default/lwc/Excluded/**
-      - force-app/main/default/lwc/dmlAverage
+    eslint_ignore_file: .eslintignore
 
 
   regex:
-    exclude_patterns:  # ← Add this instead of custom_rules for exclusions
-      - force-app/main/default/lwc/Excluded/**
-      - force-app/main/default/lwc/dmlAverage
+    custom_rules: ./sfca-regex-rules.yml
 
   retirejs:
     exclude_patterns:
@@ -26,7 +26,5 @@ engines:
       - force-app/main/default/lwc/dmlAverage
 
   flow:
-    exclude_patterns:
-    - force-app/main/default/flows/Excluded/**
-    - force-app/main/default/flows/Send_Email_on_New_Account_Creation.flow-meta.xml
-    python_command: python3
+    exclude_paths:
+      - "force-app/main/default/flows/Excluded/**"
