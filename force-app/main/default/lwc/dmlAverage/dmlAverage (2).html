@@ -1,0 +1,40 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 10-03-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card title="DML Audit AI Analysis" icon-name="standard:analytics">
+        <div class="slds-m-around_medium">
+            <p><strong>User:</strong> {userId}</p>
+            <p><strong>Object:</strong> {objectName}</p>
+            <p><strong>Current Count:</strong> {count}</p>
+            <p><strong>Historical Average:</strong> {averageCount}</p>
+
+            <template if:true={spikeDetected}>
+                <p style="color:red;"><strong>DML spike detected!</strong></p>
+            </template>
+            <template if:false={spikeDetected}>
+                <p>No spike detected.</p>
+            </template>
+
+            <!-- Flex Prompt Builder -->
+            <lightning-textarea 
+                label="Custom Prompt Template" 
+                value={customPrompt} 
+                onchange={handlePromptChange}>
+            </lightning-textarea>
+            <lightning-button 
+                label="Generate AI Response" 
+                onclick={generateCustomAIMessage} 
+                class="slds-m-top_small">
+            </lightning-button>
+
+            <hr/>
+            <h4>AI Message:</h4>
+            <pre>{aiMessage}</pre>
+        </div>
+    </lightning-card>
+</template>
