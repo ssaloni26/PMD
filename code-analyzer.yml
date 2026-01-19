@@ -8,8 +8,8 @@ engines:
     minimum_tokens:
       apex: 50
 
-  eslint:
-    eslint_ignore_file: .eslintignore
+  # eslint:
+  #   eslint_ignore_file: .eslintignore
 
   regex:
     custom_rules: ./sfca-regex-rules.yml
