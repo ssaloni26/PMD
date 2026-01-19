@@ -2,7 +2,6 @@ engines:
   pmd:
     fileExclusions:
       - force-app/main/default/classes/Excluded
-
   cpd:
     fileExclusions:
       - force-app/main/default/classes/Excluded

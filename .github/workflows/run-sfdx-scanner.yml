@@ -94,14 +94,23 @@ jobs:
           echo "$FINAL_FILES"
       
           echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
-
+      # -------------------------------
+      # Guard: Skip SFCA if no changed files remain
+      # -------------------------------
+      - name: Guard against unchanged / excluded files
+        run: |
+          if [ -z "${FILES// }" ]; then
+            echo "No changed files to analyze after exclusions."
+            echo "Skipping Salesforce Code Analyzer to avoid full repository scan."
+            exit 0
+          fi
+      
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
       - name: Run Salesforce Code Analyzer (changed files only)
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          changed-only: true
           run-arguments: >
             --target ${{ env.FILES }}
             --view detail
