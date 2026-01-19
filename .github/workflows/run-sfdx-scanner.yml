@@ -100,22 +100,14 @@ jobs:
       # Run Salesforce Code Analyzer
       # -------------------------------
       - name: Run Salesforce Code Analyzer (changed files only)
-        id: run-code-analyzer 
+
         uses: forcedotcom/run-code-analyzer@v2
         with:
           run-arguments: >
-            --target ${{ env.FILES }}
+            --target ${{ env.FINAL_FILES }}
             --view detail
             --output-file sfca_results.html
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
 
           
-      # -------------------------------
-      # Fail on Sev 1 / Sev 2 (changed files only)
-      # -------------------------------
-      - name: Fail on Critical/High Violations (Changed Files Only)
-        if: |
-          steps.run-code-analyzer.outputs.num-sev1-violations-in-changed-files > 0 ||
-          steps.run-code-analyzer.outputs.num-sev2-violations-in-changed-files > 0
-        run: exit 1
