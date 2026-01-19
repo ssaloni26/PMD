@@ -77,6 +77,9 @@ jobs:
       # -------------------------------
       # Filter changed files against exclusions
       # -------------------------------
+        # -------------------------------
+          # Filter changed files against exclusions
+          # -------------------------------
       - name: Resolve final FILES (apply exclusions)
         run: |
           FINAL_FILES="$FILES"
@@ -84,17 +87,31 @@ jobs:
           ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS $FLOW_EXCLUSIONS"
           
           for EXCLUDE in $ALL_EXCLUSIONS; do
-          SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
-          FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "^${SAFE_EXCLUDE}$|^${SAFE_EXCLUDE}/" || true)
+            SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
+            FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "^${SAFE_EXCLUDE}$|^${SAFE_EXCLUDE}/" || true)
           done
       
           FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
       
           echo "Final files to analyze:"
           echo "$FINAL_FILES"
-      
-          echo "FILE=$FINAL_FILES" >> $GITHUB_ENV
 
+          if [ -z "$FINAL_FILES" ]; then
+            echo "No files left to analyze after exclusions."
+          fi
+
+          echo "FILE=$FINAL_FILES" >> $GITHUB_ENV
+      # -------------------------------
+      # Guard: Skip SFCA if no changed files remain
+      # -------------------------------
+      - name: Guard against unchanged / excluded files
+        run: |
+          if [ -z "${FILE// }" ]; then
+            echo "No changed files to analyze after exclusions."
+            echo "Skipping Salesforce Code Analyzer to avoid full repository scan."
+            exit 0
+          fi
+      
       
       # -------------------------------
       # Run Salesforce Code Analyzer
