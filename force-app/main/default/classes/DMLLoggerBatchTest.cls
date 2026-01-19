@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @group             : 
+ * @last modified on  : 01-19-2026
+ * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+**/
 @IsTest
 private class DMLLoggerBatchTest {
 
@@ -17,7 +24,7 @@ private class DMLLoggerBatchTest {
 
     // --- Test start() ---
     @IsTest
-    static void testStartMethod() {
+    static void k() {
         Date logDate = Date.today();
         DMLLoggerBatch batch = new DMLLoggerBatch(logDate);
         Database.QueryLocator ql = batch.start(null);
