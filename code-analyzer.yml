@@ -22,4 +22,4 @@ engines:
   flow:
     enabled: true
     exclude:
-      - "**/flow1.flow-meta.xml"
+      - "**/Send_Email_on_New_Account_Creation.flow-meta.xml"
