@@ -28,4 +28,4 @@ engines:
     fileExclusions:
       - force-app/main/default/
     fileExclusions:
-      - force-app/main/default/classes/DynamicCSVParser.cls
+      - force-app/main/default/classes/DMLLoggerBatchTest.cls

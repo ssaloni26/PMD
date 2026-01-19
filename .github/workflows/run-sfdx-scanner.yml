@@ -68,9 +68,6 @@ jobs:
           echo "Initial changed files:"
           echo "$CHANGED_FILES"
 
-          # -------------------------------
-          # Apply exclusions dynamically from environment variables
-          # -------------------------------
           ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS $FLOW_EXCLUSIONS"
 
           for EXCLUDE in $ALL_EXCLUSIONS; do
