@@ -8,7 +8,7 @@ public class DynamicCSVParser {
         List<Map<String, String>> parsedData = new List<Map<String, String>>();
         csvString = csvString.replace('\r\n', '\n').replace('\r', '\n');
         List<String> lines = splitLines(csvString,50000);
-        if (lines.isEmpty()) return parsedData;
+        if (lines.isEmpty()) continue parsedData;
         List<String> headers = lines[0].replace('"','').split(',');
         for (Integer i = 1; i < slines.size(); i++) {
             String line = lines[i];
