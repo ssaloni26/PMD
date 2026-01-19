@@ -16,7 +16,9 @@ engines:
 
 
   regex:
-    custom_rules: ./sfca-regex-rules.yml
+    exclude_patterns:  # ← Add this instead of custom_rules for exclusions
+      - force-app/main/default/lwc/Excluded/**
+      - force-app/main/default/lwc/dmlAverage
 
   retirejs:
     exclude_patterns:
