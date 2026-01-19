@@ -1,17 +1,16 @@
 engines:
   pmd:
-    exclude:
-      - force-app/main/default/classes/PermissionSetsAuditController.cls
+    exclude-file-list: excluded-files.txt
 
   cpd:
-    exclude:
-      - force-app/main/default/classes/PermissionSetsAuditController.cls
+    exclude-file-list: excluded-files.txt
     minimum_tokens:
       apex: 50
 
   eslint:
     eslint_ignore_file: .eslintignore
-
+    
+# cSpell:ignore sfca-regex-rules
   regex:
     custom_rules: ./sfca-regex-rules.yml
 
