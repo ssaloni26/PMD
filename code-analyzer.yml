@@ -10,9 +10,9 @@ engines:
       apex: 50
 
   eslint:
-  exclude_patterns:
-    - force-app/main/default/lwc/Excluded/**
-    - force-app/main/default/lwc/dmlAverage
+    exclude_patterns:
+      - force-app/main/default/lwc/Excluded/**
+      - force-app/main/default/lwc/dmlAverage
 
 
   regex:
