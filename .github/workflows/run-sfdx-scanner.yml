@@ -106,9 +106,14 @@ jobs:
 
       - name: Run Graph Engine
         run: |
-          sf code-analyzer run --rule-selector sfge --format json > sfge-results.json
-          if grep -q '"engine":"sfge"' sfge-results.json; then
+          echo "Running Graph Engine on changed files..."
+          sf code-analyzer run --rule-selector sfge > sfge-results.txt 2>&1
+          cat sfge-results.txt
+          if grep -q "sfge:" sfge-results.txt; then
             echo "Graph Engine violations detected"
             exit 1
+          else
+            echo "No Graph Engine violations"
           fi
+      
       
