@@ -60,11 +60,7 @@ jobs:
         if: ${{ env.CHANGED_FILES != '' }}
         uses: forcedotcom/run-code-analyzer@v2  
         with:
-          run-arguments: >
-            --target ${{ env.CHANGED_FILES }}
-            --config-file sfca-config.yml
-            --view detail
-            --output-file sfca_results.html
+          run-arguments: --workspace  --config-file sfca-config.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
 
