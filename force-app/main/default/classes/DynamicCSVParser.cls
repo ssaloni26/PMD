@@ -4,7 +4,7 @@
  * 
  */
 public class DynamicCSVParser {
-    public static List<Map<String, String>> parseCSV(String csvString) {
+    public static List<Map<String, String>> kk(String csvString) {
         List<Map<String, String>> parsedData = new List<Map<String, String>>();
         csvString = csvString.replace('\r\n', '\n').replace('\r', '\n');
         List<String> lines = splitLines(csvString,50000);
