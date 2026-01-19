@@ -364,4 +364,42 @@ global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, 
         }
         return permissionDisplayName;
     }
+
+    public void engine(List<User> users) {
+
+        // 1️⃣ Query inside a loop
+        for (User u : users) {
+            // This is inefficient and will trigger Graph Engine
+            List<Contact> contacts = [SELECT Id, Name FROM Contact WHERE AccountId = :u.AccountId];
+            System.debug('Contacts count for user ' + u.Id + ': ' + contacts.size());
+        }
+    
+        // 2️⃣ Chained SOQL without selectivity hints
+        // Suppose we query Contacts and their related Account, then related Owner
+        List<Contact> contactList = [SELECT Id, Account.Name, Account.Owner.Name FROM Contact];
+        for (Contact c : contactList) {
+            System.debug('Contact: ' + c.Name + ', Account Owner: ' + c.Account.Owner.Name);
+        }
+    
+        // 3️⃣ Nested queries on unindexed fields & PermissionSetAssignments queried per user
+        for (User u : users) {
+            // Querying PermissionSetAssignment individually per user (inefficient)
+            List<PermissionSetAssignment> psaList = [
+                SELECT Id, PermissionSet.Name 
+                FROM PermissionSetAssignment 
+                WHERE AssigneeId = :u.Id
+            ];
+    
+            // Nested query on unindexed field (suppose Custom_Object__c.Name is unindexed)
+            for (PermissionSetAssignment psa : psaList) {
+                List<Custom_Object__c> records = [
+                    SELECT Id, Name 
+                    FROM Custom_Object__c 
+                    WHERE Name LIKE 'Test%' AND OwnerId = :u.Id
+                ];
+                System.debug('User ' + u.Id + ' has ' + records.size() + ' custom objects');
+            }
+        }
+    }
+    
 }
