@@ -93,18 +93,17 @@ jobs:
           echo "Final files to analyze:"
           echo "$FINAL_FILES"
       
-          echo "FILES=$FINAL_FILES" >> $GITHUB_ENV
+          echo "FILE=$FINAL_FILES" >> $GITHUB_ENV
 
       
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
       - name: Run Salesforce Code Analyzer (changed files only)
-
         uses: forcedotcom/run-code-analyzer@v2
         with:
           run-arguments: >
-            --target ${{ env.FINAL_FILES }}
+            --target ${{ env.FILE }}
             --view detail
             --output-file sfca_results.html
           results-artifact-name: salesforce-code-analyzer-results
