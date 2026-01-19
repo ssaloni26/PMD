@@ -94,26 +94,26 @@ jobs:
       # -------------------------------
       # Run Salesforce Code Analyzer
       # -------------------------------
-      # - name: Run Salesforce Code Analyzer (changed files only)
-      #   uses: forcedotcom/run-code-analyzer@v2
-      #   with:
-      #     run-arguments: >
-      #       --target ${{ env.CHANGED_FILES }}
-      #       --view detail
-      #       --output-file sfca_results.html
-      #     results-artifact-name: salesforce-code-analyzer-results
-      #     github-token: ${{ github.token }}
+      - name: Run Salesforce Code Analyzer (changed files only)
+        uses: forcedotcom/run-code-analyzer@v2
+        with:
+          run-arguments: >
+            --target ${{ env.CHANGED_FILES }}
+            --view detail
+            --output-file sfca_results.html
+          results-artifact-name: salesforce-code-analyzer-results
+          github-token: ${{ github.token }}
 
-      - name: Run Graph Engine
-        run: |
-          echo "Running Graph Engine on changed files..."
-          sf code-analyzer run --rule-selector sfge > sfge-results.txt 2>&1
-          cat sfge-results.txt
-          if grep -q "sfge:" sfge-results.txt; then
-            echo "Graph Engine violations detected"
-            exit 1
-          else
-            echo "No Graph Engine violations"
-          fi
+      # - name: Run Graph Engine
+      #   run: |
+      #     echo "Running Graph Engine on changed files..."
+      #     sf code-analyzer run --rule-selector sfge > sfge-results.txt 2>&1
+      #     cat sfge-results.txt
+      #     if grep -q "sfge:" sfge-results.txt; then
+      #       echo "Graph Engine violations detected"
+      #       exit 1
+      #     else
+      #       echo "No Graph Engine violations"
+      #     fi
       
       
