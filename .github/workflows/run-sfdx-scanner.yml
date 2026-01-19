@@ -43,12 +43,9 @@ jobs:
       - name: Get changed Apex files
         id: changed
         run: |
-          CHANGED_FILES=$(git diff origin/${{ github.base_ref }}...HEAD \
-            --name-only \
-            --diff-filter=ACM \
-            | grep '^force-app/main/default/classes/.*\.cls$' \
-            | tr '\n' ' ')
-      
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+          | grep '^force-app/main/default/' || true)
+
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
           echo "Changed files: $CHANGED_FILES"
         
@@ -58,26 +55,8 @@ jobs:
       # -------------------------------
       - name: Run Salesforce Code Analyzer (changed files only)
         if: ${{ env.CHANGED_FILES != '' }}
-        uses: forcedotcom/run-code-analyzer@v2  
+        uses: forcedotcom/run-code-analyzer@v2
         with:
-          run-arguments: --workspace . --target ${{ env.CHANGED_FILES }} --config-file sfca-config.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
+          run-arguments: --workspace . --target ${{ env.CHANGED_FILES }} --view detail --output-file sfca_results.html --output-file sfca_results.json
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
-
-      # - name: Run Graph Engine safely
-      #   if: ${{ env.CHANGED_FILES != '' }}
-      #   run: |
-      #     echo "Running Graph Engine..."
-      #     sf code-analyzer run --target ${{ env.CHANGED_FILES }} --rule-selector sfge --view detail --output-file sfge_results.html || true
-      #     echo "SFGE finished (errors may exist in sfge_results.html)"
-          
-      
-      #   # -------------------------------
-      #   # Upload SFGE Report as Artifact
-      #   # -------------------------------
-      # - name: Upload SFGE results
-      #   if: always()
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: sfge-results
-      #     path: sfge_results.html
