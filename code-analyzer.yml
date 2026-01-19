@@ -3,13 +3,13 @@ engines:
     exclude-file-list: excluded-files.txt
 
   cpd:
-    exclude-file-list: excluded-files.txt
+    exclude: "**/PermissionSetsAuditController.*"
     minimum_tokens:
       apex: 50
 
   eslint:
     eslint_ignore_file: .eslintignore
-    
+
 # cSpell:ignore sfca-regex-rules
   regex:
     custom_rules: ./sfca-regex-rules.yml
