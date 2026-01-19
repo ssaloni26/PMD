@@ -44,12 +44,14 @@ jobs:
         id: changed
         run: |
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-          | grep '^force-app/main/default/' || true)
-
+            | grep '^force-app/main/default/' || true)
+      
+          # join lines with spaces
+          CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
+      
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
           echo "Changed files: $CHANGED_FILES"
         
-      
       # -------------------------------
       # Run Salesforce Code Analyzer(without --rule-selector sfge )
       # -------------------------------
@@ -60,3 +62,4 @@ jobs:
           run-arguments: --workspace . --target ${{ env.CHANGED_FILES }} --view detail --output-file sfca_results.html --output-file sfca_results.json
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
+      
