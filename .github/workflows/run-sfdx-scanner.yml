@@ -74,7 +74,7 @@ jobs:
             CHANGED_FILES=$(echo "$CHANGED_FILES" | grep -v -E "^${SAFE_EXCLUDE}(/.*)?$" || true)
           done
 
-          # Remove files that do not exist on disk
+          # Remove files that do not exist on disks
           CHANGED_FILES=$(echo "$CHANGED_FILES" | xargs -n1 -I{} bash -c 'if [ -f "{}" ] || [ -d "{}" ]; then echo "{}"; fi')
 
           # Deduplicate and convert to space-separated list
