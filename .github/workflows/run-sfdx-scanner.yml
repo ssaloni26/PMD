@@ -98,7 +98,7 @@ jobs:
     
       
       # -------------------------------
-      # Run Salesforce Code Analyzer
+      # Run Salesforce Code Analyzer(without       --rule-selector sfge )
       # -------------------------------
       - name: Run Salesforce Code Analyzer (changed files only)
         if: ${{ env.CHANGED_FILES != '' }}
