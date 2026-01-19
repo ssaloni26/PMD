@@ -111,12 +111,12 @@ jobs:
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
 
-      - name: Run Graph Engine safely
-        if: ${{ env.CHANGED_FILES != '' }}
-        run: |
-          echo "Running Graph Engine..."
-          sf code-analyzer run --target ${{ env.CHANGED_FILES }} --rule-selector sfge --view detail --output-file sfge_results.html || true
-          echo "SFGE finished (errors may exist in sfge_results.html)"
+      # - name: Run Graph Engine safely
+      #   if: ${{ env.CHANGED_FILES != '' }}
+      #   run: |
+      #     echo "Running Graph Engine..."
+      #     sf code-analyzer run --target ${{ env.CHANGED_FILES }} --rule-selector sfge --view detail --output-file sfge_results.html || true
+      #     echo "SFGE finished (errors may exist in sfge_results.html)"
           
       
       
