@@ -70,15 +70,16 @@ jobs:
           for EXCLUDE in $ALL_EXCLUSIONS; do
             # Escape regex special characters
             SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
-            # Remove any matching files or directories
-            CHANGED_FILES=$(echo "$CHANGED_FILES" | grep -v -E "^${SAFE_EXCLUDE}$|^${SAFE_EXCLUDE}/" || true)
+            # Remove folder and all subfiles recursively
+            CHANGED_FILES=$(echo "$CHANGED_FILES" | grep -v -E "^${SAFE_EXCLUDE}(/.*)?$" || true)
           done
 
-          # -------------------------------
+          # Remove files that do not exist on disk
+          CHANGED_FILES=$(echo "$CHANGED_FILES" | xargs -n1 -I{} bash -c 'if [ -f "{}" ] || [ -d "{}" ]; then echo "{}"; fi')
+
           # Deduplicate and convert to space-separated list
-          # -------------------------------
           CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
-          echo "Final changed files after exclusions:"
+          echo "Final changed files after exclusions and existence check:"
           echo "$CHANGED_FILES"
 
           # Save to GitHub Actions environment
