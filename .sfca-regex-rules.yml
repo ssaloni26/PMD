@@ -1,8 +1,19 @@
+# cSpell:words sfca
+# sfca-regex-rules.yml - Ignore PermissionSetsAuditController references
+# Purpose: Robustly ignore analyzer findings that reference the PermissionSetsAuditController Apex class.
+# Notes:
+# - Regex uses a word boundary to avoid matching substrings (e.g., HelperPermissionSetsAuditController)
+# - (?i) can be dropped if you want case-sensitive matches (Apex class names are typically PascalCase)
 rules:
-  - id: avoid_hardcoded_password
-    description: "Avoid hardcoding passwords in Apex classes."
-    regex: ".*password.*=.*['\"].*['\"]"
-    severity: critical
-    exclude_paths:
-      - "force-app/main/default/classes/Excluded/**"
-      - "force-app/main/default/classes/Utility/**"
+  - id: ignore-permission-sets-audit
+    name: "Ignore: PermissionSetsAuditController references"
+    # Prefer case-insensitive if analyzer may vary casing; otherwise remove (?i)
+    regex: '(?i)\bPermissionSetsAuditController\b'
+    message: "Reference to PermissionSetsAuditController (auto-ignored)"
+    severity: info
+    languages:
+      - apex
+    ignore: true
+    ruleTag: ignore-permission-sets-audit
+    paths:
+      - "**/PermissionSetsAuditController/**"

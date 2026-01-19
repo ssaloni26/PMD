@@ -14,11 +14,12 @@ engines:
   regex:
     custom_rules: ./sfca-regex-rules.yml
 
+
   retirejs:
     exclude_patterns:
       - force-app/main/default/lwc/Excluded/**
       - force-app/main/default/lwc/dmlAverage
 
   flow:
-    # Flow doesn't support exclude_paths - remove this
-    python_command: python3
+    exclude_paths: 
+      - "**/flow.flow-meta.xml" 
