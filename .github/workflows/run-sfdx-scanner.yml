@@ -93,6 +93,7 @@ jobs:
         with:
           run-arguments: >
             --target ${{ env.CHANGED_FILES }}
+            --rule-selector sfge
             --view detail
             --output-file sfca_results.html
           results-artifact-name: salesforce-code-analyzer-results
