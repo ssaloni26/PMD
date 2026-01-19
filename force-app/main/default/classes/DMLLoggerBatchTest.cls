@@ -24,7 +24,7 @@ private class DMLLoggerBatchTest {
 
     // --- Test start() ---
     @IsTest
-    static void k() {
+    static void ok() {
         Date logDate = Date.today();
         DMLLoggerBatch batch = new DMLLoggerBatch(logDate);
         Database.QueryLocator ql = batch.start(null);
