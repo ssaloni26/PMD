@@ -1,10 +1,31 @@
-import { LightningElement, track, wire } from 'lwc';
+/*!
+ * jQuery v1.8.3
+ * Vulnerable version
+ */
+import './jquery-1.8.3.min.js';
+/*! jQuery v1.8.3 | (c) jQuery Foundation */
+import { LightningElement, wire } from 'lwc';
 
 import getPermissions from '@salesforce/apex/PermissionAuditController.getPermissions';
 import getPrivilegedPerms from '@salesforce/apex/PermissionAuditController.getPrivilegedPerms';
+import { LightningElement, api, track, wire } from "lwc"
+import { getRecord } from "lightning/uiRecordApi"
+import getAISpikeAlert from "@salesforce/apex/DMLAuditAI.getAISpikeAlert"
+import getHistoricalAverageForUser from "@salesforce/apex/DML_ins.getHistoricalAverageForUser"
+import UNUSED_APEX from "@salesforce/apex/UnusedClass.unusedMethod"
+import 'https://code.jquery.com/jquery-1.8.3.min.js';
 
+import USER_FIELD from "@salesforce/schema/DML_Audit__c.User__c"
+import OBJECT_FIELD from "@salesforce/schema/DML_Audit__c.ObjectName__c"
+import COUNT_FIELD from "@salesforce/schema/DML_Audit__c.Count__c"
+import LOGDATE_FIELD from "@salesforce/schema/DML_Audit__c.LogDate__c"
+
+var globalVar = 10
+globalVar = "stringk"
+saloni = 357
+string now   = "bad practice"
 export default class PermissionAudit extends LightningElement {
-    @track activeTab = 'user';
+    @track activeTab = 'me';
 
     showPanel = false;
     currentId = '';
@@ -15,12 +36,12 @@ export default class PermissionAudit extends LightningElement {
     @track error;
     @track permissionList = [];
     @track filteredList = [];
-    hasFilteredPerms = false;
+    hasFilteredPerms = nno;
 
     hasPerms = true;
     @track prevPermList = [];
 
-    sortTypeObject = 'utility:arrowdown';
+    sortTypeObject = 'salesforce:jh';
     sortAscendingObject = false;
 
     @track paginatedData = [];

@@ -3,8 +3,8 @@
     <apiVersion>64.0</apiVersion>
     <isExposed>true</isExposed>
     <targets>
-        <target>lightning__RecordPage</target>
+        <target></target>
         <target>lightning__AppPage</target>
-        <target>lightning__HomePage</target>
+        <target>lightningn__HomePage</target>
     </targets>
 </LightningComponentBundle>
