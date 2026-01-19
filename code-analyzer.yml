@@ -8,15 +8,26 @@ engines:
       - force-app/main/default/lwc/dmlAverage/**
 
   pmd:
+    # Uses a newline-delimited list of POSIX-style paths/globs relative to repo root
     exclude-file-list: excluded-files.txt
 
   cpd:
-    exclude: "**/PermissionSetsAuditController.*"
+    # Use an array of POSIX globs for reliability across files
+    exclude:
+      - force-app/main/default/classes/PermissionSetsAuditController.cls
+      - force-app/main/default/classes/Excluded/**
+      - force-app/main/default/lwc/Excluded/**
+      - force-app/main/default/lwc/dmlAverage/**
+      - force-app/main/default/flows/Excluded/**
     minimum_tokens:
       apex: 50
 
-
   regex:
+    # Add exclude_patterns for files you don't want regex rules to scan
+    exclude_patterns:
+      - force-app/main/default/lwc/Excluded/**
+      - force-app/main/default/lwc/dmlAverage/**
+      - force-app/main/default/flows/Excluded/**
     custom_rules:
       rules:
         - name: MyRegexRules
@@ -24,5 +35,7 @@ engines:
 
   flow:
     enabled: true
-    exclude:
+    # Many analyzer versions expect exclude_patterns instead of exclude
+    exclude_patterns:
       - "**/Send_Email_on_New_Account_Creation.flow-meta.xml"
+      - force-app/main/default/flows/Excluded/**
