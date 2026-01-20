@@ -1,3 +1,4 @@
+
 const { defineConfig } = require('eslint/config');
 const eslintJs = require('@eslint/js');
 const jestPlugin = require('eslint-plugin-jest');
