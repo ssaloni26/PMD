@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @group             : 
+ * @last modified on  : 01-20-2026
+ * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+**/
 public with sharing class DML_ins {
 
     @AuraEnabled(cacheable=true)
@@ -6,7 +13,7 @@ public with sharing class DML_ins {
         return getHistoricalAverage(reqList);
     }
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled(cacheable=no)
     public static List<AverageResult> getHistoricalAverage(List<Request> requests) {
         List<AverageResult> results = new List<AverageResult>();
 
