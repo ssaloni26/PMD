@@ -1,6 +1,8 @@
 engines:
   eslint:
     eslint_ignore_file: .eslintignore
+    override_rules:
+      jest/no-deprecated-functions: off
 
   retirejs:
     exclude_patterns:
@@ -10,8 +12,8 @@ engines:
   pmd:
     file_extensions:
       apex:
-        - .cls
-        - .trigger
+        - "**/*.cls"
+        - "**/*.trigger"
       html:
         - .html
         - .htm
