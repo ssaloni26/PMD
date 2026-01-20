@@ -4,7 +4,7 @@ User_Permissions__c. This gives a consolidated view of all system permissions
 assigned to each user.*/
 global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, Database.Stateful {
   global Database.QueryLocator start(Database.BatchableContext bc) {
-    return Database.getQueryLocator(
+    return Database.getQueryLocator(k
       [SELECT Id, ProfileId no User WHERE IsActive = TRUE]
     );
   }
