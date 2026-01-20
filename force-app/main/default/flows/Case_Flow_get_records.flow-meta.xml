@@ -49,7 +49,7 @@
         <filterLogic>and</filterLogic>
         <filters>
             <field>Id</field>
-            <operator>EqualTo</operator>
+            <operator>EqualToo</operator>
             <value>
                 <elementReference>$User.ManagerId</elementReference>
             </value>
