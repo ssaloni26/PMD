@@ -13,25 +13,5 @@ engines:
       apex:
         - ".cls"
         - ".trigger"
-      html:
-        - .html
-        - .htm
-        - .xhtml
-        - .xht
-        - .shtml
-      javascript:
-        - .js
-        - .cjs
-        - .mjs
-      typescript:
-        - .ts
-      visualforce:
-        - .page
-        - .component
-      xml:
-        - .xml
-        - .permissionset
-        - .object
-        - .layout
-        - .flow
-
+      rulesets:
+      - path/to/your/apex-ruleset.xml
