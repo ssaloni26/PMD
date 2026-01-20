@@ -62,35 +62,23 @@ jobs:
           echo "Base branch: ${{ github.base_ref }}"
           git fetch origin ${{ github.base_ref }} --depth=1
       
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD \
-            | grep '^force-app/main/default/' || true)
-      
-          echo "Changed files before filtering:"
-          echo "$CHANGED_FILES"
-
-          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS $FLOW_EXCLUSIONS"
-
-          for EXCLUDE in $ALL_EXCLUSIONS; do
-            # Escape regex special characters
-            SAFE_EXCLUDE=$(echo "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
-            CHANGED_FILES=$(echo "$CHANGED_FILES" | grep -v -E "^${SAFE_EXCLUDE}$|^${SAFE_EXCLUDE}/" || true)
-
+          
+          for engine in "${engines[@]}"; do
+            CHANGED_ENGINE="$CHANGED_FILES"  # start with all changed files
+            EXCLUSIONS=$(yq ".engines.${engine}.fileExclusions[]" sfca-config.yml || true)
+          
+            for EXCLUDE in $EXCLUSIONS; do
+              SAFE_EXCLUDE=$(echo "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
+              CHANGED_ENGINE=$(echo "$CHANGED_ENGINE" | grep -v -E "^${SAFE_EXCLUDE}$|^${SAFE_EXCLUDE}/" || true)
+            done
+          
+            # Save filtered list per engine
+            echo "${engine^^}_CHANGED_FILES=$CHANGED_ENGINE" >> $GITHUB_ENV
           done
           echo "Exclusions for flow: $FLOW_EXCLUSIONS"
           echo "Changed files before filtering: $CHANGED_FILES"
 
-          FILTERED_FILES=""
-
-          for FILE in $CHANGED_FILES; do
-            if [ -e "$FILE" ]; then
-              FILTERED_FILES="$FILTERED_FILES $FILE"
-            else
-              echo "Skipping non-existent path: $FILE"
-            fi
-          done
-         
-          CHANGED_FILES=$(echo "$FILTERED_FILES" | sed 's/^ *//')
-         
+                  
           # Deduplicate and convert to space-separated list
           CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
           echo "Final changed files after exclusions and existence check:"
@@ -104,7 +92,6 @@ jobs:
       # Run Salesforce Code Analyzer(without --rule-selector sfge )
       # -------------------------------
       - name: Run Salesforce Code Analyzer (changed files only)
-        if: ${{ env.CHANGED_FILES != '' }}
         uses: forcedotcom/run-code-analyzer@v2  
         with:
           run-arguments: >
