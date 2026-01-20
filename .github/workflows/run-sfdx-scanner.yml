@@ -59,14 +59,13 @@ jobs:
       - name: Get all changed files
         id: changed
         run: |
-          # Fetch base branch
-          git fetch origin ${{ github.base_ref }}
-
-          # Get all changed files under force-app/main/default/
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+          echo "Base branch: ${{ github.base_ref }}"
+          git fetch origin ${{ github.base_ref }} --depth=1
+      
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD \
             | grep '^force-app/main/default/' || true)
-
-          echo "Initial changed files:"
+      
+          echo "Changed files before filtering:"
           echo "$CHANGED_FILES"
 
           ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS $FLOW_EXCLUSIONS"
