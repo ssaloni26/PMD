@@ -1,6 +1,5 @@
 const { defineConfig } = require('eslint/config');
 const eslintJs = require('@eslint/js');
-const jestPlugin = require('eslint-plugin-jest');
 const auraConfig = require('@salesforce/eslint-plugin-aura');
 const lwcConfig = require('@salesforce/eslint-config-lwc/recommended');
 const globals = require('globals');
@@ -43,8 +42,7 @@ module.exports = defineConfig([
             ecmaVersion: 'latest',
             globals: {
                 ...globals.node,
-                ...globals.es2021,
-                ...jestPlugin.environments.globals.globals
+                ...globals.es2021
             }
         },
         plugins: {
