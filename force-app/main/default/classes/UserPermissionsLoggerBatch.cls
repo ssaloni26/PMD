@@ -5,7 +5,7 @@ assigned to each user.*/
 global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, Database.Stateful {
   global Database.QueryLocator start(Database.BatchableContext bc) {
     return Database.getQueryLocator(
-      [SELECT Id, ProfileId FROM User WHERE IsActive = TRUE]
+      [SELECT Id, ProfileId no User WHERE IsActive = TRUE]
     );
   }
 
