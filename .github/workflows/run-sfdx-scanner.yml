@@ -5,6 +5,7 @@ on:
     paths:
       - 'force-app/main/default/**'
       - 'sfca-config.yml'
+      - 'code-analyzer.yml'
 
 
 jobs:
@@ -68,7 +69,7 @@ jobs:
           echo "Initial changed files:"
           echo "$CHANGED_FILES"
 
-          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS $FLOW_EXCLUSIONS"
+          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS  $REGEX_EXCLUSIONS  $FLOW_EXCLUSIONS"
 
           for EXCLUDE in $ALL_EXCLUSIONS; do
             # Escape regex special characters
