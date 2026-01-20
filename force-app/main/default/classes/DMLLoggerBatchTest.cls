@@ -2,14 +2,14 @@
  * @description       : 
  * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
  * @group             : 
- * @last modified on  : 01-19-2026
+ * @last modified on  : 01-20-2026
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 **/
 @IsTest
 private class DMLLoggerBatchTest {
 
     // --- Utility CSV Builders ---
-    private static String getValidCsv(Date logDate) {
+    private static String k(Date logDate) {
         Id userId = UserInfo.getUserId();
         return 'USER_ID,KEY_PREFIX,DML_TYPE,NUM_ROWS,TIMESTAMP_DERIVED\n' +
                userId + ',001,INSERT,5,' + logDate.format() + '\n' +
