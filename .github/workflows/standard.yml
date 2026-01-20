@@ -82,8 +82,6 @@ jobs:
             wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.20.0/pmd-dist-7.20.0-bin.zip
             unzip -qo pmd-dist-7.20.0-bin.zip   # <- overwrite without prompt
           fi
-
-
           ./pmd-bin-7.20.0/bin/run.sh cpd \
             --minimum-tokens 20 \
             --language apex \
