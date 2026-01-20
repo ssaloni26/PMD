@@ -1,9 +1,10 @@
 engines:
   eslint:
-    eslint_ignore_file: .eslintignore
-
+    fileExclusions: 
+      - force-app/main/default/lwc/Excluded/**
+      - force-app/main/default/lwc/dmlAverage/**
   retirejs:
-    exclude_patterns:
+    fileExclusions:
       - force-app/main/default/lwc/Excluded/**
       - force-app/main/default/lwc/dmlAverage/**
 
