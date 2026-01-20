@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - 'force-app/main/default/**'
-      - 'code-analyzer.yml'
+      - 'sfca-config.yml'
 
 
 jobs:
