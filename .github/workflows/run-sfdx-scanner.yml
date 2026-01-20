@@ -1,6 +1,11 @@
 name: old  Salesforce Code Analyzer Workflow
 
+
 on:
+  push:
+    paths:
+      - 'force-app/main/default/**'
+      - 'sfca-config.yml'
   pull_request:
     paths:
       - 'force-app/main/default/**'
