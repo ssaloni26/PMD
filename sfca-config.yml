@@ -12,9 +12,9 @@ engines:
       - force-app/main/default/lwc/Excluded
       - force-app/main/default/lwc/dmlAverage
   regex:
-    fileExclusions:
-      - force-app/main/default/lwc/Excluded
-      - force-app/main/default/lwc/dmlAverage
+    exclude:
+      - "force-app/main/default/lwc/Excluded/**"
+      - "force-app/main/default/lwc/dmlAverage/**"
   retirejs:
     fileExclusions:
       - force-app/main/default/lwc/Excluded
