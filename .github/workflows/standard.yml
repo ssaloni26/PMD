@@ -78,6 +78,13 @@ jobs:
 
       - name: Run PMD CPD
         run: |
+          # Download PMD if not already downloaded
+          if [ ! -d "pmd-bin-7.20.0" ]; then
+            wget https://github.com/pmd/pmd/releases/download/pmd_releases/7.20.0/pmd-bin-7.20.0.zip
+            unzip -q pmd-bin-7.20.0.zip
+            chmod +x pmd-bin-7.20.0/bin/run.sh
+          fi
+
           ./pmd-bin-7.20.0/bin/run.sh cpd \
             --minimum-tokens 20 \
             --language apex \
