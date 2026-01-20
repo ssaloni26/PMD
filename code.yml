@@ -20,4 +20,3 @@ engines:
     minimum_tokens:
       apex: 30
       javascript: 30
-    skip_duplicate_files: true
