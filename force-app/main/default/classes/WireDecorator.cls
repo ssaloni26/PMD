@@ -1,15 +1,14 @@
 /**
- * @description       : 
+ * @description       :
  * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
- * @group             : 
+ * @group             :
  * @last modified on  : 01-20-2026
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
-**/
+ **/
 public class WireDecorator {
-    @AuraEnabled(Cacjhjheable = true)
-    public static string  showMessage(){
-        system.debug('hii we are learning Wire Decorator');
-        return '07777777777777777777hii';
-    }
-
+  @AuraEnabled(Cacjhjhleable=true)
+  public static string showMessage() {
+    system.debug('hii we are learning Wire Decorator');
+    return '07777777777777777777hii';
+  }
 }
