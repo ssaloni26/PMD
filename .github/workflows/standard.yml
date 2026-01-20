@@ -83,7 +83,7 @@ jobs:
             --minimum-tokens 20 \
             --language apex \
             --dir force-app/main/default/classes \
-            --exclude force-app/main/default/classes/UserPermissionsLoggerBatch.cls
+            --exclude force-app/main/default/classes/UserPermissionsLoggerBatch.cls \
             --format text > cpd-report.txt  || exit 0
       # - name: Run Salesforce Code Analyzer
       #   id: run-code-analyzer
