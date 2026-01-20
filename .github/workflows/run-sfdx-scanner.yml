@@ -27,6 +27,9 @@ jobs:
 
       - name: Install Salesforce CLI
         run: npm install -g @salesforce/cli@latest
+      - name: Install Salesforce Code Analyzer Plugin
+        run: sf plugins install code-analyzer@latest
+
 
       # -------------------------------
       # Install yq (YAML parser)
@@ -42,7 +45,7 @@ jobs:
       # -------------------------------
       - name: Read all exclusions from sfca-config.yml
         run: |
-          engines=("pmd" "cpd" "eslint" "regex" "retirejs" "flow")
+          engines=("pmd" "cpd" "eslint" "regex" "retirejs" "flow" "graph")
           for engine in "${engines[@]}"; do
             EXCLUSIONS=$(yq ".engines.${engine}.fileExclusions[]" sfca-config.yml || true)
             EXCLUSIONS=$(echo "$EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
@@ -52,73 +55,56 @@ jobs:
       # -------------------------------
       # Get changed files
       # -------------------------------
-      - name: Get all changed Salesforce paths
+      - name: Get all changed files
+        id: changed
         run: |
+          # Fetch base branch
           git fetch origin ${{ github.base_ref }}
 
+          # Get all changed files under force-app/main/default/
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^force-app/main/default/' || true)
 
-          FINAL_PATHS=""
+          echo "Initial changed files:"
+          echo "$CHANGED_FILES"
+
+          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS $FLOW_EXCLUSIONS"
+
+          for EXCLUDE in $ALL_EXCLUSIONS; do
+            # Escape regex special characters
+            SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
+            # Remove folder and all subfiles recursively
+            CHANGED_FILES=$(echo "$CHANGED_FILES" | grep -v -E "^${SAFE_EXCLUDE}(/.*)?$" || true)
+          done
+          FILTERED_FILES=""
+
           for FILE in $CHANGED_FILES; do
-            if [[ "$FILE" == force-app/main/default/lwc/*/* ]]; then
-              LWC_DIR=$(echo "$FILE" | cut -d'/' -f1-5)
-              FINAL_PATHS="$FINAL_PATHS $LWC_DIR"
+            if [ -e "$FILE" ]; then
+              FILTERED_FILES="$FILTERED_FILES $FILE"
             else
-              FINAL_PATHS="$FINAL_PATHS $FILE"
+              echo "Skipping non-existent path: $FILE"
             fi
           done
-
-          # Deduplicate
-          FINAL_PATHS=$(echo "$FINAL_PATHS" | tr ' ' '\n' | sort -u | tr '\n' ' ')
-          echo "FILES=$FINAL_PATHS" >> $GITHUB_ENV
-          echo "Final changed files: $FINAL_PATHS"
-
-      # -------------------------------
-      # Filter changed files against exclusions
-      # -------------------------------
-
-      - name: Resolve final FILES (apply exclusions)
-        run: |
-          FINAL_FILES="$FILES"
-     
-          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS $FLOW_EXCLUSIONS"
          
-          for EXCLUDE in $ALL_EXCLUSIONS; do
-            SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
-            FINAL_FILES=$(echo "$FINAL_FILES" | tr ' ' '\n' | grep -v -E "^${SAFE_EXCLUDE}$|^${SAFE_EXCLUDE}/" || true)
-          done
-     
-          FINAL_FILES=$(echo "$FINAL_FILES" | tr '\n' ' ' | sed 's/ $//')
-     
-          echo "Final files to analyze:"
-          echo "$FINAL_FILES"
+          CHANGED_FILES=$(echo "$FILTERED_FILES" | sed 's/^ *//')
+         
+          # Deduplicate and convert to space-separated list
+          CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
+          echo "Final changed files after exclusions and existence check:"
+          echo "$CHANGED_FILES"
 
-          if [ -z "$FINAL_FILES" ]; then
-            echo "No files left to analyze after exclusions."
-          fi
-
-          echo "FILE=$FINAL_FILES" >> $GITHUB_ENV
+          # Save to GitHub Actions environment
+          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
       # -------------------------------
-      # Guard: Skip SFCA if no changed files remain
-      # -------------------------------
-      - name: Guard against unchanged / excluded files
-        run: |
-          if [ -z "${FILE// }" ]; then
-            echo "No changed files to analyze after exclusions."
-            echo "Skipping Salesforce Code Analyzer to avoid full repository scan."
-            exit 0
-          fi
-     
-     
-      # -------------------------------
-      # Run Salesforce Code Analyzer
+      # Run Salesforce Code Analyzer(without --rule-selector sfge )
       # -------------------------------
       - name: Run Salesforce Code Analyzer (changed files only)
-        uses: forcedotcom/run-code-analyzer@v2
+        if: ${{ env.CHANGED_FILES != '' }}
+        uses: forcedotcom/run-code-analyzer@v2  
         with:
           run-arguments: >
-            --target ${{ env.FILE }}
+            --target ${{ env.CHANGED_FILES }}
+            --config-file sfca-config.yml
             --view detail
             --output-file sfca_results.html
           results-artifact-name: salesforce-code-analyzer-results
