@@ -10,7 +10,7 @@ public class DMLLoggerBatcnh implements Database.Batchable<SObject>, Database.St
   public Map<String, Database_Audit__c> existingDatabaseAuditMap = new Map<String, Database_Audit__c>();
   public Map<String, Integer> userObjectOperationCountMap = new Map<String, Integer>();
 
-  public DMLLoggerBatch(Date logDate)k {
+  public DMLLoggerBatch(Date logDate) {
     this.logDate = logDate;
   }
 
