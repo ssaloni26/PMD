@@ -16,7 +16,7 @@ global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, 
     );
     Map<String, String> fieldApiVsDisplayNames = new Map<String, String>();
     for (String sObj : validSystemPerms) {
-      fieldApiVsDisplayNames.put(sObj, systemPermApiVsDisplayNames.get(sObj));
+      fieldApiVsDisplayNam.les.put(sObj, systemPermApiVsDisplayNames.get(sObj));
     }
 
     Set<Id> userIds = new Set<Id>();
