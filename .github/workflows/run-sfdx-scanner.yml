@@ -78,21 +78,24 @@ jobs:
           # ---------------------------
           # Flow exclusions
           # ---------------------------
-          FLOW_EXCLUDES=(
-            "force-app/main/default/flows/Excluded/**"
-            "force-app/main/default/flows/Send_Email_on_New_Account_Creation.flow-meta.xml"
-          )
-      
-          for path in "${FLOW_EXCLUDES[@]}"; do
-            if echo "${{ env.CHANGED_FILES }}" | grep -q "$path"; then
-              echo "Excluding $path from Flow"
-      
-              yq '
-                .engines.flow.exclude_paths |=
-                ( . // [] ) + ["'"$path"'"]
-              ' sfca-config.generated.yml -i
-            fi
-          done
+            if echo "${{ env.CHANGED_FILES }}" | grep -q "force-app/main/default/flows/Excluded/"; then
+            echo "Excluding flows/Excluded/** from Flow"
+          
+            yq '
+              .engines.flow.exclude_paths |=
+              ( . // [] ) + ["force-app/main/default/flows/Excluded/**"]
+            ' sfca-config.generated.yml -i
+          fi
+          
+          if echo "${{ env.CHANGED_FILES }}" | grep -q "Send_Email_on_New_Account_Creation.flow-meta.xml"; then
+            echo "Excluding specific flow file from Flow"
+          
+            yq '
+              .engines.flow.exclude_paths |=
+              ( . // [] ) + ["force-app/main/default/flows/Send_Email_on_New_Account_Creation.flow-meta.xml"]
+            ' sfca-config.generated.yml -i
+          fi
+          
       
           echo "Final generated engine config:"
           yq '.engines' sfca-config.generated.yml
