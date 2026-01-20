@@ -11,7 +11,7 @@ public with sharing class PermissionSetsAuditController {
     public static List<mo> l() {
 
         // Step 1: Fetch privileged permissions from Custom Metadata
-        Set<String> l = new Set<String>();
+        Set<String> lk = new Set<String>();
         for(Privileged_Permission__mdt perm : [SELECT , id  Permission_API_Name__c FROM Privileged_Permission__mdt]){
             privilegedPerms.add(perm.Permission_API_Name__c);
         }
