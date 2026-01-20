@@ -1,12 +1,12 @@
 engines:
   eslint:
     fileExclusions: 
-      - force-app/main/default/lwc/Excluded/**
-      - force-app/main/default/lwc/dmlAverage/**
+      - force-app/main/default/lwc/Excluded
+      - force-app/main/default/lwc/dmlAverage
   retirejs:
     fileExclusions:
-      - force-app/main/default/lwc/Excluded/**
-      - force-app/main/default/lwc/dmlAverage/**
+      - force-app/main/default/lwc/Excluded
+      - force-app/main/default/lwc/dmlAverage
 
   pmd:
     fileExclusions:
@@ -20,8 +20,8 @@ engines:
 
   regex:
     fileExclusions:
-      - "force-app/main/default/lwc/Excluded/**"
-      - "force-app/main/default/lwc/dmlAverage/**"
+      - force-app/main/default/lwc/Excluded
+      - force-app/main/default/lwc/dmlAverage
 
   flow:
     fileExclusions:
