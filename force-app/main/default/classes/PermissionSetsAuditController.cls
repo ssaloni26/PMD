@@ -179,7 +179,7 @@ public with sharing class PermissionSetsAuditController {
     ]) {
       apiToLabelMap.put(ed.QualifiedApiName, ed.Label);
     }
-    
+      
     List<ObjPerm> results = new List<ObjPerm>();
     for (ObjectPermissions op : perms) {
       if (!apiToLabelMap.containsKey(op.SObjectType) || !op.PermissionsRead)
