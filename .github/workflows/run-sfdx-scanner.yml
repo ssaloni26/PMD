@@ -2,10 +2,16 @@ name: old  Salesforce Code Analyzer Workflow
 
 
 on:
+  push:
+    paths:
+      - 'force-app/main/default/**'
+      - 'sfca-config.yml'
   pull_request:
     paths:
       - 'force-app/main/default/**'
-      - 'code-analyzer.yml'
+      - 'sfca-config.yml'
+
+
 jobs:
   sfca:
     runs-on: ubuntu-latest
