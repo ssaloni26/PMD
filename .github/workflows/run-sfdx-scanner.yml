@@ -73,10 +73,13 @@ jobs:
 
           for EXCLUDE in $ALL_EXCLUSIONS; do
             # Escape regex special characters
-            SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
-            # Remove folder and all subfiles recursively
-            CHANGED_FILES=$(echo "$CHANGED_FILES" | grep -v -E "^${SAFE_EXCLUDE}(/.*)?$" || true)
+            SAFE_EXCLUDE=$(echo "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
+            CHANGED_FILES=$(echo "$CHANGED_FILES" | grep -v -E "^${SAFE_EXCLUDE}$|^${SAFE_EXCLUDE}/" || true)
+
           done
+          echo "Exclusions for flow: $FLOW_EXCLUSIONS"
+          echo "Changed files before filtering: $CHANGED_FILES"
+
           FILTERED_FILES=""
 
           for FILE in $CHANGED_FILES; do
