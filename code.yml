@@ -13,5 +13,7 @@ engines:
       apex:
         - ".cls"
         - ".trigger"
-      rulesets:
+      javascript:
+        - ".js"
+    rulesets:
       - path/to/your/apex-ruleset.xml
