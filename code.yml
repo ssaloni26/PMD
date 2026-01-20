@@ -9,11 +9,5 @@ engines:
       - force-app/main/default/lwc/dmlAverage/**
       
   pmd:
-    file_extensions:
-      apex:
-        - ".cls"
-        - ".trigger"
-      javascript:
-        - ".js"
     custom_rulesets:
       - config/pmd/apex-ruleset.xml
