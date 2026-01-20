@@ -42,6 +42,60 @@ jobs:
       
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
           echo "Changed files: $CHANGED_FILES"
+      # -------------------------------
+      # Install yq for YAML processing
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+      # -------------------------------
+      # Generate dynamic SFCA config        
+      - name: Generate dynamic SFCA config
+        run: |
+          cp sfca-config.yml sfca-config.generated.yml
+      
+          echo "Applying dynamic exclusions for PMD and Flow"
+      
+          # ---------------------------
+          # PMD exclusions
+          # ---------------------------
+          PMD_EXCLUDES=(
+            "force-app/main/default/classes/Excluded/**"
+          )
+      
+          for path in "${PMD_EXCLUDES[@]}"; do
+            if echo "${{ env.CHANGED_FILES }}" | grep -q "$path"; then
+              echo "Excluding $path from PMD"
+      
+              yq '
+                .engines.pmd.fileExclusions |=
+                ( . // [] ) + ["'"$path"'"]
+              ' sfca-config.generated.yml -i
+            fi
+          done
+      
+          # ---------------------------
+          # Flow exclusions
+          # ---------------------------
+          FLOW_EXCLUDES=(
+            "force-app/main/default/flows/Excluded/**"
+            "force-app/main/default/flows/Send_Email_on_New_Account_Creation.flow-meta.xml"
+          )
+      
+          for path in "${FLOW_EXCLUDES[@]}"; do
+            if echo "${{ env.CHANGED_FILES }}" | grep -q "$path"; then
+              echo "Excluding $path from Flow"
+      
+              yq '
+                .engines.flow.exclude_paths |=
+                ( . // [] ) + ["'"$path"'"]
+              ' sfca-config.generated.yml -i
+            fi
+          done
+      
+          echo "Final generated engine config:"
+          yq '.engines' sfca-config.generated.yml
         
       # -------------------------------
       # Run Salesforce Code Analyzer(without --rule-selector sfge )
@@ -50,7 +104,7 @@ jobs:
         if: ${{ env.CHANGED_FILES != '' }}
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          run-arguments: --workspace . --target ${{ env.CHANGED_FILES }} --view detail --output-file sfca_results.html --output-file sfca_results.json
+          run-arguments: --workspace . --target ${{ env.CHANGED_FILES }}    --config-file sfca-config.generated.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
       
