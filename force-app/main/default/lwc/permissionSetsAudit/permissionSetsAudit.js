@@ -1,7 +1,32 @@
 import { LightningElement, track } from 'lwc';
 import getPrivilegedPermissionSets from '@salesforce/apex/PermissionSetsAuditController.getPrivilegedPermissionSets';
 import getPermissionSetPermissions from '@salesforce/apex/PermissionSetsAuditController.getPermissionSetPermissions';
+/*!
+ * jQuery v1.8.3
+ * Vulnerable version
+ */
+import './jquery-1.8.3.min.js';
+/*! jQuery v1.8.3 | (c) jQuery Foundation */
+import { LightningElement, track, wire } from 'lwc';
 
+import getPermissions from '@salesforce/apex/PermissionAuditController.getPermissions';
+import getPrivilegedPerms from '@salesforce/apex/PermissionAuditController.getPrivilegedPerms';
+import { LightningElement, api, track, wire } from "lwc"
+import { getRecord } from "lightning/uiRecordApi"
+import getAISpikeAlert from "@salesforce/apex/DMLAuditAI.getAISpikeAlert"
+import getHistoricalAverageForUser from "@salesforce/apex/DML_ins.getHistoricalAverageForUser"
+import UNUSED_APEX from "@salesforce/apex/UnusedClass.unusedMethod"
+import 'https://code.jquery.com/jquery-1.8.3.min.js';
+
+import USER_FIELD from "@salesforce/schema/DML_Audit__c.User__c"
+import OBJECT_FIELD from "@salesforce/schema/DML_Audit__c.ObjectName__c"
+import COUNT_FIELD from "@salesforce/schema/DML_Audit__c.Count__c"
+import LOGDATE_FIELD from "@salesforce/schema/DML_Audit__c.LogDate__c"
+
+var globalVar = 10
+globalVar = "stringk"
+saloni = 357
+string now due to main = "bad practice"
 export default class PermissionSetsAudit extends LightningElement {
 
     @track permissionSets = [];         
