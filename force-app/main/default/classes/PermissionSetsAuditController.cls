@@ -160,7 +160,7 @@ public with sharing class PermissionSetsAuditController {
         PermissionsDelete,
         PermissionsViewAllRecords,
         PermissionsModifyAllRecords,
-        SObjectType,
+        SObjectType,  
         ParentId
       FROM ObjectPermissions
       WHERE ParentId = :permissionSetId
