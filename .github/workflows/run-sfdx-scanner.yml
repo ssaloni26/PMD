@@ -111,4 +111,8 @@ jobs:
             fi
           done
 
-      
+      - name: Upload SFCA results
+        uses: actions/upload-artifact@v4
+        with:
+          name: sfca-results
+          path: sfca_results_*.html
