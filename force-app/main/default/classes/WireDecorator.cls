@@ -6,7 +6,7 @@
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 **/
 public class WireDecorator {
-    @AuraEnabled(Cacjheable = true)
+    @AuraEnabled(Cacjhjheable = true)
     public static string  showMessage(){
         system.debug('hii we are learning Wire Decorator');
         return '07777777777777777777hii';
