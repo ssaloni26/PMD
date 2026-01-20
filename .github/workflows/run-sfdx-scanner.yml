@@ -49,59 +49,66 @@ jobs:
           sudo wget -qO /usr/local/bin/yq \
             https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           sudo chmod +x /usr/local/bin/yq
+
       # -------------------------------
-      # Generate dynamic SFCA config        
-      - name: Generate dynamic SFCA config
+      # Read all exclusions from sfca-config.yml
+      # -------------------------------
+      - name: Read all exclusions from sfca-config.yml
         run: |
-          cp sfca-config.yml sfca-config.generated.yml
+          engines=("pmd" "cpd"  "regex"  "flow" )
+          for engine in "${engines[@]}"; do
+            EXCLUSIONS=$(yq ".engines.${engine}.fileExclusions[]" sfca-config.yml || true)
+            EXCLUSIONS=$(echo "$EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
+            echo "${engine^^}_EXCLUSIONS=$EXCLUSIONS" >> $GITHUB_ENV
+          done
       
-          echo "Applying dynamic exclusions for PMD and Flow"
-      
-          # ---------------------------
-          # PMD exclusions
-          # ---------------------------
-          if echo "${{ env.CHANGED_FILES }}" | grep -q "force-app/main/default/classes/Excluded/"; then
-            echo "Excluding classes/Excluded/** from PMD"
-      
-            yq '
-              .engines.pmd.fileExclusions |=
-              ( . // [] ) + ["force-app/main/default/classes/Excluded/**"]
-            ' sfca-config.generated.yml -i
-          fi
-      
-          # ---------------------------
-          # Flow exclusions
-          # ---------------------------
-          if echo "${{ env.CHANGED_FILES }}" | grep -q "force-app/main/default/flows/Excluded/"; then
-            echo "Excluding flows/Excluded/** from Flow"
-      
-            yq '
-              .engines.flow.exclude_paths |=
-              ( . // [] ) + ["force-app/main/default/flows/Excluded/**"]
-            ' sfca-config.generated.yml -i
-          fi
-      
-          if echo "${{ env.CHANGED_FILES }}" | grep -q "Send_Email_on_New_Account_Creation.flow-meta.xml"; then
-            echo "Excluding specific flow file from Flow"
-      
-            yq '
-              .engines.flow.exclude_paths |=
-              ( . // [] ) + ["force-app/main/default/flows/Send_Email_on_New_Account_Creation.flow-meta.xml"]
-            ' sfca-config.generated.yml -i
-          fi
-      
-          echo "Final generated engine config:"
-          yq '.engines' sfca-config.generated.yml
       
         
       # -------------------------------
       # Run Salesforce Code Analyzer(without --rule-selector sfge )
       # -------------------------------
-      - name: Run Salesforce Code Analyzer (changed files only)
+      - name: Run Salesforce Code Analyzer per engine with exclusions
         if: ${{ env.CHANGED_FILES != '' }}
-        uses: forcedotcom/run-code-analyzer@v2
-        with:
-          run-arguments: --workspace . --target ${{ env.CHANGED_FILES }}    --config-file sfca-config.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
-          results-artifact-name: salesforce-code-analyzer-results
-          github-token: ${{ github.token }}
+        run: |
+          engines=("pmd" "cpd" "eslint" "regex" "retirejs" "flow" "graph")
+
+          for engine in "${engines[@]}"; do
+            echo "Processing engine: $engine"
+
+            # Get exclusions for this engine
+            EXCLUSIONS_VAR="${engine^^}_EXCLUSIONS"
+            EXCLUSIONS="${!EXCLUSIONS_VAR}"
+
+            # Remove exclusions from CHANGED_FILES
+            FILES_TO_ANALYZE=""
+            for file in $CHANGED_FILES; do
+              skip=false
+              for excl in $EXCLUSIONS; do
+                if [[ "$file" == "$excl"* ]]; then
+                  skip=true
+                  break
+                fi
+              done
+              if [ "$skip" = false ]; then
+                FILES_TO_ANALYZE="$FILES_TO_ANALYZE $file"
+              fi
+            done
+
+            FILES_TO_ANALYZE=$(echo $FILES_TO_ANALYZE | xargs) # trim extra spaces
+
+            if [ -n "$FILES_TO_ANALYZE" ]; then
+              echo "Running $engine on files: $FILES_TO_ANALYZE"
+
+              # Run SFCA for this engine
+              npx sf code-analyzer run \
+                --target $FILES_TO_ANALYZE \
+                --config-file sfca-config.yml \
+                --view detail \
+                --engine $engine \
+                --output-file "sfca_results_${engine}.html"
+            else
+              echo "No files to analyze for $engine after exclusions."
+            fi
+          done
+
       
