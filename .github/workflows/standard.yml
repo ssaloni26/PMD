@@ -31,8 +31,8 @@ jobs:
       #   run: npm install --save-dev jest
       - name: Download PMD
         run: |
-          wget https://github.com/pmd/pmd/releases/download/pmd_releases/7.20.0/pmd-bin-7.20.0.zip
-          unzip -q pmd-bin-7.20.0.zip
+          wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.20.0/pmd-dist-7.20.0-bin.zip
+          unzip -q pmd-dist-7.20.0-bin.zip
 
       # -------------------------------
       # Install Salesforce CLI and Code Analyzer plugin
@@ -78,11 +78,9 @@ jobs:
 
       - name: Run PMD CPD
         run: |
-          # Download PMD if not already downloaded
-          if [ ! -d "pmd-bin-7.20.0" ]; then
-            wget https://github.com/pmd/pmd/releases/download/pmd_releases/7.20.0/pmd-bin-7.20.0.zip
-            unzip -q pmd-bin-7.20.0.zip
-            chmod +x pmd-bin-7.20.0/bin/run.sh
+          if [ ! -d "pmd-dist-7.20.0" ]; then
+            wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.20.0/pmd-dist-7.20.0-bin.zip
+            unzip -q pmd-dist-7.20.0-bin.zip
           fi
 
           ./pmd-bin-7.20.0/bin/run.sh cpd \
