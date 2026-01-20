@@ -18,7 +18,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
 
       # -------------------------------
       # Setup Node and Salesforce CLI
@@ -31,19 +31,9 @@ jobs:
         run: sf plugins install code-analyzer@latest
 
 
-      - name: Get changed Apex files
-        id: changed
-        run: |
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-            | grep '^force-app/main/default/' || true)
-      
-          # join lines with spaces
-          CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
-      
-          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
-          echo "Changed files: $CHANGED_FILES"
       # -------------------------------
-      # Install yq for YAML processing
+      # Install yq (YAML parser)
+      # -------------------------------
       - name: Install yq
         run: |
           sudo wget -qO /usr/local/bin/yq \
@@ -61,64 +51,63 @@ jobs:
             EXCLUSIONS=$(echo "$EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
             echo "${engine^^}_EXCLUSIONS=$EXCLUSIONS" >> $GITHUB_ENV
           done
-      
-      
-        
+
+      # -------------------------------
+      # Get changed files
+      # -------------------------------
+      - name: Get all changed files
+        id: changed
+        run: |
+          # Fetch base branch
+          git fetch origin ${{ github.base_ref }}
+
+          # Get all changed files under force-app/main/default/
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^force-app/main/default/' || true)
+
+          echo "Initial changed files:"
+          echo "$CHANGED_FILES"
+
+          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS $FLOW_EXCLUSIONS"
+
+          for EXCLUDE in $ALL_EXCLUSIONS; do
+            # Escape regex special characters
+            SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
+            # Remove folder and all subfiles recursively
+            CHANGED_FILES=$(echo "$CHANGED_FILES" | grep -v -E "^${SAFE_EXCLUDE}(/.*)?$" || true)
+          done
+          FILTERED_FILES=""
+
+          for FILE in $CHANGED_FILES; do
+            if [ -e "$FILE" ]; then
+              FILTERED_FILES="$FILTERED_FILES $FILE"
+            else
+              echo "Skipping non-existent path: $FILE"
+            fi
+          done
+         
+          CHANGED_FILES=$(echo "$FILTERED_FILES" | sed 's/^ *//')
+         
+          # Deduplicate and convert to space-separated list
+          CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
+          echo "Final changed files after exclusions and existence check:"
+          echo "$CHANGED_FILES"
+
+          # Save to GitHub Actions environment
+          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+   
+     
       # -------------------------------
       # Run Salesforce Code Analyzer(without --rule-selector sfge )
       # -------------------------------
-      - name: Run Salesforce Code Analyzer per engine with exclusions
+      - name: Run Salesforce Code Analyzer (changed files only)
         if: ${{ env.CHANGED_FILES != '' }}
-        run: |
-          engines=("pmd" "cpd" "regex" "flow" )
-
-          for engine in "${engines[@]}"; do
-            echo "Processing engine: $engine"
-          
-            # Get exclusions for this engine
-            EXCLUSIONS_VAR="${engine^^}_EXCLUSIONS"
-            EXCLUSIONS="${!EXCLUSIONS_VAR}"
-          
-            # Remove excluded files from CHANGED_FILES
-            FILES_TO_ANALYZE=""
-            for file in $CHANGED_FILES; do
-              skip=false
-              for excl in $EXCLUSIONS; do
-                if [[ "$file" == "$excl"* ]]; then
-                  skip=true
-                  break
-                fi
-              done
-              if [ "$skip" = false ]; then
-                FILES_TO_ANALYZE="$FILES_TO_ANALYZE $file"
-              fi
-            done
-          
-            FILES_TO_ANALYZE=$(echo $FILES_TO_ANALYZE | xargs)
-          
-            if [ -n "$FILES_TO_ANALYZE" ]; then
-              echo "Running $engine on files: $FILES_TO_ANALYZE"
-          
-              # Create temp config for this engine only
-              yq eval "(.engines | keys) as \$allKeys | \$allKeys[] | select(. != \"$engine\") | . as \$k | .engines[\$k] = {}" sfca-config.yml > temp_config.yml
-          
-              # Run SFCA with temp config
-              npx sf code-analyzer run \
-                --target $FILES_TO_ANALYZE \
-                --config-file temp_config.yml \
-                --view detail \
-                --output-file "sfca_results_${engine}.html"
-          
-              # Remove temp config
-              rm temp_config.yml
-            else
-              echo "No files to analyze for $engine after exclusions."
-            fi
-          done
-        
-
-      - name: Upload SFCA results
-        uses: actions/upload-artifact@v4
+        uses: forcedotcom/run-code-analyzer@v2  
         with:
-          name: sfca-results
-          path: sfca_results_*.html
+          run-arguments: >
+            --target ${{ env.CHANGED_FILES }}
+            --config-file sfca-config.yml
+            --view detail
+            --output-file sfca_results.html
+          results-artifact-name: salesforce-code-analyzer-results
+          github-token: ${{ github.token }}

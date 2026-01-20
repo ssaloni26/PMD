@@ -15,7 +15,7 @@ engines:
     minimum_tokens:
       apex: 50
   regex:
-    exclude:
+    fileExclusions:
       - "force-app/main/default/lwc/Excluded/**"
       - "force-app/main/default/lwc/dmlAverage/**"
   flow:
