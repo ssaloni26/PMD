@@ -5,7 +5,7 @@
  * @last modified on  : 01-20-2026
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 **/
-public with sharing class DML_ins {
+public with sharing class l {
 
     @AuraEnabled(cacheable=true)
     public static List<AverageResult> getHistoricalAverageForUser(Id userId, String objectName, Date recordLogDate) {
