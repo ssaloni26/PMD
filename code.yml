@@ -16,4 +16,4 @@ engines:
       javascript:
         - ".js"
     custom_rulesets:
-      - path/to/your/apex-ruleset.xml
+      - config/pmd/apex-ruleset.xml
