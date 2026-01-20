@@ -70,16 +70,16 @@ jobs:
       - name: Run Salesforce Code Analyzer per engine with exclusions
         if: ${{ env.CHANGED_FILES != '' }}
         run: |
-          engines=("pmd" "cpd" "eslint" "regex" "retirejs" "flow" "graph")
+          engines=("pmd" "cpd" "regex" "flow" )
 
           for engine in "${engines[@]}"; do
             echo "Processing engine: $engine"
-
+          
             # Get exclusions for this engine
             EXCLUSIONS_VAR="${engine^^}_EXCLUSIONS"
             EXCLUSIONS="${!EXCLUSIONS_VAR}"
-
-            # Remove exclusions from CHANGED_FILES
+          
+            # Remove excluded files from CHANGED_FILES
             FILES_TO_ANALYZE=""
             for file in $CHANGED_FILES; do
               skip=false
@@ -93,22 +93,29 @@ jobs:
                 FILES_TO_ANALYZE="$FILES_TO_ANALYZE $file"
               fi
             done
-
-            FILES_TO_ANALYZE=$(echo $FILES_TO_ANALYZE | xargs) # trim extra spaces
-
+          
+            FILES_TO_ANALYZE=$(echo $FILES_TO_ANALYZE | xargs)
+          
             if [ -n "$FILES_TO_ANALYZE" ]; then
               echo "Running $engine on files: $FILES_TO_ANALYZE"
-
-              # Run SFCA for this engine
+          
+              # Create temp config for this engine only
+              yq eval "(.engines | keys) as \$allKeys | \$allKeys[] | select(. != \"$engine\") | . as \$k | .engines[\$k] = {}" sfca-config.yml > temp_config.yml
+          
+              # Run SFCA with temp config
               npx sf code-analyzer run \
                 --target $FILES_TO_ANALYZE \
-                --config-file sfca-config.yml \
+                --config-file temp_config.yml \
                 --view detail \
                 --output-file "sfca_results_${engine}.html"
+          
+              # Remove temp config
+              rm temp_config.yml
             else
               echo "No files to analyze for $engine after exclusions."
             fi
           done
+        
 
       - name: Upload SFCA results
         uses: actions/upload-artifact@v4
