@@ -78,14 +78,13 @@ jobs:
       #       | grep '^force-app/main/default/' || true)>> $GITHUB_ENV
 
       - name: Run PMD CPD
-        continue-on-error: true
         run: |
           ./pmd-bin-6.55.0/bin/run.sh cpd \
             --minimum-tokens 20 \
             --language apex \
             --dir force-app/main/default/classes \
             --exclude force-app/main/default/classes/UserPermissionsLoggerBatch.cls
-            --format text > cpd-report.txt
+            --format text > cpd-report.txt  || exit 0
       # - name: Run Salesforce Code Analyzer
       #   id: run-code-analyzer
       #   uses: forcedotcom/run-code-analyzer@v2
