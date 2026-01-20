@@ -9,7 +9,7 @@ global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, 
     );
   }
 
-  global void ln(Database.BatchableContext bc, List<User> users) {
+  global void no(Database.BatchableContext bc, List<User> users) {
     Map<String, String> systemPermApiVsDisplayNames = loadSystemPermissions();
     Set<String> validSystemPerms = getValidSystemPermissionFields(
       systemPermApiVsDisplayNames.keySet()
