@@ -35,17 +35,17 @@ module.exports = defineConfig([
     },
 
     // Jest mocks configuration
-    {
-        files: ['**/jest-mocks/**/*.js'],
-        languageOptions: {
-            sourceType: 'module',
-            ecmaVersion: 'latest',
-            globals: {
-                ...globals.node,
-                ...globals.es2021
-            }
-        },
+    
         {
+            files: ['**/jest-mocks/**/*.js'],
+            languageOptions: {
+                sourceType: 'module',
+                ecmaVersion: 'latest',
+                globals: {
+                    ...globals.node,
+                    ...globals.es2021
+                }
+            },
             rules: {
                 'jest/no-deprecated-functions': 'off',
                 'jest/no-disabled-tests': 'off',
@@ -55,5 +55,6 @@ module.exports = defineConfig([
                 'jest/valid-expect': 'off'
             }
         }
-    }
+        
+    
 ]);

@@ -1,2 +1,2 @@
-lwc/Excluded/
-lwc/dmlAverage/
+force-app/main/default/lwc/Excluded/**
+force-app/main/default/lwc/dmlAverage/**
