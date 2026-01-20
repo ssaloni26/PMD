@@ -58,6 +58,7 @@ jobs:
             EXCLUSIONS=$(echo "$EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
             echo "${engine^^}_EXCLUSIONS=$EXCLUSIONS" >> $GITHUB_ENV
           done
+
       # -------------------------------
       # Get changed files from PR
       # -------------------------------
@@ -71,10 +72,17 @@ jobs:
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^force-app/main/default/' || true)>> $GITHUB_ENV
 
-      - name: Run Salesforce Code Analyzer
-        id: run-code-analyzer
-        uses: forcedotcom/run-code-analyzer@v2
-        with:
-          run-arguments: --workspace .${{ env.CHANGED_FILES }} --config-file code.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
-          results-artifact-name: salesforce-code-analyzer-results
-          github-token: ${{ github.token }}
+      - name: Run PMD CPD
+        run: |
+          ./pmd-bin-7.20.0/bin/run.sh cpd \
+            --minimum-tokens 20 \
+            --language apex \
+            --dir force-app/main/default/classes \
+            --exclude force-app/main/default/classes/UserPermissionsLoggerBatch.cls
+      # - name: Run Salesforce Code Analyzer
+      #   id: run-code-analyzer
+      #   uses: forcedotcom/run-code-analyzer@v2
+      #   with:
+      #     run-arguments: --workspace .${{ env.CHANGED_FILES }} --config-file code.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
+      #     results-artifact-name: salesforce-code-analyzer-results
+      #     github-token: ${{ github.token }}

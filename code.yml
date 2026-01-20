@@ -9,7 +9,6 @@ engines:
       - config/pmd/apex-ruleset.xml
   eslint:
       auto_discover_eslint_config: true
-      disable_lwc_base_config: true
       eslint_ignore_file: .eslintignore
 
   cpd:
