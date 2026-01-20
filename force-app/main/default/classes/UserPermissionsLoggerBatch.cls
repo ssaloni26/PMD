@@ -182,9 +182,7 @@ global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, 
         return permissionDisplayName;
     }
 
-<<<<<<< Updated upstream
-}
-=======
+
         /*Reads Permission Set assignments for users & determines which 
         system permissions are enabled through permission sets.
         Query PermissionSetAssignment for users,Get related Permission Sets,Query PermissionSet object fields dynamically,
@@ -261,4 +259,3 @@ global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, 
         }
         
     }
->>>>>>> Stashed changes
