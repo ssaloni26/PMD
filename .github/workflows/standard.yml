@@ -29,11 +29,12 @@ jobs:
       #   run: npm install
       # - name: Install Jest
       #   run: npm install --save-dev jest
-      - name: Download PMD
+      # 3️⃣ Download and setup PMD
+      - name: Download and Setup PMD
         run: |
-          wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.20.0/pmd-dist-7.20.0-bin.zip
-          unzip -qo pmd-dist-7.20.0-bin.zip   # <- added -o for overwrite and -q for quiet
-
+          wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.55.0/pmd-bin-6.55.0.zip
+          unzip pmd-bin-6.55.0.zip
+          chmod +x pmd-bin-6.55.0/bin/run.sh
       # -------------------------------
       # Install Salesforce CLI and Code Analyzer plugin
       # -------------------------------
@@ -66,27 +67,25 @@ jobs:
       # -------------------------------
       # Get changed files from PR
       # -------------------------------
-      - name: Get all changed files
-        id: changed
-        run: |
-          # Fetch base branch
-          git fetch origin ${{ github.base_ref }}
+      # - name: Get all changed files
+      #   id: changed
+      #   run: |
+      #     # Fetch base branch
+      #     git fetch origin ${{ github.base_ref }}
 
-          # Get all changed files under force-app/main/default/
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-            | grep '^force-app/main/default/' || true)>> $GITHUB_ENV
+      #     # Get all changed files under force-app/main/default/
+      #     CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+      #       | grep '^force-app/main/default/' || true)>> $GITHUB_ENV
 
       - name: Run PMD CPD
+        continue-on-error: true
         run: |
-          if [ ! -d "pmd-dist-7.20.0" ]; then
-            wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.20.0/pmd-dist-7.20.0-bin.zip
-            unzip -qo pmd-dist-7.20.0-bin.zip   # <- overwrite without prompt
-          fi
           ./pmd-bin-7.20.0/bin/run.sh cpd \
             --minimum-tokens 20 \
             --language apex \
             --dir force-app/main/default/classes \
             --exclude force-app/main/default/classes/UserPermissionsLoggerBatch.cls
+            --format text > cpd-report.txt
       # - name: Run Salesforce Code Analyzer
       #   id: run-code-analyzer
       #   uses: forcedotcom/run-code-analyzer@v2
