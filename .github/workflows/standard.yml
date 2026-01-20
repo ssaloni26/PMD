@@ -32,7 +32,7 @@ jobs:
       - name: Download PMD
         run: |
           wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.20.0/pmd-dist-7.20.0-bin.zip
-          unzip -q pmd-dist-7.20.0-bin.zip
+          unzip -qo pmd-dist-7.20.0-bin.zip   # <- added -o for overwrite and -q for quiet
 
       # -------------------------------
       # Install Salesforce CLI and Code Analyzer plugin
@@ -80,8 +80,9 @@ jobs:
         run: |
           if [ ! -d "pmd-dist-7.20.0" ]; then
             wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.20.0/pmd-dist-7.20.0-bin.zip
-            unzip -q pmd-dist-7.20.0-bin.zip
+            unzip -qo pmd-dist-7.20.0-bin.zip   # <- overwrite without prompt
           fi
+
 
           ./pmd-bin-7.20.0/bin/run.sh cpd \
             --minimum-tokens 20 \
