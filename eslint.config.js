@@ -1,5 +1,6 @@
 const { defineConfig } = require('eslint/config');
 const eslintJs = require('@eslint/js');
+const jestPlugin = require('eslint-plugin-jest');
 const auraConfig = require('@salesforce/eslint-plugin-aura');
 const lwcConfig = require('@salesforce/eslint-config-lwc/recommended');
 const globals = require('globals');
@@ -20,7 +21,7 @@ module.exports = defineConfig([
         extends: [lwcConfig]
     },
 
-    // LWC test files (no Jest dependency)
+    // LWC configuration with override for LWC test files
     {
         files: ['**/lwc/**/*.test.js'],
         extends: [lwcConfig],
@@ -34,7 +35,7 @@ module.exports = defineConfig([
         }
     },
 
-    // Jest mocks folder (treated as plain JS)
+    // Jest mocks configuration
     {
         files: ['**/jest-mocks/**/*.js'],
         languageOptions: {
@@ -42,24 +43,13 @@ module.exports = defineConfig([
             ecmaVersion: 'latest',
             globals: {
                 ...globals.node,
-                ...globals.es2021
+                ...globals.es2021,
+                ...jestPlugin.environments.globals.globals
             }
         },
         plugins: {
             eslintJs
         },
         extends: ['eslintJs/recommended']
-    },
-
-    // 🔴 REQUIRED for Salesforce Code Analyzer
-    {
-        rules: {
-            'jest/no-deprecated-functions': 'off',
-            'jest/no-disabled-tests': 'off',
-            'jest/no-focused-tests': 'off',
-            'jest/no-identical-title': 'off',
-            'jest/prefer-to-have-length': 'off',
-            'jest/valid-expect': 'off'
-        }
     }
 ]);
