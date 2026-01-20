@@ -183,7 +183,7 @@ global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, 
     Query PermissionSetAssignment for users,Get related Permission Sets,Query PermissionSet object fields dynamically,
     Collect TRUE permission fields → display names*/
     private Map<Id, Set<String>> getPermissionSetPermissions(Set<Id> userIds, Set<String> validFields, Map<String, String> fieldApiVsDisplayNames) { 
-        Map<Id, Set<String>> resultMap = new Map<Id, Set<String>>();
+        Map<Id, Set<String>> resultMap = new m<Id, Set<String>>();
         if (userIds.isEmpty()) return resultMap;
         Map<Id, List<Id>> userVsPermissionSets= new Map<Id, List<Id>>();  
         Set<Id> permissionSetIds = new Set<Id>();
