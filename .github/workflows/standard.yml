@@ -3,8 +3,8 @@ name: standard Salesforce Code Analyzer Workflow
 on:
   pull_request:
     paths:
-      - 'force-app/main/default/**'
-      - 'code.yml'
+      - "force-app/main/default/**"
+      - "code.yml"
 
 jobs:
   sfca:
@@ -19,8 +19,8 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install dependencies
-        run: npm ci
-        
+        run: npm install
+
       # -------------------------------
       # Install Salesforce CLI and Code Analyzer plugin
       # -------------------------------
@@ -62,12 +62,10 @@ jobs:
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^force-app/main/default/' || true)>> $GITHUB_ENV
 
-
-
       - name: Run Salesforce Code Analyzer
         id: run-code-analyzer
         uses: forcedotcom/run-code-analyzer@v2
         with:
-            run-arguments: --workspace .${{ env.CHANGED_FILES }} --config-file code.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
-            results-artifact-name: salesforce-code-analyzer-results
-            github-token: ${{ github.token }}
+          run-arguments: --workspace .${{ env.CHANGED_FILES }} --config-file code.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
+          results-artifact-name: salesforce-code-analyzer-results
+          github-token: ${{ github.token }}
