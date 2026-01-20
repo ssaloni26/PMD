@@ -6,7 +6,10 @@ engines:
     exclude_patterns:
       - force-app/main/default/lwc/Excluded/**
       - force-app/main/default/lwc/dmlAverage/**
-
+  regex:
+    exclude:
+      - "force-app/main/default/lwc/Excluded/**"
+      - "force-app/main/default/lwc/dmlAverage/**"
   pmd:
     # Uses a newline-delimited list of POSIX-style paths/globs relative to repo root
     exclude-file-list: excluded-files.txt
@@ -22,16 +25,7 @@ engines:
     minimum_tokens:
       apex: 50
 
-  regex:
-    # Add exclude_patterns for files you don't want regex rules to scan
-    exclude_patterns:
-      - force-app/main/default/lwc/Excluded/**
-      - force-app/main/default/lwc/dmlAverage/**
-      - force-app/main/default/flows/Excluded/**
-    custom_rules:
-      rules:
-        - name: MyRegexRules
-          path: ./sfca-regex-rules.yml
+
 
   flow:
     enabled: true
