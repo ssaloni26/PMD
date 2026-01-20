@@ -130,7 +130,7 @@ public with sharing class PermissionSetsAuditController {
     }
   }
 
-  public class ObjPerm {   
+  public class ObjPerm {      
     @AuraEnabled
     public String sObjectType;
     @AuraEnabled
