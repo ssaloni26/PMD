@@ -1,10 +1,3 @@
-/**
- * @description       : 
- * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
- * @group             : 
- * @last modified on  : 01-14-2026
- * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
-**/
 public with sharing class PermissionSetsAuditController {
 
     @AuraEnabled(cacheable=true)
@@ -31,7 +24,7 @@ public with sharing class PermissionSetsAuditController {
         if(validPrivilegedPerms.isEmpty()) return new List<PermissionSetAuditWrapper>();
 
         // Step 3: Build dynamic SOQL query
-        String query = 'SELECT Id, Name';
+        String query = 'SELECT Id, Label';
         for(String fieldName : validPrivilegedPerms){
             query += ', ' + fieldName;
         }
@@ -49,15 +42,12 @@ public with sharing class PermissionSetsAuditController {
         }
 
         // Step 5: Loop through permission sets
-        // Step 5: Loop through permission sets
 Map<Id, PermissionSetAuditWrapper> wrapperMap = new Map<Id, PermissionSetAuditWrapper>();
 
 for(SObject ps : permSets){
     List<String> enabledPermLabels = new List<String>();
-
     for(String permName : validPrivilegedPerms){
         if(ps.get(permName) == true){
-            // Get the field label dynamically
             String label = psFields.get(permName).getDescribe().getLabel();
             enabledPermLabels.add(label);
         }
@@ -68,11 +58,25 @@ for(SObject ps : permSets){
 
         if(!wrapperMap.containsKey(psId)){
             Integer userCount = psUserCountMap.containsKey(psId) ? psUserCountMap.get(psId) : 0;
+
+            // Calculate object count (View All or Modify All)
+            Integer objCount = 0;
+            for(ObjectPermissions op : [
+                SELECT PermissionsViewAllRecords, PermissionsModifyAllRecords
+                FROM ObjectPermissions
+                WHERE ParentId = :psId
+            ]){
+                if(op.PermissionsViewAllRecords || op.PermissionsModifyAllRecords){
+                    objCount++;
+                }
+            }
+
             wrapperMap.put(psId, new PermissionSetAuditWrapper(
                 psId,
-                (String)ps.get('Name'),
+                (String)ps.get('Label'),
                 userCount,
-                enabledPermLabels
+                enabledPermLabels,
+                objCount
             ));
         }
     }
@@ -87,13 +91,62 @@ for(SObject ps : permSets){
         @AuraEnabled public String permissionSetName;
         @AuraEnabled public Integer assignedUserCount;
         @AuraEnabled public String assignedPermissions;
+            @AuraEnabled public Integer objectCount; // <-- NEW
 
-public PermissionSetAuditWrapper(Id id, String name, Integer count, List<String> enabledPermLabels){
+public PermissionSetAuditWrapper(Id id, String name, Integer count, List<String> enabledPermLabels, Integer objCount){
     this.permissionSetId = id;
     this.permissionSetName = name;
     this.assignedUserCount = count;
     this.assignedPermissions = String.join(enabledPermLabels, ', ');
+     this.objectCount = objCount;
 }
-
+}
+   
+    public class ObjPerm {
+        @AuraEnabled public String sObjectType;
+        @AuraEnabled public String objectLabel;
+        @AuraEnabled public Boolean createPerm;
+        @AuraEnabled public Boolean readPerm;
+        @AuraEnabled public Boolean editPerm;
+        @AuraEnabled public Boolean deletePerm;
+        @AuraEnabled public Boolean viewAll;
+        @AuraEnabled public Boolean modifyAll;
     }
+
+    @AuraEnabled(cacheable=true)
+    public static List<ObjPerm> getPermissionSetPermissions(Id permissionSetId) {
+        List<ObjectPermissions> perms = [
+            SELECT Id, PermissionsCreate, PermissionsRead, PermissionsEdit, PermissionsDelete,
+                   PermissionsViewAllRecords, PermissionsModifyAllRecords, SObjectType, ParentId
+            FROM ObjectPermissions
+            WHERE ParentId = :permissionSetId
+            ORDER BY SObjectType
+        ];
+
+        Set<String> apiNames = new Set<String>();
+        for (ObjectPermissions p : perms) apiNames.add(p.SObjectType);
+
+        Map<String, String> apiToLabelMap = new Map<String, String>();
+        for (EntityDefinition ed : [SELECT QualifiedApiName, Label FROM EntityDefinition WHERE QualifiedApiName IN :apiNames]) {
+            apiToLabelMap.put(ed.QualifiedApiName, ed.Label);
+        }
+
+        List<ObjPerm> results = new List<ObjPerm>();
+        for (ObjectPermissions op : perms) {
+            if (!apiToLabelMap.containsKey(op.SObjectType) || !op.PermissionsRead) continue;
+
+            ObjPerm p = new ObjPerm();
+            p.sObjectType = op.SObjectType;
+            p.objectLabel = apiToLabelMap.get(op.SObjectType);
+            p.createPerm = op.PermissionsCreate;
+            p.readPerm = op.PermissionsRead;
+            p.editPerm = op.PermissionsEdit;
+            p.deletePerm = op.PermissionsDelete;
+            p.viewAll = op.PermissionsViewAllRecords;
+            p.modifyAll = op.PermissionsModifyAllRecords;
+            results.add(p);
+        }
+        return results;
+    }
+   
 }
