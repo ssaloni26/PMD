@@ -10,8 +10,8 @@ engines:
   pmd:
     file_extensions:
       apex:
-        - "**/*.cls"
-        - "**/*.trigger"
+        - .cls
+        - .trigger
       html:
         - .html
         - .htm
