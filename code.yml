@@ -1,13 +1,13 @@
 engines:
-  eslint:
-    eslint_ignore_file: .eslintignore
+  # eslint:
+  #   eslint_ignore_file: .eslintignore
 
 
-  # retirejs:
-  #   exclude_patterns:
-  #     - force-app/main/default/lwc/Excluded/**
-  #     - force-app/main/default/lwc/dmlAverage/**
+  retirejs:
+    exclude_patterns:
+      - force-app/main/default/lwc/Excluded/**
+      - force-app/main/default/lwc/dmlAverage/**
       
-  # pmd:
-  #   custom_rulesets:
-  #     - config/pmd/apex-ruleset.xml
+  pmd:
+    custom_rulesets:
+      - config/pmd/apex-ruleset.xml
