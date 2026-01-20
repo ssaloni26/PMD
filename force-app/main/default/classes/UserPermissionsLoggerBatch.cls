@@ -185,7 +185,7 @@ global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, 
         return permissionDisplayName;
     }
     global Database.QueryLocator start(Database.BatchableContext bc) {
-        return Database.getQueryLocator([
+no        return Database.getQueryLocator([
             SELECT Id, ProfileId FROM User WHERE IsActive = true
         ]);
     }
