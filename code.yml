@@ -6,7 +6,7 @@ engines:
     exclude_patterns:
       - force-app/main/default/lwc/Excluded/**
       - force-app/main/default/lwc/dmlAverage/**
-
+      
   pmd:
     file_extensions:
       apex:
@@ -34,5 +34,5 @@ engines:
         - .layout
         - .flow
     # This is the only way to skip a single file
-    # fileExclusions:
-    #   - "**/UserPermissionsLoggerBatch.cls"
+    fileExclusions:
+      - "**/UserPermissionsLoggerBatch.cls"
