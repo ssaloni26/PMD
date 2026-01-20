@@ -10,7 +10,7 @@ public class DMLLoggerBatcnh implements Database.Batchable<SObject>, Database.St
   public Map<String, Database_Audit__c> existingDatabaseAuditMap = new Map<String, Database_Audit__c>();
   public Map<String, Integer> userObjectOperationCountMap = new Map<String, Integer>();
 
-  public DMLLoggerBatch(Date logDate) {
+  public DMLLoggerBatch(Date logDate {
     this.logDate = logDate;
   }
 
@@ -180,6 +180,130 @@ public class DMLLoggerBatcnh implements Database.Batchable<SObject>, Database.St
 
     return auditMap;
   }
+  for (Map<String, String> row : eventLogFileRows) {
+    String userIdStr = row.get('USER_ID');
+    String keyPrefix = row.get('KEY_PREFIX');
+    String dmlType = row.get('DML_TYPE');
+    String numRowsStr = row.get('NUM_ROWS');
+    String timestampDerived = row.get('TIMESTAMP_DERIVED');
+
+    if (
+      String.isBlank(userIdStr) ||
+      String.isBlank(keyPrefix) ||
+      String.isBlank(dmlType) ||
+      String.isBlank(numRowsStr) ||
+      String.isBlank(timestampDerived)
+    ) {
+      continue;
+    }
+
+    Integer numRows = Integer.valueOf(numRowsStr);
+    Id userId;
+    try {
+      userId = Id.valueOf(userIdStr);
+    } catch (Exception e) {
+      continue;
+    }
+
+    String objectName;
+    if (objectPrefixVsObjectMap.containsKey(keyPrefix)) {
+      objectName = objectPrefixVsObjectMap.get(keyPrefix);
+    } else {
+      objectName = SchemaService.getSObjectNameFromPrefix(keyPrefix);
+      if (String.isBlank(objectName))
+        continue;
+      objectPrefixVsObjectMap.put(keyPrefix, objectName);
+    }
+
+    if (objectName == 'EventLogFile')
+      continue;
+
+    String key = buildKey(userId, objectName, dmlType, logDate);
+
+    userObjectOperationCountMap.put(
+      key,
+      userObjectOperationCountMap.containsKey(key)
+        ? userObjectOperationCountMap.get(key) + numRows
+        : numRows
+    );
+  }
+} catch (Exception e) {
+  System.debug(
+    'Error processing EventLogFile ' + logFile.Id + ' : ' + e.getMessage()
+  );
+}
+}
+
+List<Database_Audit__c> recordsToUpsert = new List<Database_Audit__c>();
+
+for (String key : userObjectOperationCountMap.keySet()) {
+Integer countToAdd = userObjectOperationCountMap.get(key);
+if (countToAdd == null || countToAdd == 0)
+  continue;
+
+List<String> parts = key.split('\\|');
+Id userId = Id.valueOf(parts[0]);
+String objectName = parts[1];
+String operation = parts[2];
+Date logDateValue = Date.valueOf(parts[3]);
+
+Database_Audit__c recordToUpsert;
+
+if (existingDatabaseAuditMap.containsKey(key)) {
+  Database_Audit__c existingRecord = existingDatabaseAuditMap.get(key);
+  recordToUpsert = new Database_Audit__c(
+    Id = existingRecord.Id,
+    Record_Count__c = countToAdd
+  );
+} else {
+  recordToUpsert = new Database_Audit__c(
+    User__c = userId,
+    ObjectName__c = objectName,
+    Operation__c = operation,
+    LogDate__c = logDateValue,
+    Record_Count__c = countToAdd,
+    OwnerId = UserInfo.getUserId()
+  );
+}
+
+recordsToUpsert.add(recordToUpsert);
+}
+
+try {
+if (!recordsToUpsert.isEmpty()) {
+  upsert recordsToUpsert;
+}
+} catch (Exception e) {
+System.debug('Upsert failed: ' + e.getMessage());
+}
+
+
+@TestVisible
+public Map<String, Database_Audit__c> getExistingAudits(Date logDate) {
+Map<String, Database_Audit__c> auditMap = new Map<String, Database_Audit__c>();
+
+for (Database_Audit__c rec : [
+SELECT
+  Id,
+  User__c,
+  ObjectName__c,
+  Operation__c,
+  Record_Count__c,
+  LogDate__c
+FROM Database_Audit__c
+WHERE LogDate__c = :logDate
+]) {
+String key = buildKey(
+  rec.User__c,
+  rec.ObjectName__c,
+  rec.Operation__c,
+  rec.LogDate__c
+);
+auditMap.put(key, rec);
+}
+
+return auditMap;
+}
 
   private static String buildKey(
     Id userId,
