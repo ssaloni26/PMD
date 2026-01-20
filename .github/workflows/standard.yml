@@ -1,0 +1,71 @@
+name: Salesforce Code Analyzer Workflow
+
+on:
+  pull_request:
+    paths:
+      - 'force-app/main/default/**'
+      - 'sfca-config.yml'
+
+jobs:
+  sfca:
+    runs-on: ubuntu-latest
+
+    steps:
+      # -------------------------------
+      # Checkout repository
+      # -------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      # -------------------------------
+      # Install Salesforce CLI and Code Analyzer plugin
+      # -------------------------------
+      - name: Install Salesforce CLI
+        run: npm install -g @salesforce/cli@latest
+
+      - name: Install Salesforce Code Analyzer Plugin
+        run: sf plugins install code-analyzer@latest
+
+      # -------------------------------
+      # Install yq (YAML parser)
+      # -------------------------------
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          # -------------------------------
+      # Read all exclusions from sfca-config.yml
+      # -------------------------------
+      - name: Read all exclusions from sfca-config.yml
+        run: |
+          engines=("pmd" "cpd" "eslint" "regex" "retirejs" "flow" "graph")
+          for engine in "${engines[@]}"; do
+            EXCLUSIONS=$(yq ".engines.${engine}.fileExclusions[]" sfca-config.yml || true)
+            EXCLUSIONS=$(echo "$EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
+            echo "${engine^^}_EXCLUSIONS=$EXCLUSIONS" >> $GITHUB_ENV
+          done
+      # -------------------------------
+      # Get changed files from PR
+      # -------------------------------
+      - name: Get all changed files
+        id: changed
+        run: |
+          # Fetch base branch
+          git fetch origin ${{ github.base_ref }}
+
+          # Get all changed files under force-app/main/default/
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^force-app/main/default/' || true)>> $GITHUB_ENV
+
+
+
+      - name: Run Salesforce Code Analyzer
+        id: run-code-analyzer
+        uses: forcedotcom/run-code-analyzer@v2
+        with:
+            run-arguments: --workspace  --config-file sfca-config.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
+            results-artifact-name: salesforce-code-analyzer-results
+            github-token: ${{ github.token }}
