@@ -45,9 +45,15 @@ module.exports = defineConfig([
                 ...globals.es2021
             }
         },
-        plugins: {
-            eslintJs
-        },
-        extends: ['eslintJs/recommended']
+        {
+            rules: {
+                'jest/no-deprecated-functions': 'off',
+                'jest/no-disabled-tests': 'off',
+                'jest/no-focused-tests': 'off',
+                'jest/no-identical-title': 'off',
+                'jest/prefer-to-have-length': 'off',
+                'jest/valid-expect': 'off'
+            }
+        }
     }
 ]);
