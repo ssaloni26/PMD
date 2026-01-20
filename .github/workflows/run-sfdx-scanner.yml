@@ -1,10 +1,11 @@
-name: Salesforce Code Analyzer Workflow
+name: old  Salesforce Code Analyzer Workflow
 
 on:
   pull_request:
     paths:
       - 'force-app/main/default/**'
       - 'sfca-config.yml'
+
 
 jobs:
   sfca:
@@ -20,13 +21,15 @@ jobs:
           fetch-depth: 0
 
       # -------------------------------
-      # Install Salesforce CLI and Code Analyzer plugin
+      # Setup Node and Salesforce CLI
       # -------------------------------
+
+
       - name: Install Salesforce CLI
         run: npm install -g @salesforce/cli@latest
-
       - name: Install Salesforce Code Analyzer Plugin
         run: sf plugins install code-analyzer@latest
+
 
       # -------------------------------
       # Install yq (YAML parser)
@@ -38,50 +41,68 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
 
       # -------------------------------
-      # Get changed files from PR
+      # Read all exclusions from sfca-config.yml
       # -------------------------------
-      - name: Get changed files
-        id: changed
-        run: |
-          echo "Base branch: ${{ github.base_ref }}"
-          git fetch origin ${{ github.base_ref }} --depth=1
-
-          # Get list of all changed files
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-          echo "All changed files:"
-          echo "$CHANGED_FILES"
-
-          # Save initial list for later use
-          echo "CHANGED_FILES_RAW=$CHANGED_FILES" >> $GITHUB_ENV
-
-      # -------------------------------
-      # Read engine-specific exclusions and filter changed files
-      # -------------------------------
-      - name: Filter changed files per engine
+      - name: Read all exclusions from sfca-config.yml
         run: |
           engines=("pmd" "cpd" "eslint" "regex" "retirejs" "flow" "graph")
           for engine in "${engines[@]}"; do
-            CHANGED_ENGINE="$CHANGED_FILES_RAW"
             EXCLUSIONS=$(yq ".engines.${engine}.fileExclusions[]" sfca-config.yml || true)
-            
-            for EXCLUDE in $EXCLUSIONS; do
-              # Escape special regex chars for grep
-              SAFE_EXCLUDE=$(echo "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
-              # Remove excluded files from the list
-              CHANGED_ENGINE=$(echo "$CHANGED_ENGINE" | grep -v -E "$SAFE_EXCLUDE" || true)
-            done
-
-            # Deduplicate and convert to comma-separated
-            CHANGED_ENGINE=$(echo "$CHANGED_ENGINE" | sort -u | tr '\n' ',' | sed 's/,$//')
-            echo "${engine^^}_CHANGED_FILES=$CHANGED_ENGINE" >> $GITHUB_ENV
-            echo "${engine^^} changed files: $CHANGED_ENGINE"
+            EXCLUSIONS=$(echo "$EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
+            echo "${engine^^}_EXCLUSIONS=$EXCLUSIONS" >> $GITHUB_ENV
           done
 
       # -------------------------------
-      # Run Salesforce Code Analyzer
+      # Get changed files
+      # -------------------------------
+      - name: Get all changed files
+        id: changed
+        run: |
+          # Fetch base branch
+          git fetch origin ${{ github.base_ref }}
+
+          # Get all changed files under force-app/main/default/
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^force-app/main/default/' || true)
+
+          echo "Initial changed files:"
+          echo "$CHANGED_FILES"
+
+          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS $ESLINT_EXCLUSIONS $REGEX_EXCLUSIONS $RETIREJS_EXCLUSIONS $FLOW_EXCLUSIONS"
+
+          for EXCLUDE in $ALL_EXCLUSIONS; do
+            # Escape regex special characters
+            SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
+            # Remove folder and all subfiles recursively
+            CHANGED_FILES=$(echo "$CHANGED_FILES" | grep -v -E "^${SAFE_EXCLUDE}(/.*)?$" || true)
+          done
+          FILTERED_FILES=""
+
+          for FILE in $CHANGED_FILES; do
+            if [ -e "$FILE" ]; then
+              FILTERED_FILES="$FILTERED_FILES $FILE"
+            else
+              echo "Skipping non-existent path: $FILE"
+            fi
+          done
+         
+          CHANGED_FILES=$(echo "$FILTERED_FILES" | sed 's/^ *//')
+         
+          # Deduplicate and convert to space-separated list
+          CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
+          echo "Final changed files after exclusions and existence check:"
+          echo "$CHANGED_FILES"
+
+          # Save to GitHub Actions environment
+          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+   
+     
+      # -------------------------------
+      # Run Salesforce Code Analyzer(without --rule-selector sfge )
       # -------------------------------
       - name: Run Salesforce Code Analyzer (changed files only)
-        uses: forcedotcom/run-code-analyzer@v2
+        if: ${{ env.CHANGED_FILES != '' }}
+        uses: forcedotcom/run-code-analyzer@v2  
         with:
           run-arguments: >
             --target ${{ env.CHANGED_FILES }}
