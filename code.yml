@@ -15,5 +15,5 @@ engines:
         - ".trigger"
       javascript:
         - ".js"
-    rulesets:
+    custom_rulesets:
       - path/to/your/apex-ruleset.xml

@@ -20,6 +20,8 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         run: npm install
+      - name: Install Jest
+        run: npm install --save-dev jest
 
       # -------------------------------
       # Install Salesforce CLI and Code Analyzer plugin
