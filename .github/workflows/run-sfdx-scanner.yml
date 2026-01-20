@@ -104,7 +104,6 @@ jobs:
                 --target $FILES_TO_ANALYZE \
                 --config-file sfca-config.yml \
                 --view detail \
-                --engine $engine \
                 --output-file "sfca_results_${engine}.html"
             else
               echo "No files to analyze for $engine after exclusions."
