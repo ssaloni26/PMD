@@ -43,71 +43,59 @@ jobs:
       # -------------------------------
       # Read all exclusions from sfca-config.yml
       # -------------------------------
-      - name: Read all exclusions from sfca-config.yml
+        # -------------------------------
+          # Read all exclusions from sfca-config.yml per engine
+          # -------------------------------
+      - name: Read exclusions per engine
         run: |
-          engines=("pmd" "cpd"  "regex"  "flow" )
+          engines=("pmd" "cpd" "regex" "flow")
           for engine in "${engines[@]}"; do
             EXCLUSIONS=$(yq ".engines.${engine}.fileExclusions[]" sfca-config.yml || true)
             EXCLUSIONS=$(echo "$EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
             echo "${engine^^}_EXCLUSIONS=$EXCLUSIONS" >> $GITHUB_ENV
           done
-
+      
       # -------------------------------
-      # Get changed files
+      # Get all changed files
       # -------------------------------
       - name: Get all changed files
         id: changed
         run: |
-          # Fetch base branch
           git fetch origin ${{ github.base_ref }}
-
-          # Get all changed files under force-app/main/default/
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^force-app/main/default/' || true)
-
-          echo "Initial changed files:"
-          echo "$CHANGED_FILES"
-
-          ALL_EXCLUSIONS="$PMD_EXCLUSIONS $CPD_EXCLUSIONS  $REGEX_EXCLUSIONS  $FLOW_EXCLUSIONS"
-
-          for EXCLUDE in $ALL_EXCLUSIONS; do
-            # Escape regex special characters
-            SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
-            # Remove folder and all subfiles recursively
-            CHANGED_FILES=$(echo "$CHANGED_FILES" | grep -v -E "^${SAFE_EXCLUDE}(/.*)?$" || true)
-          done
-          FILTERED_FILES=""
-
-          for FILE in $CHANGED_FILES; do
-            if [ -e "$FILE" ]; then
-              FILTERED_FILES="$FILTERED_FILES $FILE"
-            else
-              echo "Skipping non-existent path: $FILE"
-            fi
-          done
-         
-          CHANGED_FILES=$(echo "$FILTERED_FILES" | sed 's/^ *//')
-         
-          # Deduplicate and convert to space-separated list
-          CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
-          echo "Final changed files after exclusions and existence check:"
-          echo "$CHANGED_FILES"
-
-          # Save to GitHub Actions environment
-          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
-   
-     
+          echo "CHANGED_FILES_RAW=$CHANGED_FILES" >> $GITHUB_ENV
+      
       # -------------------------------
-      # Run Salesforce Code Analyzer(without --rule-selector sfge )
+      # Filter files per engine
       # -------------------------------
-      - name: Run Salesforce Code Analyzer (changed files only)
-        if: ${{ env.CHANGED_FILES != '' }}
-        uses: forcedotcom/run-code-analyzer@v2  
+      - name: Filter changed files per engine
+        run: |
+          engines=("pmd" "cpd" "regex" "flow")
+          for engine in "${engines[@]}"; do
+            FILES="${CHANGED_FILES_RAW}"
+            EXCLUSIONS_VAR="${engine^^}_EXCLUSIONS"
+            for EXCLUDE in ${!EXCLUSIONS_VAR}; do
+              SAFE_EXCLUDE=$(printf '%s\n' "$EXCLUDE" | sed 's/[.[\^$+?()|]/\\&/g')
+              FILES=$(echo "$FILES" | grep -v -E "^${SAFE_EXCLUDE}(/.*)?$" || true)
+            done
+            # Deduplicate and trim
+            FILES=$(echo "$FILES" | tr '\n' ' ' | sed 's/ $//')
+            echo "${engine^^}_FILES=$FILES" >> $GITHUB_ENV
+            echo "${engine^^} files to scan: $FILES"
+          done
+      
+      # -------------------------------
+      # Run Salesforce Code Analyzer
+      # -------------------------------
+      - name: Run Salesforce Code Analyzer
+        uses: forcedotcom/run-code-analyzer@v2
         with:
           run-arguments: >
-            --target ${{ env.CHANGED_FILES }}
+            --target ${{ env.PMD_FILES }} ${{ env.CPD_FILES }} ${{ env.REGEX_FILES }} ${{ env.FLOW_FILES }}
             --config-file sfca-config.yml
             --view detail
             --output-file sfca_results.html
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
+          
