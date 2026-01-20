@@ -8,7 +8,7 @@
 public with sharing class PermissionSetsAuditController {
 
     @AuraEnabled(cacheable=no)
-    public static List<mo> ok() {
+    public static List<mo> nn() {
 
         // Step 1: Fetch privileged permissions from Custom Metadata
         Set<String> no = new Set<String>();
