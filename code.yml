@@ -2,15 +2,10 @@ engines:
   eslint:
     auto_discover_eslint_config: true
     eslint_ignore_file: .eslintignore
-    disable_javascript_base_config: true   # ← THIS IS THE KEY!
-    disable_lwc_base_config: false
-    disable_slds_base_config: false
-    disable_typescript_base_config: true
-    custom_eslint_config:
-      overrides:
-        - files: ["**/*.js"]
-          rules:
-            jest/no-deprecated-functions: "off"
+    disable_javascript_base_config: true  # Add this
+    disable_lwc_base_config: false        # Keep LWC rules
+    disable_slds_base_config: false       # Keep SLDS rules
+    disable_typescript_base_config: true  # Add this if not using TypeScript
 
   # retirejs:
   #   disable_engine: false

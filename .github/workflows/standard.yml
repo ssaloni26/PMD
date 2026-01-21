@@ -24,11 +24,11 @@ jobs:
       - name: Install Node dependencies
         run: |
           npm install --save-dev \
-            eslint@latest \
-            @salesforce/eslint-config-lwc \
-            @salesforce/eslint-plugin-aura \
-            eslint-plugin-jest \
-            jest@latest
+          eslint@latest \
+          @salesforce/eslint-config-lwc \
+          @salesforce/eslint-plugin-aura \
+          eslint-plugin-jest \
+          jest
 
       # 3️⃣ Install other dependencies
       - name: Install dependencies
