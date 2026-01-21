@@ -2,7 +2,7 @@
  * @description       :
  * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
  * @group             :
- * @last modified on  : 01-20-2026
+ * @last modified on  : 01-21-2026
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
  **/
 public with sharing class PermissionSetsAuditController {
@@ -54,7 +54,7 @@ public with sharing class PermissionSetsAuditController {
 
     // Step 5: Loop through permission sets
     Map<Id, PermissionSetAuditWrapper> wrapperMap = new Map<Id, PermissionSetAuditWrapper>();
-
+  
     for (SObject ps : permSets) {
       List<String> enabledPermLabels = new List<String>();
       for (String permName : validPrivilegedPerms) {
