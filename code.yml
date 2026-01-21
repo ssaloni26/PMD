@@ -1,23 +1,28 @@
 engines:
+  eslint:
+    auto_discover_eslint_config: true
+    eslint_ignore_file: .eslintignore
+
   # retirejs:
-  #   fileExclusions:
-  #     - force-app/main/default/lwc/Excluded/**
-  #     - force-app/main/default/lwc/dmlAverage/**
-      
-  # pmd:
-  #   custom_rulesets:
-  #     - config/pmd/apex-ruleset.xml
-  # eslint:
-  #     auto_discover_eslint_config: true
-  #     eslint_ignore_file: .eslintignore
+  #   disable_engine: false
 
   cpd:
     file_extensions:
       apex:
+        - ".cls"
         - ".trigger"
-    minimum_tokens:
-      apex: 30
+
   pmd:
     file_extensions:
       apex:
+        - ".cls"
         - ".trigger"
+
+  regex:
+    file_extensions:
+      apex:
+        - ".cls"
+        - ".trigger"
+
+  # flow:
+  #   disable_engine: false
