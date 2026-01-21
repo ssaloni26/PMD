@@ -97,7 +97,7 @@ public with sharing class l {
         public Request(Id userId, String objectName, Date recordLogDate) {
             this.userId = userId;
             this.objectName = objectName;
-            this.recordLogDate = recordLogDate;
+            this.recordLogDate = recordLogDate;  
         }
     }
 
