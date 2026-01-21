@@ -21,7 +21,8 @@ jobs:
       - name: Install Node dependencies
         run: |
           npm install --save-dev eslint@latest @salesforce/eslint-config-lwc @salesforce/eslint-plugin-aura eslint-plugin-jest
-
+      - name: Install dependencies
+        run: npm install
       # -------------------------------
       # Get changed files from PR
       # -------------------------------
