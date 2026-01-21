@@ -1,0 +1,83 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 09-12-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card title="Dynamic Object Browser">
+        <div class="slds-p-around_medium">
+
+            <!-- Object Selector -->
+            <lightning-combobox
+                name="object"
+                label="Select Object"
+                options={objectOptions}
+                value={selectedObject}
+                onchange={handleObjectChange}>
+            </lightning-combobox>
+
+            <!-- Button to open field selection modal -->
+            <template if:true={selectedObject}>
+                <lightning-button 
+                    label="Select Fields" 
+                    onclick={openFieldsModal} 
+                    class="slds-m-top_small">
+                </lightning-button>
+            </template>
+
+            <!-- Field Selection Modal -->
+            <template if:true={fieldsModalVisible}>
+                <section role="dialog" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <div class="slds-modal__content slds-p-around_medium">
+                            <template if:true={fieldOptions.length}>
+                                <lightning-dual-listbox
+                                    name="fields"
+                                    label="Select Fields"
+                                    source-label="Available"
+                                    selected-label="Selected"
+                                    options={fieldOptions}
+                                    value={selectedFields}
+                                    onchange={handleFieldSelectionChange}>
+                                </lightning-dual-listbox>
+                            </template>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <lightning-button 
+                                label="Cancel" 
+                                onclick={handleCancel}>
+                            </lightning-button>
+                            <lightning-button 
+                                variant="brand" 
+                                label="Load Data" 
+                                onclick={handleLoad}>
+                            </lightning-button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </template>
+
+            <!-- Datatable -->
+            <template if:true={showDatatable}>
+                <div class="datatable-container slds-m-top_medium">
+                    <lightning-datatable
+        key-field="Id"
+        data={rows}
+        columns={columns}
+        draft-values={draftValues}
+        onsave={handleInlineSave}
+        enable-infinite-loading={enableInfiniteScroll}
+        onloadmore={handleLoadMore}
+        load-more-offset="20"
+        is-loading={isLoadingMore}
+        hide-checkbox-column="true">
+    </lightning-datatable>
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>

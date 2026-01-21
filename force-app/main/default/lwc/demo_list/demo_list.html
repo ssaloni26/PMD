@@ -1,0 +1,104 @@
+<!--
+    @description       : 
+    @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+    @group             : 
+    @last modified on  : 09-11-2025
+    @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+  -->
+  <template>
+      <lightning-card title="Object Browser">
+          <div class="slds-p-around_medium">
+  
+              <!-- Object Dropdown -->
+              <lightning-combobox
+                  name="objectSelect"
+                  label="Select Object"
+                  value={selectedObject}
+                  options={objectOptions}
+                  placeholder="Select an object"
+                  onchange={handleObjectChange}>
+              </lightning-combobox>
+  
+              <!-- Loader -->
+              <template if:true={loading}>
+                  <div class="slds-m-top_medium slds-text-align_center slds-text-body_regular">
+                      Loading...
+                  </div>
+              </template>
+  
+              <!-- Error -->
+              <template if:true={errorMessage}>
+                  <div class="slds-text-color_error slds-m-top_medium slds-text-body_regular">
+                      {errorMessage}
+                  </div>
+              </template>
+  
+              <!-- Action Buttons -->
+              <template if:true={showDatatable}>
+                  <div class="slds-m-top_medium slds-grid slds-grid_align-spread slds-m-bottom_small">
+                      <lightning-button
+                          label="New Record"
+                          onclick={handleNewRecord}
+                          variant="brand">
+                      </lightning-button>
+  
+                      <lightning-button
+                          label="Delete Selected"
+                          onclick={handleDeleteSelected}
+                          variant="destructive">
+                      </lightning-button>
+                  </div>
+  
+                  <!-- Datatable with manual inline editing -->
+                  <lightning-datatable
+                      key-field="Id"
+                      data={rows}
+                      columns={columns}
+                      draft-values={draftValues}
+                      onsave={handleInlineSave}
+                      onrowaction={handleRowAction}
+                      onrowselection={handleRowSelection}
+                      hide-checkbox-column={hideCheckbox}
+                      show-row-number-column={showRowNumbers}
+                      class="slds-box slds-box_xx-small slds-m-top_small">
+                  </lightning-datatable>
+              </template>
+  
+              <!-- No Records -->
+              <template if:true={showNoRecordsMessage}>
+                  <div class="slds-m-top_medium slds-text-body_regular">
+                      No records found.
+                  </div>
+              </template>
+  
+              <!-- Modal for New Record Only -->
+              <template if:true={isModalOpen}>
+                  <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" aria-modal="true">
+                      <div class="slds-modal__container">
+                          <header class="slds-modal__header">
+                              <h2 class="slds-text-heading_medium">New Record</h2>
+                          </header>
+                          <div class="slds-modal__content slds-p-around_medium">
+                              <lightning-record-form
+                                  object-api-name={selectedObject}
+                                  record-id={recordForm.Id}
+                                  layout-type="Full"
+                                  mode="edit"
+                                  onsuccess={handleSaveSuccess}
+                                  onerror={handleSaveError}>
+                              </lightning-record-form>
+                          </div>
+                          <footer class="slds-modal__footer">
+                              <lightning-button
+                                  label="Cancel"
+                                  onclick={handleCloseModal}>
+                              </lightning-button>
+                          </footer>
+                      </div>
+                  </section>
+                  <div class="slds-backdrop slds-backdrop_open"></div>
+              </template>
+  
+          </div>
+      </lightning-card>
+  </template>

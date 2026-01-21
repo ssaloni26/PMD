@@ -1,0 +1,39 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-27-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+
+    <!--LWC Button-->
+    <lightning-button label={buttonLabel}
+                      variant="brand"
+                      onclick={handleShow}>
+                    
+    </lightning-button>
+
+    <!--LWC DataTable-->
+    <!--condition rendering-->
+    <template if:true={showDatatable}>
+    <!--for Opportunity Records-->
+
+    <lightning-datatable
+                        key-field="id"
+                        data={opportunityData}
+                        columns={columns1}
+                        hide-checkbox-column>
+
+    </lightning-datatable>
+    <!--for Contact Records-->
+
+    <lightning-datatable
+                        key-field="id"
+                        data={contactData}
+                        columns={columns2}
+                        hide-checkbox-column>
+
+    </lightning-datatable>
+    </template>
+</template>

@@ -20,14 +20,14 @@ engines:
       apex:
         - ".cls"
         - ".trigger"
-
+   
   pmd:
     file_extensions:
       apex:
         - ".cls"
         - ".trigger"
 
-  regex:
+  regex:  
     custom_rules:
       "NoTodoComments":
         regex: /\/\/[ \t]*TODO/gi

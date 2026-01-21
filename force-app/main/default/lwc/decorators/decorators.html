@@ -1,0 +1,30 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-26-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card title="API, Wire & Track Example">
+        <!-- API property -->
+        <p><b>API Property (from parent):</b> {recordId}</p>
+
+        <!-- Wire (Accounts from Apex) -->
+        <p><b>Accounts from @wire:</b></p>
+        <template if:true={accounts.data}>
+            <ul>
+                <template for:each={accounts.data} for:item="acc">
+                    <li key={acc.Id}>{acc.Name}</li>
+                </template>
+            </ul>
+        </template>
+        <template if:true={accounts.error}>
+            <p style="color:red;">Error loading accounts!</p>
+        </template>
+
+        <!-- Track -->
+        <p><b>Tracked Counter:</b> {counter.value}</p>
+        <lightning-button label="Increase Counter" onclick={increaseCounter}></lightning-button>
+    </lightning-card>
+</template>

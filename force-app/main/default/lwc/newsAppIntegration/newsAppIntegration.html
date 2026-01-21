@@ -1,0 +1,64 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-29-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card title="Business News">
+    <div class="container">
+        <div class="slds-grid slds-gutters slds-wrap justify-center">
+            <template if:true={result}>
+                <template for:each={result} for:item="item">
+                    <div class="card" key={item.id}>
+                        <img class="card-image" src={item.urlToImage} alt="image"/> 
+                        <div class="card-text">
+                            <span>{item.date}</span>
+                            <h2>{item.title}</h2>
+                        </div>
+                        <div class="card-stats" data-item={item.id} onclick={showModal}>Read More</div>
+                    </div>
+                </template>
+            </template>
+        </div>
+    </div>
+
+    <!-- modal section  -->
+    <template if:true={isModalOpen}>
+    <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+        class={modalClass}>
+        <div class="slds-modal__container">
+            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse">
+                <lightning-icon icon-name="utility:close" variant="inverse" title="Close" onclick={cloaseModal}></lightning-icon>
+                <span class="slds-assistive-text">Cancel and close</span>
+            </button>
+            <div class="slds-modal__header">
+                <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{selectedNews.title}</h1>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <img src={selectedNews.urlToImage}/>
+                <div>
+                    <div>Source - {selectedNews.name}</div>
+                    <div>{selectedNews.date}</div>
+                </div>
+                <p>
+                    {selectedNews.content}
+                    <a href={selectedNews.url} target="_blank">Go to website</a>
+                </p>
+                <template if:true={selectedNews.author}>
+                    <div>
+                        <div>Author - {selectedNews.author}</div>
+                    </div>
+                </template>
+            </div>
+            <div class="slds-modal__footer">
+                <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick={cloaseModal}>Cancel</button>
+               
+            </div>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+</template>
+    </lightning-card>
+</template>

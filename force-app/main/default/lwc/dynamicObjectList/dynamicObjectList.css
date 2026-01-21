@@ -1,0 +1,18 @@
+/* Add subtle pencil-like icon for editable cells */
+    .custom-datatable .slds-cell-edit:before {
+        content: "✎"; /* pencil icon */
+        font-size: 12px;
+        color: #0070d2; /* Salesforce blue */
+        margin-right: 4px;
+        vertical-align: middle;
+    }
+
+    /* Make the datatable look closer to standard Salesforce UI */
+    .custom-datatable .slds-table td {
+        padding: 0.5rem;
+    }
+
+    .datatable-container {
+        height: 500px; /* fixed height so scroll triggers loadmore */
+        overflow-y: auto;
+    }

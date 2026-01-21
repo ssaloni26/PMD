@@ -1,0 +1,31 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-27-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card title="parent P2C LWC">
+        <lightning-input 
+                        class="slds-p horizontal_small"
+                        label="Set counter"
+                        type="number"
+                        min="0"
+                        max="100000"
+                        value={startCounter}
+                        onchange={handleStartChange}>
+                        </lightning-input>
+
+
+    <lightning-button class="slds-p-horizontal_small"
+                      label="add 100 to Counter"
+                      onclick={handleMaximizeCounter}>
+                    </lightning-button>
+    <!--//child  component calling -->
+    <c-childp2c counter={startCounter}></c-childp2c>
+
+
+
+    </lightning-card>
+</template>

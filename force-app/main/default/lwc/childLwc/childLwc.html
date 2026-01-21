@@ -1,0 +1,34 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-25-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card title="child Lwc" icon-name ="action:upload">
+        <lightning-button class="slds-p-horizontal_medium"
+                          label="Substract"
+                          icon-name="utility:dash"
+                          onclick={handleSubtract}>
+                        </lightning-button>
+        <lightning-button class="slds-p-horizontal_medium"
+                        label="Add"
+                        icon-name="utility:add"
+                        onclick={handleAdd}>
+                      </lightning-button>
+        <lightning-button 
+                        label="2"
+                        value ="2"
+                        icon-name="utility:close"
+                        onclick={handleMultiply}>
+                    </lightning-button>
+      
+      <lightning-button 
+                    label="10"
+                    value ="10"
+                    icon-name="utility:close"
+                    onclick={handleMultiply}>
+                  </lightning-button>
+    </lightning-card>
+</template>
