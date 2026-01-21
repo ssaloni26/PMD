@@ -1,11 +1,11 @@
 engines:
   eslint:
-  auto_discover_eslint_config: true
-  eslint_ignore_file: .eslintignore
-  disable_javascript_base_config: true   # ← THIS IS THE KEY!
-  disable_lwc_base_config: false
-  disable_slds_base_config: false
-  disable_typescript_base_config: true
+    auto_discover_eslint_config: true
+    eslint_ignore_file: .eslintignore
+    disable_javascript_base_config: true   # ← THIS IS THE KEY!
+    disable_lwc_base_config: false
+    disable_slds_base_config: false
+    disable_typescript_base_config: true
 
   # retirejs:
   #   disable_engine: false
