@@ -31,5 +31,32 @@ export default class Publwc extends LightningElement {
         
         publish(this.MessageContext,Counting_update,payload);
     }
+    @wire(MessageContext)
+    MessageContext;
 
+
+    handleIncrement(){
+        const payload={
+            operator : 'Add',
+            constant:1
+        };
+
+        publish(this.MessageContext,Counting_update,payload);
+    }
+    handleDecrement(){
+        const payload={
+            operator : 'Subtract',
+            constant:1
+        };
+        
+        publish(this.MessageContext,Counting_update,payload);
+    }
+    handleMultiply(){
+        const payload={
+            operator : 'Multiply',
+            constant:2
+        };
+        
+        publish(this.MessageContext,Counting_update,payload);
+    }
 }
