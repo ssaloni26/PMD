@@ -4,7 +4,7 @@ engines:
     auto_discover_eslint_config: true
     eslint_ignore_file: .eslintignore
     disable_javascript_base_config: true
-    disable_lwc_base_config: false
+    disable_lwc_base_config: true  
     disable_slds_base_config: false
     disable_typescript_base_config: true
 
