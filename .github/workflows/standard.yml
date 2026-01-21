@@ -85,6 +85,12 @@ jobs:
           --dir force-app/main/default/classes \
           --exclude force-app/main/default/classes/UserPermissionsLoggerBatch.cls \
           --format text > cpd-report.txt || true
+
+      - name: Upload CPD Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpd-report
+          path: cpd-report.txt
       # - name: Run Salesforce Code Analyzer
       #   id: run-code-analyzer
       #   uses: forcedotcom/run-code-analyzer@v2
