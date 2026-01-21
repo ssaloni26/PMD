@@ -3,6 +3,7 @@ engines:
   eslint:
     auto_discover_eslint_config: true
     eslint_ignore_file: .eslintignore
+    disable_lwc_base_config: true
 
   # retirejs:
   #   disable_engine: false
