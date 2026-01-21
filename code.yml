@@ -3,7 +3,6 @@ engines:
     exclude_patterns:
       - force-app/main/default/lwc/Excluded/**
       - force-app/main/default/lwc/dmlAverage/**
-      - force-app/main/default/lwc/publwc/publwc.js
       
   # pmd:
   #   custom_rulesets:
