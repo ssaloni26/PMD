@@ -19,10 +19,10 @@ engines:
         - ".trigger"
 
   regex:
-    file_extensions:
-      apex:
-        - ".cls"
-        - ".trigger"
+    regex: /\/\/[ \t]*TODO/gi
+    file_extensions: [".cls", ".trigger"]
+    description: "Prevents TODO comments from being in Apex code."
+
 
   # flow:
   #   disable_engine: false
