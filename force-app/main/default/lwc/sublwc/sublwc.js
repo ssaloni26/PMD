@@ -22,7 +22,7 @@ export default class Sublwc extends LightningElement {
     }
     handleMessage(message){
         
-            console.log('Received message:', JSON.stringify(message));
+            console.log('Received message:', JSON.stringify(messag    e));
         
             if (message.operator === 'Add') {
                 this.counter += message.constant;
