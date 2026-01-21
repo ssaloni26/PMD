@@ -10,6 +10,7 @@
     </description>
 
     <exclude-pattern>.*UserPermissionsLoggerBatch\.cls</exclude-pattern>
+    <exclude-pattern>.*/Exclude/.*</exclude-pattern>
 
     <!-- COMPLEXITY / DESIGN -->
     <rule ref="category/apex/design.xml">
