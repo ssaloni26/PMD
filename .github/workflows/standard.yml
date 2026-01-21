@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - "force-app/main/default/**"
-      - "sfac.yml"
+      - "code.yml"
 
 jobs:
   sfca:
@@ -45,6 +45,6 @@ jobs:
         id: run-code-analyzer
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          run-arguments: --workspace .${{ env.CHANGED_FILES }} --config-file sfac.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
+          run-arguments: --workspace .${{ env.CHANGED_FILES }} --config-file code.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
