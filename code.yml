@@ -19,9 +19,11 @@ engines:
         - ".trigger"
 
   regex:
-    regex: /\/\/[ \t]*TODO/gi
-    file_extensions: [".cls", ".trigger"]
-    description: "Prevents TODO comments from being in Apex code."
+    custom_rules:
+      "NoTodoComments":
+        regex: /\/\/[ \t]*TODO/gi
+        file_extensions: [".cls", ".trigger"]
+        description: "Prevents TODO comments from being in Apex code."
 
 
   # flow:
