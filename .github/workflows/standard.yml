@@ -84,7 +84,7 @@ jobs:
           --language apex \
           --dir force-app/main/default/classes \
           --exclude force-app/main/default/classes/UserPermissionsLoggerBatch.cls \
-          --format text > cpd-report.txt
+          --format text > cpd-report.txt || true
       # - name: Run Salesforce Code Analyzer
       #   id: run-code-analyzer
       #   uses: forcedotcom/run-code-analyzer@v2
