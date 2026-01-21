@@ -1,8 +1,11 @@
 engines:
   eslint:
     auto_discover_eslint_config: true
-    disable_lwc_base_config: true
     eslint_ignore_file: .eslintignore
+    disable_javascript_base_config: true  # Add this
+    disable_lwc_base_config: false        # Keep LWC rules
+    disable_slds_base_config: false       # Keep SLDS rules
+    disable_typescript_base_config: true  # A
 
   # retirejs:
   #   disable_engine: false
