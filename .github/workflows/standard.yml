@@ -80,7 +80,7 @@ jobs:
       - name: Run PMD CPD
         run: |
           ./pmd-bin-6.55.0/bin/run.sh cpd \
-          --minimum-tokens 20 \
+          --minimum-tokens 5 \
           --language apex \
           --dir force-app/main/default/classes \
           --exclude force-app/main/default/classes/UserPermissionsLoggerBatch.cls \
