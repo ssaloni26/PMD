@@ -27,8 +27,8 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-      # - name: Install Jest
-      #   run: npm install --save-dev jest
+      - name: Install Jest
+        run: npm install --save-dev jest
       # 3️⃣ Download and setup PMD
       - name: Download and Setup PMD
         run: |
