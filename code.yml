@@ -6,6 +6,11 @@ engines:
     disable_lwc_base_config: false
     disable_slds_base_config: false
     disable_typescript_base_config: true
+    custom_eslint_config:
+      overrides:
+        - files: ["**/*.js"]
+          rules:
+            jest/no-deprecated-functions: "off"
 
   # retirejs:
   #   disable_engine: false
