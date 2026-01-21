@@ -1,8 +1,8 @@
 engines:
-  retirejs:
-    fileExclusions:
-      - force-app/main/default/lwc/Excluded/**
-      - force-app/main/default/lwc/dmlAverage/**
+  # retirejs:
+  #   fileExclusions:
+  #     - force-app/main/default/lwc/Excluded/**
+  #     - force-app/main/default/lwc/dmlAverage/**
       
   # pmd:
   #   custom_rulesets:
@@ -14,7 +14,6 @@ engines:
   cpd:
     file_extensions:
       apex:
-        - ".cls"
         - ".trigger"
     minimum_tokens:
       apex: 30
