@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__HomePage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__UtilityBar</target>
+        <target>lightning__FlowScreen</target>
+        <target>lightning__GlobalAction</target>
+        <target>lightning__Inbox</target>
+        <target>lightning__PropertyEditor</target>
+        <target>lightning__RecordAction</target>
+    </targets>
+    <!--
+ - lightning__Tab
+ - lightning__Inbox
+ - lightningStatic__Email
+ - lightningCommunity__Page
+ - lightningCommunity__Page_Layout
+ - lightningCommunity__Theme_Layout
+ - lightningCommunity__Default
+ - lightningSnapin__ChatMessage
+ - lightningSnapin__Minimized
+ - lightningSnapin__PreChat
+ - lightningSnapin__ChatHeader
+ - lightning__RecordAction
+ - lightning__GlobalAction
+ - analytics__Dashboard
+ - lightning__PropertyEditor
+ - lightning__UrlAddressable
+ -->
+</LightningComponentBundle>

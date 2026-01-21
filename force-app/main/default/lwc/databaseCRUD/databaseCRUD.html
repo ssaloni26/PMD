@@ -1,0 +1,116 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-28-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card title="Contacts & Opportunities" class="slds-p-around_small">
+        
+
+        <lightning-card title="Contacts Inline Edit" icon-name="standard:contact">
+            <lightning-datatable
+                key-field="Id"
+                data={contactData}
+                columns={columns2}
+                draft-values={draftValues}
+                onsave={handleSaveContactInline}
+                
+                onrowaction={handleRowAction}>
+            </lightning-datatable>
+    
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Saving..."></lightning-spinner>
+            </template>
+        </lightning-card>
+        <!-- Insert Contact -->
+        <div class="slds-p-around_small slds-grid slds-wrap">
+            <lightning-input 
+                label="New Contact Name" 
+                value={newContactName} 
+                onchange={handleNameChange} 
+                class="slds-m-right_small">
+            </lightning-input>
+            <lightning-button 
+                label="Insert Contact" 
+                variant="brand" 
+                onclick={handleInsertContact}>
+            </lightning-button>
+            <lightning-button 
+                label="Delete First Contact"
+                variant="destructive"
+                onclick={handleDeleteContact} 
+                class="slds-m-left_small">
+            </lightning-button>
+        </div>
+
+        <!-- Update Contact (by name) -->
+        <div class="slds-p-around_small slds-grid slds-wrap">
+            <lightning-input 
+                label="Update Contact Name" 
+                value={updateContactName} 
+                onchange={handleUpdateContactName}>
+            </lightning-input>
+            <lightning-button 
+                label="Update Contact" 
+                variant="brand" 
+                onclick={handleUpdateContact} 
+                class="slds-m-left_small">
+            </lightning-button>
+        </div>
+
+        <!-- Update Contact (by Id) -->
+        <div class="slds-p-around_small slds-grid slds-wrap">
+            <lightning-input 
+                label="Contact Id" 
+                value={updateid} 
+                onchange={handleUpdateid} 
+                class="slds-m-right_small">
+            </lightning-input>
+            <lightning-input 
+                label="New Last Name" 
+                value={updateContactNamebyid}
+                onchange={handleUpdateContactNameById} 
+                class="slds-m-right_small">
+            </lightning-input>
+            <lightning-button 
+                label="Update Contact by Id" 
+                variant="brand" 
+                onclick={handleUpdateById}>
+            </lightning-button>
+        </div>
+
+        <!-- Delete Contact by Id -->
+        <div class="slds-p-around_small slds-grid slds-wrap">
+            <lightning-input
+                label="Contact Id to Delete"
+                value={contactIdToDelete}
+                onchange={handleContactIdChange}
+                class="slds-m-right_small">
+            </lightning-input>
+            <lightning-button 
+                label="Delete Contact by Id" 
+                variant="destructive"
+                onclick={handleDeleteById}>
+            </lightning-button>
+        </div>
+
+
+
+
+        <!-- Opportunity Table -->
+        <lightning-datatable
+            key-field="Id"
+            data={opportunityData}
+            columns={columns1}
+            hide-checkbox-column>
+        </lightning-datatable>
+
+        <!-- Spinner -->
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading records"></lightning-spinner>
+        </template>
+
+    </lightning-card>
+</template>

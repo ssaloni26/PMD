@@ -1,0 +1,37 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-29-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card title="Contacts Inline Edit Lookup">
+        <div class="slds-p-around_medium">
+            <template if:true={contacts}>
+                <template for:each={contacts} for:item="contact">
+                    <div key={contact.Id} class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-around_small slds-border_bottom slds-m-bottom_small">
+                        <div class="slds-size_1-of-5">{contact.FirstName}</div>
+                        <div class="slds-size_1-of-5">{contact.LastName}</div>
+            
+                        <!-- Inline Account Lookup -->
+                        <div class="slds-size_2-of-5">
+                            <lightning-record-edit-form
+                                record-id={contact.Id}
+                                object-api-name="Contact"
+                                onsuccess={handleSuccess}
+                            >
+                                <lightning-input-field field-name="AccountId"></lightning-input-field>
+                                <lightning-button type="submit" label="Save" variant="brand" class="slds-m-left_small"></lightning-button>
+                            </lightning-record-edit-form>
+                        </div>
+                    </div>
+                </template>
+            </template>
+            
+            <template if:false={contacts}>
+                <p>No contacts found.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

@@ -12,7 +12,7 @@ engines:
       apex:
         - ".cls"
         - ".trigger"
-
+   
   pmd:
     file_extensions:
       apex:

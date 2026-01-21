@@ -1,0 +1,33 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-27-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card title="Imperative Methods">
+        <div style="height: 200px">
+            <lightning-datatable 
+                key-field="Id"
+                data={data}
+                columns={columns}>
+            </lightning-datatable>
+        </div>
+
+        <lightning-tabset selected-tab-value="tab1">
+            <lightning-tab label="Details" value="tab1">Details content</lightning-tab>
+            <lightning-tab label="Related" value="tab2">Related content</lightning-tab>
+        </lightning-tabset>
+        <lightning-layout horizontal-align="center">
+            <lightning-layout-item size="6">
+                <lightning-card title="Left Panel"></lightning-card>
+            </lightning-layout-item>
+            <lightning-layout-item size="6">
+                <lightning-card title="Right Panel"></lightning-card>
+            </lightning-layout-item>
+        </lightning-layout>
+        <lightning-input type="text" label="First Name" value={firstName} onchange={handleChange}></lightning-input>
+
+    </lightning-card>
+</template>

@@ -1,0 +1,56 @@
+<template>
+    <lightning-card title="Dynamic Object Browser" icon-name="standard:custom_object">
+        <div class="slds-p-around_medium">
+           
+            <!-- Object selection -->
+            <lightning-combobox
+                name="object"
+                label="Select Object"
+                placeholder="Select an object"
+                options={objectOptions}
+                value={selectedObject}
+                onchange={handleObjectChange}>
+            </lightning-combobox>
+
+
+            <!-- Field selection -->
+            <template if:true={fieldOptions}>
+                <lightning-dual-listbox
+                    name="fields"
+                    label="Select Fields to Display"
+                    source-label="Available Fields"
+                    selected-label="Selected Fields"
+                    options={fieldOptions}
+                    value={selectedFields}
+                    onchange={handleFieldSelectionChange}>
+                </lightning-dual-listbox>
+            </template>
+
+
+            <!-- Datatable with lazy loading -->
+            <template if:true={showDatatable}>
+               
+                <lightning-datatable
+                    key-field="Id"
+                    data={rows}
+                    columns={columns}
+                    draft-values={draftValues}
+                    onsave={handleInlineSave}
+                    enable-infinite-loading
+                    onloadmore={handleLoadMore}
+                    is-loading={isLoadingMore}
+                    show-row-number-column
+                    hide-checkbox-column>
+                </lightning-datatable>
+            </template>
+
+
+            <!-- No records -->
+            <template if:true={showNoRecordsMessage}>
+                <p class="slds-text-color_weak">No records to display</p>
+            </template>
+
+
+        </div>
+    </lightning-card>
+</template>

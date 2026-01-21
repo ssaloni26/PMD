@@ -1,0 +1,90 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 09-01-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card>
+        <div class="news-app-container">
+
+            <!-- 🔍 Search Field -->
+            <div class="search-bar">
+                <lightning-input 
+                    type="text"
+                    placeholder="Search news categories"
+                    value={categoryInput}
+                    onchange={handleInputChange}>
+                </lightning-input>
+
+                <lightning-button 
+                    label="Search"
+                    onclick={handleSearch}
+                    class="search-button">
+                </lightning-button>
+            </div>
+
+            <!-- 📌 Category Tabs -->
+            <div class="category-tabs">
+                <template for:each={categoriesWithLabel} for:item="cat">
+                    <span 
+                        key={cat.value}
+                        class="category-tab"
+                        data-value={cat.value}
+                        onclick={handleCategoryClick}>
+                        {cat.labelWithPipe}
+                    </span>
+                </template>
+            </div>
+
+            <!-- 📅 Date and Weather -->
+            <div class="date-weather-bar">
+                <span class="today-date">
+                    <img src={calendarIcon} class="icon" alt="Calendar" />
+                    {today}
+                </span>
+                <span class="weather-info">
+                    <img src={weatherIcon} class="icon" alt="Weather" />
+                    {weatherInfo}
+                </span>
+            </div>
+
+            <!-- 📰 News Section -->
+            <template if:true={isLoading}>
+                <p class="loading-text">Loading news...</p>
+            </template>
+
+            <template if:true={errorMessage}>
+                <p class="error-text">{errorMessage}</p>
+            </template>
+
+            <template if:true={newsList}>
+                <div class="news-grid">
+                    <template for:each={newsList} for:item="article">
+                        <div 
+                            class="news-card"
+                            key={article.title}
+                            data-url={article.url}
+                            onclick={openArticle}>
+
+                            <!-- Image with fallback -->
+                            <img 
+                                src={article.validImageUrl}
+                                alt={article.title}
+                                class="news-image"
+                                onerror={handleImageError} />
+
+                            <!-- News content -->
+                            <div class="news-content">
+                                <h3 class="news-title">{article.title}</h3>
+                                <p class="news-source">{article.description}</p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>
