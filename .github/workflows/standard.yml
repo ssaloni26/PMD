@@ -47,3 +47,4 @@ jobs:
         with:
           run-arguments: --workspace .${{ env.CHANGED_FILES }} --config-file sfac.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
           results-artifact-name: salesforce-code-analyzer-results
+          github-token: ${{ github.token }}
