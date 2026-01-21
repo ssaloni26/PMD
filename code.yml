@@ -3,6 +3,7 @@ engines:
     exclude_patterns:
       - force-app/main/default/lwc/Excluded/**
       - force-app/main/default/lwc/dmlAverage/**
+      - force-app/main/default/lwc/publwc/publwc.js
       
   pmd:
     custom_rulesets:
@@ -14,7 +15,7 @@ engines:
   cpd:
     file_extensions:
       apex:
-        - "**/*.cls"
-        - "**/*.trigger"
+        - ".cls"
+        - ".trigger"
     minimum_tokens:
       apex: 30

@@ -67,34 +67,34 @@ jobs:
       # -------------------------------
       # Get changed files from PR
       # -------------------------------
-      # - name: Get all changed files
-      #   id: changed
-      #   run: |
-      #     # Fetch base branch
-      #     git fetch origin ${{ github.base_ref }}
-
-      #     # Get all changed files under force-app/main/default/
-      #     CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
-      #       | grep '^force-app/main/default/' || true)>> $GITHUB_ENV
-
-      - name: Run PMD CPD
+      - name: Get all changed files
+        id: changed
         run: |
-          ./pmd-bin-6.55.0/bin/run.sh cpd \
-          --minimum-tokens 5 \
-          --language apex \
-          --dir force-app/main/default/classes \
-          --exclude force-app/main/default/classes/UserPermissionsLoggerBatch.cls \
-          --format text > cpd-report.txt || true
+          # Fetch base branch
+          git fetch origin ${{ github.base_ref }}
 
-      - name: Upload CPD Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: cpd-report
-          path: cpd-report.txt
-      # - name: Run Salesforce Code Analyzer
-      #   id: run-code-analyzer
-      #   uses: forcedotcom/run-code-analyzer@v2
+          # Get all changed files under force-app/main/default/
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^force-app/main/default/' || true)>> $GITHUB_ENV
+
+      # - name: Run PMD CPD
+      #   run: |
+      #     ./pmd-bin-6.55.0/bin/run.sh cpd \
+      #     --minimum-tokens 5 \
+      #     --language apex \
+      #     --dir force-app/main/default/classes \
+      #     --exclude force-app/main/default/classes/UserPermissionsLoggerBatch.cls \
+      #     --format text > cpd-report.txt || true
+
+      # - name: Upload CPD Report
+      #   uses: actions/upload-artifact@v4
       #   with:
-      #     run-arguments: --workspace .${{ env.CHANGED_FILES }} --config-file code.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
-      #     results-artifact-name: salesforce-code-analyzer-results
-      #     github-token: ${{ github.token }}
+      #     name: cpd-report
+      #     path: cpd-report.txt
+      - name: Run Salesforce Code Analyzer
+        id: run-code-analyzer
+        uses: forcedotcom/run-code-analyzer@v2
+        with:
+          run-arguments: --workspace .${{ env.CHANGED_FILES }} --config-file code.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
+          results-artifact-name: salesforce-code-analyzer-results
+          github-token: ${{ github.token }}
