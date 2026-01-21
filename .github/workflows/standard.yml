@@ -44,26 +44,6 @@ jobs:
         run: sf plugins install code-analyzer@latest
 
       # -------------------------------
-      # Install yq (YAML parser)
-      # -------------------------------
-      # - name: Install yq
-      #   run: |
-      #     sudo wget -qO /usr/local/bin/yq \
-      #       https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-      #     sudo chmod +x /usr/local/bin/yq
-      #     # -------------------------------
-      # Read all exclusions from sfca-config.yml
-      # -------------------------------
-      # - name: Read all exclusions from sfca-config.yml
-      #   run: |
-      #     engines=("pmd" "cpd" "eslint" "regex" "retirejs" "flow" "graph")
-      #     for engine in "${engines[@]}"; do
-      #       EXCLUSIONS=$(yq ".engines.${engine}.fileExclusions[]" sfca-config.yml || true)
-      #       EXCLUSIONS=$(echo "$EXCLUSIONS" | tr '\n' ' ' | sed 's/ $//')
-      #       echo "${engine^^}_EXCLUSIONS=$EXCLUSIONS" >> $GITHUB_ENV
-      #     done
-
-      # -------------------------------
       # Get changed files from PR
       # -------------------------------
       - name: Get all changed files
@@ -76,20 +56,6 @@ jobs:
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^force-app/main/default/' || true)>> $GITHUB_ENV
 
-      # - name: Run PMD CPD
-      #   run: |
-      #     ./pmd-bin-6.55.0/bin/run.sh cpd \
-      #     --minimum-tokens 5 \
-      #     --language apex \
-      #     --dir force-app/main/default/classes \
-      #     --exclude force-app/main/default/classes/UserPermissionsLoggerBatch.cls \
-      #     --format text > cpd-report.txt || true
-
-      # - name: Upload CPD Report
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: cpd-report
-      #     path: cpd-report.txt
       - name: Run Salesforce Code Analyzer
         id: run-code-analyzer
         uses: forcedotcom/run-code-analyzer@v2
