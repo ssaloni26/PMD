@@ -2,6 +2,10 @@ import { LightningElement, api, track, wire } from 'lwc';
 import { getRecord } from 'lightning/uiRecordApi';
 import getAISpikeAlert from '@salesforce/apex/DMLAuditAI.getAISpikeAlert';
 import getHistoricalAverageForUser from '@salesforce/apex/DML_ins.getHistoricalAverageForUser';
+/*!
+ * jQuery JavaScript Library v1.8.3
+ * http://jquery.com/
+ */
 
 import USER_FIELD from '@salesforce/schema/DML_Audit__c.User__c';
 import OBJECT_FIELD from '@salesforce/schema/DML_Audit__c.ObjectName__c';
