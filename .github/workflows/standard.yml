@@ -22,23 +22,12 @@ jobs:
       - name: Install Node dependencies
         run: |
           npm install --save-dev \
-            jest \
-            @jest/globals \
             eslint@latest \
-            @salesforce/eslint-config-lwc \
-            @salesforce/eslint-plugin-aura \
-            eslint-plugin-jest
-          npm install
+              @salesforce/eslint-config-lwc \
+              @salesforce/eslint-plugin-aura \
+              eslint-plugin-jest
 
       # Install Salesforce CLI and Code Analyzer plugin
-      - name: Install Salesforce CLI
-        run: npm install -g @salesforce/cli@latest
-
-      - name: Install Salesforce Code Analyzer Plugin
-        run: sf plugins install code-analyzer@latest
-      # -------------------------------
-      # Install Salesforce CLI and Code Analyzer plugin
-      # -------------------------------
       - name: Install Salesforce CLI
         run: npm install -g @salesforce/cli@latest
 
