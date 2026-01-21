@@ -79,10 +79,10 @@ jobs:
             --language apex \
             --dir force-app/main/default/classes \
             --exclude force-app/main/default/classes/UserPermissionsLoggerBatch.cls
-      # - name: Run Salesforce Code Analyzer
-      #   id: run-code-analyzer
-      #   uses: forcedotcom/run-code-analyzer@v2
-      #   with:
-      #     run-arguments: --workspace .${{ env.CHANGED_FILES }} --config-file code.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
-      #     results-artifact-name: salesforce-code-analyzer-results
-      #     github-token: ${{ github.token }}
+      - name: Run Salesforce Code Analyzer
+        id: run-code-analyzer
+        uses: forcedotcom/run-code-analyzer@v2
+        with:
+          run-arguments: --workspace .${{ env.CHANGED_FILES }} --config-file code.yml --view detail --output-file sfca_results.html --output-file sfca_results.json
+          results-artifact-name: salesforce-code-analyzer-results
+          github-token: ${{ github.token }}
