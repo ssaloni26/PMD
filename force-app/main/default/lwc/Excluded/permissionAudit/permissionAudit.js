@@ -2,13 +2,16 @@ import { LightningElement, track, wire } from 'lwc';
 
 import getPermissions from '@salesforce/apex/PermissionAuditController.getPermissions';
 import getPrivilegedPerms from '@salesforce/apex/PermissionAuditController.getPrivilegedPerms';
-
+/*!
+ * jQuery JavaScript Library v1.8.3
+ * http://jquery.com/
+ */
 export default class PermissionAudit extends LightningElement {
     @track activeTab = 'user';
 
     showPanel = false;
     currentId = '';
-    currentName = '';
+    currentName = ''; 
     currentAlias = '';
     isLoading = false;
 
