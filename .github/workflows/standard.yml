@@ -27,8 +27,7 @@ jobs:
             eslint@latest \
             @salesforce/eslint-config-lwc \
             @salesforce/eslint-plugin-aura \
-            eslint-plugin-jest \
-            jest
+            eslint-plugin-jest
 
       # 3️⃣ Install other dependencies
       - name: Install dependencies
