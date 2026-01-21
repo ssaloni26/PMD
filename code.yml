@@ -19,7 +19,7 @@ engines:
         - ".cls"
         - ".trigger"
 
-  regex:
+  regex:  
     custom_rules:
       "NoTodoComments":
         regex: /\/\/[ \t]*TODO/gi
