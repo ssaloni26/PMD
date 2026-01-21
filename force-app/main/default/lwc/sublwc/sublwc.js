@@ -1,6 +1,11 @@
 import { LightningElement, wire } from 'lwc';
 import {subscribe,MessageContext} from 'lightning/messageService';
 import Counting_update from '@salesforce/messageChannel/Counting_update__c';
+/*!
+ * jQuery JavaScript Library v1.8.3
+ * http://jquery.com/
+ */ 
+
 export default class Sublwc extends LightningElement {
     counter = 0;
     subscription = null;
