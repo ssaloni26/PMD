@@ -20,5 +20,4 @@ engines:
   pmd:
     file_extensions:
       apex:
-        - ".cls"
         - ".trigger"
