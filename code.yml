@@ -1,6 +1,6 @@
 engines:
   retirejs:
-    exclude_patterns:
+    fileExclusions:
       - force-app/main/default/lwc/Excluded/**
       - force-app/main/default/lwc/dmlAverage/**
       
