@@ -1,6 +1,11 @@
 import { LightningElement , wire} from 'lwc';
 import{publish , MessageContext} from 'lightning/messageService'
 import Counting_update from '@salesforce/messageChannel/Counting_update__c';
+/*!
+ * jQuery JavaScript Library v1.8.3
+ * http://jquery.com/
+ */
+
 
 export default class Publwc extends LightningElement {
     @wire(MessageContext)
