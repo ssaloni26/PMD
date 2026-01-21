@@ -197,7 +197,7 @@ global class UserPermissionsLoggerBatch implements Database.Batchable<SObject>, 
         collectPermissions(permSet, validFields, fieldApiVsDisplayNames)
       );
     }
-
+  
     for (Id userId : userVsPermissionSets.keySet()) {
       Set<String> userPerms = new Set<String>();
       for (Id permsSetId : userVsPermissionSets.get(userId)) {
